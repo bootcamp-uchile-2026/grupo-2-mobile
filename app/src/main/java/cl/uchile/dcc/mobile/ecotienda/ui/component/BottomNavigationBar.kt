@@ -12,6 +12,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import cl.uchile.dcc.mobile.ecotienda.ui.screen.ScreenEnum
+import cl.uchile.dcc.mobile.ecotienda.ui.theme.DarkBrown
+import cl.uchile.dcc.mobile.ecotienda.ui.theme.EcoGreen
+import cl.uchile.dcc.mobile.ecotienda.ui.theme.SoftBeige
 import compose.icons.FeatherIcons
 import compose.icons.feathericons.Grid
 import compose.icons.feathericons.Home
@@ -23,13 +26,19 @@ fun BottomNavigationBar(
     currentScreen: ScreenEnum,
     onScreenSelected: (ScreenEnum) -> Unit,
     modifier: Modifier = Modifier,
-    windowInsets: WindowInsets = WindowInsets.navigationBars
-)
+    windowInsets: WindowInsets = WindowInsets.navigationBars,
+    containerColor: Color = SoftBeige,
+    selectedColor: Color = EcoGreen,
+    selectedTextColor: Color = selectedColor,
+    unselectedColor: Color = DarkBrown.copy(alpha = 0.7f),
+    unselectedTextColor: Color = unselectedColor,
+
+    )
 {
     NavigationBar(
         modifier = modifier,
-        containerColor = Color(0xFFF5F1E9),
-        tonalElevation = 0.dp
+        containerColor = containerColor,
+        tonalElevation = 8.dp
     ) {
         NavigationBarItem(
             selected = currentScreen == ScreenEnum.HOME,
@@ -37,9 +46,11 @@ fun BottomNavigationBar(
             icon = { Icon(FeatherIcons.Home, contentDescription = "Inicio") },
             label = { Text(ScreenEnum.HOME.title) },
             colors = NavigationBarItemDefaults.colors(
-                selectedIconColor = Color(0xFF4B7039),
+                selectedIconColor = selectedColor,
                 indicatorColor = Color.Transparent,
-                unselectedIconColor = Color(0xFF8B6F47).copy(alpha = 0.7f)
+                unselectedIconColor = unselectedColor,
+                selectedTextColor = selectedColor,
+                unselectedTextColor = unselectedColor,
             )
         )
         NavigationBarItem(
@@ -48,9 +59,11 @@ fun BottomNavigationBar(
             icon = { Icon(FeatherIcons.Grid, contentDescription = "Catálogo", ) },
             label = { Text(ScreenEnum.CATALOG.title) },
             colors = NavigationBarItemDefaults.colors(
-                selectedIconColor = Color(0xFF4B7039),
+                selectedIconColor = selectedColor,
                 indicatorColor = Color.Transparent,
-                unselectedIconColor = Color(0xFF8B6F47).copy(alpha = 0.7f)
+                unselectedIconColor = unselectedColor,
+                selectedTextColor = selectedColor,
+                unselectedTextColor = unselectedColor,
             )
         )
         NavigationBarItem(
@@ -59,9 +72,11 @@ fun BottomNavigationBar(
             icon = { Icon(FeatherIcons.Users, contentDescription = "Productores") },
             label = { Text(ScreenEnum.PRODUCER.title) },
             colors = NavigationBarItemDefaults.colors(
-                selectedIconColor = Color(0xFF4B7039),
+                selectedIconColor = selectedColor,
                 indicatorColor = Color.Transparent,
-                unselectedIconColor = Color(0xFF8B6F47).copy(alpha = 0.7f)
+                unselectedIconColor = unselectedColor,
+                selectedTextColor = selectedColor,
+                unselectedTextColor = unselectedColor,
             )
         )
         NavigationBarItem(
@@ -70,9 +85,11 @@ fun BottomNavigationBar(
             icon = { Icon(FeatherIcons.ShoppingCart, contentDescription = "Carrito") },
             label = { Text(ScreenEnum.CART.title) },
             colors = NavigationBarItemDefaults.colors(
-                selectedIconColor = Color(0xFF4B7039),
+                selectedIconColor = selectedColor,
                 indicatorColor = Color.Transparent,
-                unselectedIconColor = Color(0xFF8B6F47).copy(alpha = 0.7f)
+                unselectedIconColor = unselectedColor,
+                selectedTextColor = selectedColor,
+                unselectedTextColor = unselectedColor,
             )
         )
     }
