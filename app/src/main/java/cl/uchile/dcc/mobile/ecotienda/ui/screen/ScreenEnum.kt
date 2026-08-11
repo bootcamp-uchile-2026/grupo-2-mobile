@@ -42,6 +42,11 @@ enum class ScreenEnum (
         route = "Página de Productores"
     ),
 
+    SEARCH(
+        title = "Búsqueda",
+        route = "Buscador"
+    ),
+
 
 }
 
