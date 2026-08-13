@@ -11,8 +11,7 @@ class MainScreenViewModel : ViewModel() {
     var actualScreen by mutableStateOf(ScreenEnum.HOME)
         private set
 
-    fun changeScreen(newScreen: ScreenEnum): ScreenEnum {
+    fun changeScreen(newScreen: ScreenEnum) {
         actualScreen = newScreen
-        return actualScreen
     }
 }

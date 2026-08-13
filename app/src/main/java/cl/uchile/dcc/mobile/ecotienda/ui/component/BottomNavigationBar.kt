@@ -67,10 +67,10 @@ fun BottomNavigationBar(
             )
         )
         NavigationBarItem(
-            selected = currentScreen == ScreenEnum.PRODUCER,
-            onClick = { onScreenSelected(ScreenEnum.PRODUCER)},
+            selected = currentScreen == ScreenEnum.NOSOTROS,
+            onClick = { onScreenSelected(ScreenEnum.NOSOTROS)},
             icon = { Icon(FeatherIcons.Users, contentDescription = "Productores") },
-            label = { Text(ScreenEnum.PRODUCER.title) },
+            label = { Text(ScreenEnum.NOSOTROS.title) },
             colors = NavigationBarItemDefaults.colors(
                 selectedIconColor = selectedColor,
                 indicatorColor = Color.Transparent,
