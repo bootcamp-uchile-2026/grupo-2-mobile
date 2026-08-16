@@ -29,23 +29,26 @@ import coil3.compose.AsyncImage
 
 @Composable
 fun ProductCard(
+    modifier: Modifier,
     product: Product,
     onAgregarClick: () -> Unit
 ) {
     Card(
-        modifier = Modifier
-            .width(280.dp)          // ancho fijo de la tarjeta
-            .height(340.dp),        // alto aproximado
-        shape = RoundedCornerShape(16.dp),
+        modifier = modifier
+            .height(300.dp)
+            .padding(8.dp),        // alto aproximado
+        shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
     ) {
-        Box {
+        Box(
+        ) {
             // Imagen de fondo (el empaque del cepillo)
             AsyncImage(
                 model = product.imageUrl,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .fillMaxWidth()
             )
 
             // Gradiente oscuro abajo para que se lea el texto
@@ -72,6 +75,11 @@ fun ProductCard(
                         style = MaterialTheme.typography.bodyMedium,
                         color = Color.White.copy(alpha = 0.9f)
                     )
+                    Text(
+                        text = product.productProducer,       // "Cepillo de bambú"
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color.White.copy(alpha = 0.9f)
+                    )
                     Spacer(modifier = Modifier.height(8.dp))
 
                     Text(
@@ -96,6 +104,7 @@ fun ProductCard(
             ) {
                 Text("+Agregar")
             }
+
         }
     }
 }

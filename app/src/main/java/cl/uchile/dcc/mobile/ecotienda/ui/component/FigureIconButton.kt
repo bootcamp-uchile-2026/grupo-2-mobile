@@ -1,18 +1,12 @@
-package cl.uchile.dcc.mobile.gastospersonales.ui.component
+package cl.uchile.dcc.mobile.ecotienda.ui.component
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonColors
-import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import cl.uchile.dcc.mobile.ecotienda.ui.theme.DarkBrown
-import cl.uchile.dcc.mobile.ecotienda.ui.theme.EcoGreen
-import cl.uchile.dcc.mobile.ecotienda.ui.theme.SoftBeige
 
 // FigureIconButton :: String callBack icon enabled -> Icon() { }
 // Genera un Button con forma de Icon, que se puede hacer click

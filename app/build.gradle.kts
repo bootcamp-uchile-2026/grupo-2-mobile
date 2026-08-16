@@ -49,6 +49,12 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation("io.coil-kt.coil3:coil-compose:3.5.0")
     implementation("io.coil-kt.coil3:coil-network-okhttp:3.5.0")
+    implementation(libs.androidx.compose.icons.core)
+    implementation(libs.androidx.compose.icons.extended)
+    implementation(libs.androidx.compose.foundation)
+    implementation(libs.androidx.compose.runtime)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
 
     testImplementation(libs.junit)
     androidTestImplementation(platform(libs.androidx.compose.bom))

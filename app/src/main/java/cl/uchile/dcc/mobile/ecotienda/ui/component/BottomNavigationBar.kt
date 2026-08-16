@@ -11,7 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import cl.uchile.dcc.mobile.ecotienda.ui.screen.ScreenEnum
+import cl.uchile.dcc.mobile.ecotienda.ui.screen.Routes
 import cl.uchile.dcc.mobile.ecotienda.ui.theme.DarkBrown
 import cl.uchile.dcc.mobile.ecotienda.ui.theme.EcoGreen
 import cl.uchile.dcc.mobile.ecotienda.ui.theme.SoftBeige
@@ -20,11 +20,16 @@ import compose.icons.feathericons.Grid
 import compose.icons.feathericons.Home
 import compose.icons.feathericons.ShoppingCart
 import compose.icons.feathericons.Users
+import okhttp3.Route
+
+// BottomNavigationBar :: String callBack Colors -> BottomBar() { }
+// Genera una barra de navegacion abajo con atajos a las pantallas: HOME, CATALOG, ABOUT, CART
+// ejemplo: BottomNavigationBar ("HOME", callBack = { }, Colors) Crea una barra con atajos
 
 @Composable
 fun BottomNavigationBar(
-    currentScreen: ScreenEnum,
-    onScreenSelected: (ScreenEnum) -> Unit,
+    currentRoute: String,
+    onNavigateTo: (String) -> Unit,
     modifier: Modifier = Modifier,
     windowInsets: WindowInsets = WindowInsets.navigationBars,
     containerColor: Color = SoftBeige,
@@ -40,57 +45,27 @@ fun BottomNavigationBar(
         containerColor = containerColor,
         tonalElevation = 8.dp
     ) {
-        NavigationBarItem(
-            selected = currentScreen == ScreenEnum.HOME,
-            onClick = { onScreenSelected(ScreenEnum.HOME) },
-            icon = { Icon(FeatherIcons.Home, contentDescription = "Inicio") },
-            label = { Text(ScreenEnum.HOME.title) },
-            colors = NavigationBarItemDefaults.colors(
-                selectedIconColor = selectedColor,
-                indicatorColor = Color.Transparent,
-                unselectedIconColor = unselectedColor,
-                selectedTextColor = selectedColor,
-                unselectedTextColor = unselectedColor,
-            )
+        val sections = listOf(
+            Routes.HOME,
+            Routes.CATALOG,
+            Routes.ABOUT,
+            Routes.CART
         )
-        NavigationBarItem(
-            selected = currentScreen == ScreenEnum.CATALOG,
-            onClick = {  onScreenSelected(ScreenEnum.CATALOG) },
-            icon = { Icon(FeatherIcons.Grid, contentDescription = "Catálogo", ) },
-            label = { Text(ScreenEnum.CATALOG.title) },
-            colors = NavigationBarItemDefaults.colors(
-                selectedIconColor = selectedColor,
-                indicatorColor = Color.Transparent,
-                unselectedIconColor = unselectedColor,
-                selectedTextColor = selectedColor,
-                unselectedTextColor = unselectedColor,
+
+        sections.forEach { section ->
+            NavigationBarItem(
+                selected = currentRoute == section.route,
+                onClick = { onNavigateTo(section.route) },
+                icon = { Icon(section.icon, contentDescription = section.title) },
+                label = { Text(section.title) },
+                colors = NavigationBarItemDefaults.colors(
+                    selectedIconColor = selectedColor,
+                    indicatorColor = Color.Transparent,
+                    unselectedIconColor = unselectedColor,
+                    selectedTextColor = selectedColor,
+                    unselectedTextColor = unselectedColor,
+                )
             )
-        )
-        NavigationBarItem(
-            selected = currentScreen == ScreenEnum.NOSOTROS,
-            onClick = { onScreenSelected(ScreenEnum.NOSOTROS)},
-            icon = { Icon(FeatherIcons.Users, contentDescription = "Productores") },
-            label = { Text(ScreenEnum.NOSOTROS.title) },
-            colors = NavigationBarItemDefaults.colors(
-                selectedIconColor = selectedColor,
-                indicatorColor = Color.Transparent,
-                unselectedIconColor = unselectedColor,
-                selectedTextColor = selectedColor,
-                unselectedTextColor = unselectedColor,
-            )
-        )
-        NavigationBarItem(
-            selected = currentScreen == ScreenEnum.CART,
-            onClick = { onScreenSelected(ScreenEnum.CART) },
-            icon = { Icon(FeatherIcons.ShoppingCart, contentDescription = "Carrito") },
-            label = { Text(ScreenEnum.CART.title) },
-            colors = NavigationBarItemDefaults.colors(
-                selectedIconColor = selectedColor,
-                indicatorColor = Color.Transparent,
-                unselectedIconColor = unselectedColor,
-                selectedTextColor = selectedColor,
-                unselectedTextColor = unselectedColor,
-            )
-        )
+        }
     }
 }

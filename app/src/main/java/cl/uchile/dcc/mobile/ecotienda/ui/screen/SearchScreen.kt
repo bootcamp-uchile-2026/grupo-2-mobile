@@ -28,7 +28,7 @@ fun SearchScreen(
     var query by remember { mutableStateOf("") }
     var active by remember { mutableStateOf(true) } // Iniciamos activa para que cubra la pantalla
 
-    // Esta caja asegura que la búsqueda use todo el espacio
+    // Esta caja usa all the fuckin space (me coloreaba al ponerlo en español)
     Box(Modifier
         .fillMaxSize()) {
         SearchBar(

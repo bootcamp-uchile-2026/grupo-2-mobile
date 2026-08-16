@@ -1,0 +1,3 @@
+- [ ] Corregir `Home.kt` para que use el parámetro `modifier` en el componente raíz.
+- [ ] Limpiar la definición del parámetro `modifier` en `HomeEcoTienda`.
+- [ ] Verificar que `ProductCard` reciba y aplique correctamente el `modifier`.
