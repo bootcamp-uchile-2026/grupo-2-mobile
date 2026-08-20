@@ -112,6 +112,9 @@ fun EcoTiendaApp(
             }
             Routes.ABOUT->
                 About(
+                    modifier = Modifier
+                        .padding(innerPadding),
+                    producers = DefaultData.Producer,
                 )
 
             Routes.CART->

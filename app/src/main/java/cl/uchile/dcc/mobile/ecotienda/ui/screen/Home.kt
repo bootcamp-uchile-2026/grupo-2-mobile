@@ -3,6 +3,7 @@ package cl.uchile.dcc.mobile.ecotienda.ui.screen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -42,45 +43,54 @@ fun HomeEcoTienda (
     val pagerState = rememberPagerState(pageCount = { productos.size })
     val scope = rememberCoroutineScope()
 
-    Box(modifier = modifier
-        .fillMaxSize(),
-        ) {
-        HorizontalPager(
-            state = pagerState,
-            modifier = Modifier.fillMaxWidth(),
-            contentPadding = PaddingValues(top = 16.dp, start = 16.dp, end = 16.dp)
-        ) { page ->
-            ProductCard(
-                product = productos[page],
-                onAgregarClick = { onAgregarClick(productos[page]) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 8.dp) // un poquito de margen si quieres
-            )
-        }
+    // Usamos un Column como base para que el carrusel no ocupe
+    // necesariamente toda la pantalla vertical si no quieres.
+    Column(
+        modifier = modifier.fillMaxSize()
+    ) {
 
-        // Flecha derecha
-        if (pagerState.currentPage < productos.lastIndex) {
-            IconButton(
-                onClick = {
-                    scope.launch {
-                        pagerState.animateScrollToPage(pagerState.currentPage + 1)
-                    }
-                },
-                modifier = Modifier
-                    .align(Alignment.CenterEnd)
-                    .padding(end = 12.dp)
-                    .size(44.dp)
-                    .background(Color.Black.copy(alpha = 0.4f), CircleShape)
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.ChevronRight,
-                    contentDescription = "Siguiente producto",
-                    tint = Color.White,
-                    modifier = Modifier.size(28.dp)
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.CenterEnd // Alinea el contenido al centro-derecha
+
+        ) {
+            HorizontalPager(
+                state = pagerState,
+                modifier = Modifier.fillMaxWidth(),
+                contentPadding = PaddingValues(vertical = 16.dp, horizontal = 16.dp)
+            ) { page ->
+                ProductCard(
+                    product = productos[page],
+                    onAgregarClick = { onAgregarClick(productos[page]) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp) // un poquito de margen si quieres
                 )
             }
-        }
-    }
 
+            // Flecha derecha
+            if (pagerState.currentPage < productos.lastIndex) {
+                IconButton(
+                    onClick = {
+                        scope.launch {
+                            pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                        }
+                    },
+                    modifier = Modifier
+                        .align(Alignment.CenterEnd)
+                        .padding(end = 12.dp)
+                        .size(44.dp)
+                        .background(Color.Black.copy(alpha = 0.4f), CircleShape)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.ChevronRight,
+                        contentDescription = "Siguiente producto",
+                        tint = Color.White,
+                        modifier = Modifier.size(28.dp)
+                    )
+                }
+            }
+        }
+
+    }
 }

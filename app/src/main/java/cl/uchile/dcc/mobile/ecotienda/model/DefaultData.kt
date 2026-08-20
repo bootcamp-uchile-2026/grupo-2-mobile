@@ -35,4 +35,66 @@ object DefaultData {
 
         
     )
+
+    val Producer = listOf(
+        Producer(
+            id = "CL1",
+            description = "Campo Lindo",
+            imageUrl = "https://www.explorationjunkie.com/chile-national-animal/",
+            history = "Campo Lindo",
+            location = "Rancagua"
+        ),
+        Producer(
+            id = "AH1",
+            description = "Agua Hermosa",
+            imageUrl = "https://www.explorationjunkie.com/chile-national-animal/",
+            history = "Agua Hermosa",
+            location = "Santiago"
+        ),
+        Producer(
+            id = "MT1",
+            description = "Maritima",
+            imageUrl = "https://www.explorationjunkie.com/chile-national-animal/",
+            history = "Maritima",
+            location = "Concepcion"
+        ),
+        Producer(
+            id = "TL1",
+            description = "Taller Luna",
+            imageUrl = "https://www.explorationjunkie.com/chile-national-animal/",
+            history = "Taller Luna",
+            location = "La Florida"
+        ),
+        Producer(
+            id = "RC1",
+            description = "Raices Co.",
+            imageUrl = "https://www.explorationjunkie.com/chile-national-animal/",
+            history = "Raices Co.",
+            location = "Talca"
+        ),
+        Producer(
+            id = "HV1",
+            description = "Hilos vivo",
+            imageUrl = "https://www.explorationjunkie.com/chile-national-animal/",
+            history = "Hilos vivo",
+            location = "La Serena"
+        ),
+        Producer(
+            id = "EN1",
+            description = "Extracto Natural",
+            imageUrl = "https://www.explorationjunkie.com/chile-national-animal/",
+            history = "Extracto Natural",
+            location = "Coquimbo"
+        ),
+        Producer(
+            id = "AC1",
+            description = "Ancestros",
+            imageUrl = "https://www.explorationjunkie.com/chile-national-animal/",
+            history = "Ancestros",
+            location = "Valdivia"
+        ),
+
+
+
+    )
 }
