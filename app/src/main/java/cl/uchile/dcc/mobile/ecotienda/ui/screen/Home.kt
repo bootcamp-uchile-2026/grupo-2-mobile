@@ -84,7 +84,7 @@ fun HomeEcoTienda (
                 ) {
                     Icon(
                         imageVector = Icons.Filled.ChevronRight,
-                        contentDescription = "Siguiente producto",
+                        contentDescription = "Siguiente Producto",
                         tint = Color.White,
                         modifier = Modifier.size(28.dp)
                     )

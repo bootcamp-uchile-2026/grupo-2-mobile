@@ -45,6 +45,10 @@ fun EcoTiendaApp(
     // Se crea el estado de snackbarHostState
     val snackbarHostState = remember { SnackbarHostState() }
 
+    val selectedProducer by viewModel.selectedProducer.collectAsState()
+    
+    
+
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
@@ -115,7 +119,20 @@ fun EcoTiendaApp(
                     modifier = Modifier
                         .padding(innerPadding),
                     producers = DefaultData.Producer,
+                    onProducerClick = { producer ->
+                        viewModel.selectProducer(producer) // Aquí se guarda y navega
+                    },
                 )
+
+            Routes.PRODUCERPAGE -> {
+                // 2. Si hay un productor seleccionado, mostramos su página
+                selectedProducer?.let { producer ->
+                    ProducerPage(
+                        producer = producer,
+                        onBack = { viewModel.navigateTo("ABOUT") }
+                    )
+                }
+            }
 
             Routes.CART->
                 Cart(

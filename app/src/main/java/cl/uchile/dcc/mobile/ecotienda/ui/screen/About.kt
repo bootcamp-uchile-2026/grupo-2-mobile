@@ -41,6 +41,7 @@ fun About(
     modifier: Modifier,
     producers: List<Producer>,
     textColor: Color = DarkBrown,
+    onProducerClick: (Producer) -> Unit
 ) {
     // 1. Eliminamos pagerState ya que no lo usaremos para scroll vertical
 
@@ -65,7 +66,8 @@ fun About(
                     color = textColor,
                     fontWeight = FontWeight.Bold,
                 )
-                GeneralCard(imageUrl = "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%2Fid%2FOIP.JS_gyJYif5Zf-fXp7i6-7gHaEK%3Fr%3D0%26pid%3DApi&f=1&ipt=cff1b6ac60c329c0b6bbb2b72d810ccf69ea13a2887ea4ff7cd48c2195b1bf9a&ipo=images")
+                GeneralCard(imageUrl = "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%2Fid%2FOIP.JS_gyJYif5Zf-fXp7i6-7gHaEK%3Fr%3D0%26pid%3DApi&f=1&ipt=cff1b6ac60c329c0b6bbb2b72d810ccf69ea13a2887ea4ff7cd48c2195b1bf9a&ipo=images",
+                    text1 = "Personas que comparten", text2 = "Valores ambientales")
 
                 // Un pequeño espacio antes de la lista de productores
                 Spacer(modifier = Modifier.padding(8.dp))
@@ -78,7 +80,8 @@ fun About(
                 producer = producer,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                onBack =  { onProducerClick(producer) }
             )
         }
     }

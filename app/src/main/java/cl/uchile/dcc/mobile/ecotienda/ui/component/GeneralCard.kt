@@ -34,7 +34,9 @@ import coil3.compose.AsyncImage
 fun GeneralCard(
     modifier: Modifier = Modifier,
     containerColor: Color = SoftBeige,
-    imageUrl: String
+    imageUrl: String,
+    text1: String,
+    text2: String
 ) {
     Card(
         modifier = Modifier
@@ -74,13 +76,13 @@ fun GeneralCard(
                         .padding(top = 24.dp)
                         .fillMaxWidth(1f)) {
                     Text(
-                        text = "Personas que comparten valores ",          // "Ciclo Vivo"
+                        text = text1,          // "Ciclo Vivo"
                         style = MaterialTheme.typography.titleMedium,
                         color = Color.White,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "ambientales",          // "Ciclo Vivo"
+                        text = text2,          // "Ciclo Vivo"
                         style = MaterialTheme.typography.titleMedium,
                         color = Color.White,
                         fontWeight = FontWeight.Bold
