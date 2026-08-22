@@ -1,21 +1,2 @@
-# Gradle files
-.gradle/
-build/
-
-# IntelliJ IDEA files
-.idea/
-*.iml
-*.iws
-
-# Android Studio files
-local.properties
-.cxx/
-captures/
-
-# Build outputs
-*.apk
-*.aar
-*.jar
-
-# System files
-.DS_Store
+# Agrega aquí los archivos y directorios que no deben incorporarse al repositorio.
+# Adapta este archivo a las tecnologías elegidas por el equipo.
