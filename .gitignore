@@ -1,2 +1,12 @@
 # Agrega aquí los archivos y directorios que no deben incorporarse al repositorio.
 # Adapta este archivo a las tecnologías elegidas por el equipo.
+.gradle/
+.idea/caches/
+.idea/libraries/
+.idea/workspace.xml
+.idea/deploymentTargetSelector.xml
+.idea/deviceStreaming.xml
+.idea/AndroidProjectSystem.xml
+*.iml
+local.properties
+build/
