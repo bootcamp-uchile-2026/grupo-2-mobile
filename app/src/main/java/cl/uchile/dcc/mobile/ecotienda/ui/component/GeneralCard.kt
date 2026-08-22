@@ -19,20 +19,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import cl.uchile.dcc.mobile.ecotienda.ui.theme.ecoTiendaColors
 import coil3.compose.AsyncImage
 
 @Composable
 fun GeneralCard(
     modifier: Modifier = Modifier,
-    containerColor: Color = MaterialTheme.ecoTiendaColors.cl2,
     imageUrl: String,
     text1: String,
     text2: String
 ) {
     Card(
         modifier = Modifier
-            .height(170.dp)
             .padding(8.dp),
         colors = CardDefaults.cardColors(
             containerColor = containerColor
@@ -53,24 +50,20 @@ fun GeneralCard(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .align(Alignment.TopCenter)
                     .padding(8.dp)
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.SpaceAround,
                     modifier = modifier
                         .padding(top = 24.dp)
                         .fillMaxWidth(1f)) {
                     Text(
                         text = text1,          // "Ciclo Vivo"
-                        style = MaterialTheme.typography.titleLarge,
                         color = Color.White,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
                         text = text2,          // "Ciclo Vivo"
-                        style = MaterialTheme.typography.titleLarge,
                         color = Color.White,
                         fontWeight = FontWeight.Bold
                     )

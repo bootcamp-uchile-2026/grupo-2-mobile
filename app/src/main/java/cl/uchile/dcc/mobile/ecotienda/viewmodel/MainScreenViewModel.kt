@@ -1,18 +1,18 @@
 package cl.uchile.dcc.mobile.ecotienda.viewmodel
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import cl.uchile.dcc.mobile.ecotienda.model.Producer
-import cl.uchile.dcc.mobile.ecotienda.ui.screenstates.ProductScreenState
-import cl.uchile.dcc.mobile.ecotienda.ui.screen.ScreenRoutes
-import cl.uchile.dcc.mobile.ecotienda.ui.screenstates.ProductEvenState
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import cl.uchile.dcc.mobile.ecotienda.ui.screen.ScreenEnum
 
 
 class MainScreenViewModel : ViewModel() {
-    private val _uiState = MutableStateFlow(ProductScreenState())
-    val uiState: StateFlow<ProductScreenState> = _uiState
+    var actualScreen by mutableStateOf(ScreenEnum.HOME)
+        private set
 
+    fun changeScreen(newScreen: ScreenEnum): ScreenEnum {
+        actualScreen = newScreen
+        return actualScreen
+    }
 }
