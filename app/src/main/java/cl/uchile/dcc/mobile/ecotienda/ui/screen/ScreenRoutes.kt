@@ -11,7 +11,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.ui.graphics.vector.ImageVector
 
-enum class Routes(
+enum class ScreenRoutes(
     val title: String,
     val route: String,
     val icon: ImageVector,
@@ -38,18 +38,17 @@ enum class Routes(
     ),
 
 
-
     // Sin topbar
     PRODUCERPAGE(
         showTopBar = false,
         title = "Página de Productores",
-        route = "Página de Productores",
+        route = "PRODUCERPAGE",
         icon = Icons.Filled.NaturePeople
     ),
 
     ABOUT(
         showTopBar = false,
-        title = "Productores",
+        title = "Nosotros",
         route = "ABOUT",
         icon = Icons.Filled.People
 

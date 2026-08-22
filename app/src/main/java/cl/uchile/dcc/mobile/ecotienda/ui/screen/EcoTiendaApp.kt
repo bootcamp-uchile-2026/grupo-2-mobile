@@ -46,8 +46,6 @@ fun EcoTiendaApp(
     val snackbarHostState = remember { SnackbarHostState() }
 
     val selectedProducer by viewModel.selectedProducer.collectAsState()
-    
-    
 
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
@@ -92,7 +90,7 @@ fun EcoTiendaApp(
     )
     { innerPadding ->
         when (currentRoute) {
-            Routes.HOME-> {
+            ScreenRoutes.HOME-> {
                 HomeEcoTienda(
                     modifier = Modifier
                         .padding(innerPadding),
@@ -102,19 +100,19 @@ fun EcoTiendaApp(
                     onAgregarClick = { /* */ }
                 )
             }
-            Routes.SEARCH->
+            ScreenRoutes.SEARCH->
                 SearchScreen(
                 onBack = { viewModel.navigateTo(route = "HOME" )  },
                 onSearch = { /* TODO */ }
             )
 
-            Routes.CATALOG->{
+            ScreenRoutes.CATALOG->{
                 Catalog(
                     modifier = Modifier
                         .padding(innerPadding)
                 )
             }
-            Routes.ABOUT->
+            ScreenRoutes.ABOUT->
                 About(
                     modifier = Modifier
                         .padding(innerPadding),
@@ -124,7 +122,7 @@ fun EcoTiendaApp(
                     },
                 )
 
-            Routes.PRODUCERPAGE -> {
+            ScreenRoutes.PRODUCERPAGE -> {
                 // 2. Si hay un productor seleccionado, mostramos su página
                 selectedProducer?.let { producer ->
                     ProducerPage(
@@ -134,11 +132,11 @@ fun EcoTiendaApp(
                 }
             }
 
-            Routes.CART->
+            ScreenRoutes.CART->
                 Cart(
                     modifier = Modifier
                     .padding(innerPadding),
-                    onBack = { viewModel.navigateTo(route = "HOME" )  }
+                    onBack = { viewModel.goBack() }
                 )
             else -> {}
         }

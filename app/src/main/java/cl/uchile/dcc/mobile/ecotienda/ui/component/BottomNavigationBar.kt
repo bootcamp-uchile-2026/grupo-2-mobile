@@ -11,16 +11,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import cl.uchile.dcc.mobile.ecotienda.ui.screen.Routes
+import cl.uchile.dcc.mobile.ecotienda.ui.screen.ScreenRoutes
 import cl.uchile.dcc.mobile.ecotienda.ui.theme.DarkBrown
 import cl.uchile.dcc.mobile.ecotienda.ui.theme.EcoGreen
 import cl.uchile.dcc.mobile.ecotienda.ui.theme.SoftBeige
-import compose.icons.FeatherIcons
-import compose.icons.feathericons.Grid
-import compose.icons.feathericons.Home
-import compose.icons.feathericons.ShoppingCart
-import compose.icons.feathericons.Users
-import okhttp3.Route
 
 // BottomNavigationBar :: String callBack Colors -> BottomBar() { }
 // Genera una barra de navegacion abajo con atajos a las pantallas: HOME, CATALOG, ABOUT, CART
@@ -46,10 +40,10 @@ fun BottomNavigationBar(
         tonalElevation = 8.dp
     ) {
         val sections = listOf(
-            Routes.HOME,
-            Routes.CATALOG,
-            Routes.ABOUT,
-            Routes.CART
+            ScreenRoutes.HOME,
+            ScreenRoutes.CATALOG,
+            ScreenRoutes.ABOUT,
+            ScreenRoutes.CART
         )
 
         sections.forEach { section ->
