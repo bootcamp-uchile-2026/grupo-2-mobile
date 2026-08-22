@@ -1,4 +1,4 @@
-package cl.uchile.dcc.mobile.ecotienda.ui.screen
+package cl.uchile.dcc.mobile.ecotienda.ui.screenstates
 
 import cl.uchile.dcc.mobile.ecotienda.model.DefaultData
 import cl.uchile.dcc.mobile.ecotienda.model.Product

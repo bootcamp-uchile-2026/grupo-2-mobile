@@ -1,6 +1,4 @@
-package cl.uchile.dcc.mobile.ecotienda.ui.screen
-
-import android.os.Message
+package cl.uchile.dcc.mobile.ecotienda.ui.screenstates
 
 sealed class ProductEvenState {
     object Loading: ProductEvenState()

@@ -22,7 +22,7 @@ import cl.uchile.dcc.mobile.ecotienda.ui.theme.SoftBeige
 
 @Composable
 fun BottomNavigationBar(
-    currentRoute: String,
+    currentRoute: String?,
     onNavigateTo: (String) -> Unit,
     modifier: Modifier = Modifier,
     windowInsets: WindowInsets = WindowInsets.navigationBars,
