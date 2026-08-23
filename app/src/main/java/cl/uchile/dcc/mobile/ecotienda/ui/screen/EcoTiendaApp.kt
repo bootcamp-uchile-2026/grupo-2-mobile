@@ -1,13 +1,18 @@
 package cl.uchile.dcc.mobile.ecotienda.ui.screen
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -16,8 +21,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -26,21 +33,33 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import cl.uchile.dcc.mobile.ecotienda.model.DefaultData
+import cl.uchile.dcc.mobile.ecotienda.model.Product
 import cl.uchile.dcc.mobile.ecotienda.ui.component.BottomNavigationBar
 import cl.uchile.dcc.mobile.ecotienda.ui.component.SearchStaticBar
 import cl.uchile.dcc.mobile.ecotienda.viewmodel.MainScreenViewModel
 import cl.uchile.dcc.mobile.ecotienda.ui.component.FigureIconButton
+import cl.uchile.dcc.mobile.ecotienda.viewmodel.ProducerDetailViewModel
+import cl.uchile.dcc.mobile.ecotienda.viewmodel.ProductDetailViewModel
+import cl.uchile.dcc.mobile.ecotienda.viewmodel.CartViewModel
 import compose.icons.FeatherIcons
 import compose.icons.feathericons.User
+import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EcoTiendaApp(
-    viewModel: MainScreenViewModel = viewModel()
+    viewModel: MainScreenViewModel = viewModel(),
+    producerViewModel: ProducerDetailViewModel = viewModel(),
+    productViewModel: ProductDetailViewModel = viewModel(),
+    cartViewModel: CartViewModel = viewModel(),
 ) {
     // Implementación de navcontroller
     val navController = rememberNavController()
+
+    // Se crea el estado de snackbarHostState
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
     val density = LocalDensity.current
 
     // 1. Observamos la entrada actual del BackStack
@@ -53,20 +72,22 @@ fun EcoTiendaApp(
     // Se crea variable para registrar si el teclado esta presente en pantalla
     val isKeyboardOpen = WindowInsets.ime.getBottom(density) > 0
 
-    // Se crea el estado de snackbarHostState
-    val snackbarHostState = remember { SnackbarHostState() }
-
     // Generacion de pantalla para cada producer en ProducerPage
-    val selectedProducer by viewModel.selectedProducer.collectAsState()
+    val selectedProducer by producerViewModel.selectedProducer.collectAsState()
+    val productDetailState by productViewModel.uiState.collectAsState()
+    val cartState by cartViewModel.cart.collectAsState()
 
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             if (currentScreen.showTopBar) {
+                Column(
+                    modifier = Modifier.padding(top = 36.dp)
+                ) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp, top = 32.dp),
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
@@ -79,10 +100,9 @@ fun EcoTiendaApp(
                     FigureIconButton(
                         "Usuario",
                         callBack = { navController.navigate(route = "LOGIN") },
-                        FeatherIcons.User,
-                        modifier = Modifier
-                            .align(Alignment.Bottom)
+                        icon = Icons.Filled.Person,
                     )
+                }
                 }
             }
         },
@@ -112,7 +132,20 @@ fun EcoTiendaApp(
                     // Se pasa estado de snackbarHostState
                     snackbarHostState = snackbarHostState,
                     productos = DefaultData.Product,
-                    onAgregarClick = { /* */ })
+                    // ACCIÓN 1: Ir al detalle al tocar la tarjeta
+                    onProductClick = { product ->
+                        productViewModel.selectProduct(product) // Usamos productViewModel
+                        navController.navigate(ScreenRoutes.PRODUCTPAGE.route)
+                    },
+
+                    // ACCIÓN 2: Agregar al carro al tocar el botón verde
+                    onAgregarClick = { product ->
+                        cartViewModel.addToCart(product, 1) // Usamos cartViewModel
+                        scope.launch {
+                            snackbarHostState.showSnackbar("Añadido: ${product.productName}")
+                        }
+                    }
+                )
             }
             composable(ScreenRoutes.CATALOG.route) {
                 Catalog(
@@ -132,7 +165,7 @@ fun EcoTiendaApp(
                         .padding(innerPadding),
                     producers = DefaultData.Producer,
                     onProducerClick = { producer ->
-                        viewModel.selectProducer(producer) // Aquí se guarda
+                        producerViewModel.selectProducer(producer) // Aquí se guarda
                         navController.navigate(ScreenRoutes.PRODUCERPAGE.route) // Aqui navega
                    },
                 )
@@ -146,65 +179,32 @@ fun EcoTiendaApp(
                     )
                 }
             }
+            composable(ScreenRoutes.PRODUCTPAGE.route) {
+                productDetailState.product?.let { product ->
+                    ProductPage(
+                        modifier = Modifier.padding(innerPadding),
+                        product = product,
+                        onAddToCart = { p, q -> cartViewModel.addToCart(p, q) },
+                        onBack = { navController.popBackStack() }
+                    )
+                }
+            }
             composable(ScreenRoutes.CART.route) {
                 Cart(
                     modifier = Modifier
                     .padding(innerPadding),
+                    cart = cartState,
                     onBack = { navController.popBackStack() }
                 )
             }
 
+            composable(ScreenRoutes.LOGIN.route) {
+                Login(
+                    modifier = Modifier.padding(innerPadding),
+                    snackbarHostState = snackbarHostState,
+                )
+            }
+
         }
-//        when (currentRoute) {
-//            ScreenRoutes.HOME-> {
-//                HomeEcoTienda(
-//                    modifier = Modifier
-//                        .padding(innerPadding),
-//                    // Se pasa estado de snackbarHostState
-//                    snackbarHostState = snackbarHostState,
-//                    productos = DefaultData.Product,
-//                    onAgregarClick = { /* */ }
-//                )
-//            }
-//            ScreenRoutes.SEARCH->
-//                SearchScreen(
-//                onBack = { viewModel.navigateTo(route = "HOME" )  },
-//                onSearch = { /* TODO */ }
-//            )
-//
-//            ScreenRoutes.CATALOG->{
-//                Catalog(
-//                    modifier = Modifier
-//                        .padding(innerPadding)
-//                )
-//            }
-//            ScreenRoutes.ABOUT->
-//                About(
-//                    modifier = Modifier
-//                        .padding(innerPadding),
-//                    producers = DefaultData.Producer,
-//                    onProducerClick = { producer ->
-//                        viewModel.selectProducer(producer) // Aquí se guarda y navega
-//                    },
-//                )
-//
-//            ScreenRoutes.PRODUCERPAGE -> {
-//                // 2. Si hay un productor seleccionado, mostramos su página
-//                selectedProducer?.let { producer ->
-//                    ProducerPage(
-//                        producer = producer,
-//                        onBack = { viewModel.navigateTo("ABOUT") }
-//                    )
-//                }
-//            }
-//
-//            ScreenRoutes.CART->
-//                Cart(
-//                    modifier = Modifier
-//                    .padding(innerPadding),
-//                    onBack = { viewModel.goBack() }
-//                )
-//            else -> {}
-//        }
     }
 }
