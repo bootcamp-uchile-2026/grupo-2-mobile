@@ -1,6 +1,8 @@
 package cl.uchile.dcc.mobile.ecotienda.ui.component
 
+import android.R.attr.clickable
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -31,12 +33,14 @@ import coil3.compose.AsyncImage
 fun ProductCard(
     modifier: Modifier,
     product: Product,
+    onProductClick: () -> Unit,
     onAgregarClick: () -> Unit
 ) {
     Card(
         modifier = modifier
             .height(300.dp)
-            .padding(8.dp),        // alto aproximado
+            .padding(8.dp)        // alto aproximado
+            .clickable { onProductClick() },
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
     ) {
@@ -91,7 +95,7 @@ fun ProductCard(
                 }
             }
 
-            // Botón "+Agregar" (arriba a la derecha o abajo)
+            // Botón "+Agregar"
             Button(
                 onClick = onAgregarClick,
                 modifier = Modifier

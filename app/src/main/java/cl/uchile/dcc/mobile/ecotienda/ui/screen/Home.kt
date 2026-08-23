@@ -27,8 +27,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import cl.uchile.dcc.mobile.ecotienda.model.Product
 import cl.uchile.dcc.mobile.ecotienda.ui.component.ProductCard
+import cl.uchile.dcc.mobile.ecotienda.viewmodel.CartViewModel
 import kotlinx.coroutines.launch
 
 @Composable
@@ -36,7 +38,8 @@ fun HomeEcoTienda (
     modifier: Modifier,
     snackbarHostState: SnackbarHostState,
     productos: List<Product>,
-    onAgregarClick: (Product) -> Unit
+    onAgregarClick: (Product) -> Unit,
+    onProductClick: (Product) -> Unit,
 ) {
     if (productos.isEmpty()) return
 
@@ -61,6 +64,7 @@ fun HomeEcoTienda (
             ) { page ->
                 ProductCard(
                     product = productos[page],
+                    onProductClick = { onProductClick(productos[page]) },
                     onAgregarClick = { onAgregarClick(productos[page]) },
                     modifier = Modifier
                         .fillMaxWidth()
