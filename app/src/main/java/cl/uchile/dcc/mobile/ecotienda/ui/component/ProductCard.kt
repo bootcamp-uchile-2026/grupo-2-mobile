@@ -4,9 +4,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -34,6 +36,7 @@ fun ProductCard(
     Card(
         modifier = modifier
             .height(300.dp)
+            .padding(8.dp),        // alto aproximado
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
     ) {
@@ -80,6 +83,7 @@ fun ProductCard(
                     Spacer(modifier = Modifier.height(8.dp))
 
                     Text(
+                        text = product.price.toString(),          // "$4.990"
                         style = MaterialTheme.typography.titleLarge,
                         color = Color.White,
                         fontWeight = FontWeight.Bold
@@ -87,12 +91,14 @@ fun ProductCard(
                 }
             }
 
+            // Botón "+Agregar" (arriba a la derecha o abajo)
             Button(
                 onClick = onAgregarClick,
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(12.dp),
                 colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF4CAF50) // verde como en la foto
                 ),
                 shape = RoundedCornerShape(50)
             ) {

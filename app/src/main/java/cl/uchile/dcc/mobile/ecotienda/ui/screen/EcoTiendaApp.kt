@@ -33,14 +33,17 @@ import cl.uchile.dcc.mobile.ecotienda.ui.component.FigureIconButton
 import compose.icons.FeatherIcons
 import compose.icons.feathericons.User
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EcoTiendaApp(
+    viewModel: MainScreenViewModel = viewModel()
 ) {
     // Implementación de navcontroller
     val navController = rememberNavController()
     val density = LocalDensity.current
 
+    // 1. Observamos la entrada actual del BackStack
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
@@ -50,7 +53,11 @@ fun EcoTiendaApp(
     // Se crea variable para registrar si el teclado esta presente en pantalla
     val isKeyboardOpen = WindowInsets.ime.getBottom(density) > 0
 
+    // Se crea el estado de snackbarHostState
+    val snackbarHostState = remember { SnackbarHostState() }
+
     // Generacion de pantalla para cada producer en ProducerPage
+    val selectedProducer by viewModel.selectedProducer.collectAsState()
 
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
@@ -59,6 +66,7 @@ fun EcoTiendaApp(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .padding(16.dp, top = 32.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
@@ -69,6 +77,11 @@ fun EcoTiendaApp(
                     )
 
                     FigureIconButton(
+                        "Usuario",
+                        callBack = { navController.navigate(route = "LOGIN") },
+                        FeatherIcons.User,
+                        modifier = Modifier
+                            .align(Alignment.Bottom)
                     )
                 }
             }
@@ -90,6 +103,7 @@ fun EcoTiendaApp(
     { innerPadding ->
         NavHost(
             navController = navController,
+            startDestination = ScreenRoutes.HOME.route,
         ) {
             composable(ScreenRoutes.HOME.route) {
                 HomeEcoTienda(
@@ -98,10 +112,12 @@ fun EcoTiendaApp(
                     // Se pasa estado de snackbarHostState
                     snackbarHostState = snackbarHostState,
                     productos = DefaultData.Product,
+                    onAgregarClick = { /* */ })
             }
             composable(ScreenRoutes.CATALOG.route) {
                 Catalog(
                     modifier = Modifier
+                        .padding(innerPadding)
                 )
             }
             composable(ScreenRoutes.SEARCH.route) {
@@ -116,14 +132,17 @@ fun EcoTiendaApp(
                         .padding(innerPadding),
                     producers = DefaultData.Producer,
                     onProducerClick = { producer ->
+                        viewModel.selectProducer(producer) // Aquí se guarda
                         navController.navigate(ScreenRoutes.PRODUCERPAGE.route) // Aqui navega
                    },
                 )
             }
             composable(ScreenRoutes.PRODUCERPAGE.route) {
+                // 2. Si hay un productor seleccionado, mostramos su página
                selectedProducer?.let { producer ->
                     ProducerPage(
                         producer = producer,
+                        onBack = { navController.navigate("ABOUT") }
                     )
                 }
             }
@@ -136,5 +155,56 @@ fun EcoTiendaApp(
             }
 
         }
+//        when (currentRoute) {
+//            ScreenRoutes.HOME-> {
+//                HomeEcoTienda(
+//                    modifier = Modifier
+//                        .padding(innerPadding),
+//                    // Se pasa estado de snackbarHostState
+//                    snackbarHostState = snackbarHostState,
+//                    productos = DefaultData.Product,
+//                    onAgregarClick = { /* */ }
+//                )
+//            }
+//            ScreenRoutes.SEARCH->
+//                SearchScreen(
+//                onBack = { viewModel.navigateTo(route = "HOME" )  },
+//                onSearch = { /* TODO */ }
+//            )
+//
+//            ScreenRoutes.CATALOG->{
+//                Catalog(
+//                    modifier = Modifier
+//                        .padding(innerPadding)
+//                )
+//            }
+//            ScreenRoutes.ABOUT->
+//                About(
+//                    modifier = Modifier
+//                        .padding(innerPadding),
+//                    producers = DefaultData.Producer,
+//                    onProducerClick = { producer ->
+//                        viewModel.selectProducer(producer) // Aquí se guarda y navega
+//                    },
+//                )
+//
+//            ScreenRoutes.PRODUCERPAGE -> {
+//                // 2. Si hay un productor seleccionado, mostramos su página
+//                selectedProducer?.let { producer ->
+//                    ProducerPage(
+//                        producer = producer,
+//                        onBack = { viewModel.navigateTo("ABOUT") }
+//                    )
+//                }
+//            }
+//
+//            ScreenRoutes.CART->
+//                Cart(
+//                    modifier = Modifier
+//                    .padding(innerPadding),
+//                    onBack = { viewModel.goBack() }
+//                )
+//            else -> {}
+//        }
     }
 }

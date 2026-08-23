@@ -1,10 +1,12 @@
 package cl.uchile.dcc.mobile.ecotienda.ui.component
 
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.dp
 
 // FigureIconButton :: String callBack icon enabled -> Icon() { }
 // Genera un Button con forma de Icon, que se puede hacer click
@@ -15,6 +17,7 @@ fun FigureIconButton(
     callBack: () -> Unit,
     icon: ImageVector,
     enabled: Boolean = true,
+    modifier: Modifier,
 ) {
     IconButton(
         onClick = { callBack() },
@@ -23,6 +26,8 @@ fun FigureIconButton(
         Icon(
             imageVector = icon,
             contentDescription = null,
+            modifier = Modifier
+                .padding(top = 8.dp, end = 8.dp),
             )
     }
 }

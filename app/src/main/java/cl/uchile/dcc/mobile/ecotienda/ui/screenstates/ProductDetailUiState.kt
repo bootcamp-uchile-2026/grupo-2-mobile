@@ -3,7 +3,6 @@ package cl.uchile.dcc.mobile.ecotienda.ui.screenstates
 import cl.uchile.dcc.mobile.ecotienda.model.Producer
 import cl.uchile.dcc.mobile.ecotienda.model.Product
 
-// Detalles de productos
 data class ProductDetailUiState(
     val product: Product? = null,
     val producer: Producer? = null,
