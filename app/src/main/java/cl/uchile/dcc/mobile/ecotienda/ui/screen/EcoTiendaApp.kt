@@ -202,6 +202,7 @@ fun EcoTiendaApp(
                 Login(
                     modifier = Modifier.padding(innerPadding),
                     snackbarHostState = snackbarHostState,
+                    onBack = { navController.popBackStack() }
                 )
             }
 
