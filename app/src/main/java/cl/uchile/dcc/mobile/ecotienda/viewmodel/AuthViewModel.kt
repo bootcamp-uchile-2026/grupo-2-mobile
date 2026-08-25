@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.time.delay
 import kotlin.time.Duration.Companion.milliseconds
 
 class AuthViewModel : ViewModel() {
@@ -82,6 +83,7 @@ class AuthViewModel : ViewModel() {
 
         viewModelScope.launch {
             _state.update { it.copy(login = LoginScreenState.Loading) }
+            delay(1500.milliseconds) // simulación, igual que tu addPerson()
 
             // login ficticio: acepta cualquier email/password válidos
             _state.update {
@@ -96,6 +98,7 @@ class AuthViewModel : ViewModel() {
 
     fun logout() {
         _state.update {
+            AuthUIState() // reset
         }
     }
 }
