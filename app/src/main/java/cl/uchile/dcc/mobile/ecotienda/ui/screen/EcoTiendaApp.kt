@@ -184,11 +184,13 @@ fun EcoTiendaApp(
                 )
             }
             composable(ScreenRoutes.PRODUCERPAGE.route) {
-                // 2. Si hay un productor seleccionado, mostramos su página
+                // Si hay un productor seleccionado, mostramos su página
                selectedProducer?.let { producer ->
                     ProducerPage(
                         producer = producer,
-                        onBack = { navController.navigate("ABOUT") }
+                        onBack = { navController.popBackStack() },
+                        modifier = Modifier
+                            .padding(innerPadding)
                     )
                 }
             }
@@ -215,7 +217,7 @@ fun EcoTiendaApp(
                 Login(
                     modifier = Modifier.padding(innerPadding),
                     snackbarHostState = snackbarHostState,
-                    onBack = { navController.popBackStack() }
+                    onBack = { navController.popBackStack() },
                 )
             }
 

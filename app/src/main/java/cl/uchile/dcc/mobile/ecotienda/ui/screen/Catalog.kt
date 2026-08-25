@@ -44,6 +44,7 @@ fun Catalog(
     onAgregarClick: (Product) -> Unit
 ) {
     val ui by catalogViewModel.state.collectAsState()
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -72,6 +73,7 @@ fun Catalog(
             }
 
             is CatalogScreenState.Success -> {
+                // Prueba para ver cuantos productos por categoria
 //                Text("${catalog.products.size} productos")
 
                 LazyVerticalGrid(

@@ -15,9 +15,11 @@ import kotlin.time.Duration.Companion.milliseconds
 
 class AuthViewModel : ViewModel() {
 
+    // Uso de AuthUiState para login
     private val _state = MutableStateFlow(AuthUIState())
     val state: StateFlow<AuthUIState> = _state.asStateFlow()
 
+    // formato de texto para email
     fun updateEmail(email: String) {
         _state.update {
             it.copy(
@@ -33,6 +35,7 @@ class AuthViewModel : ViewModel() {
         }
     }
 
+    // formato de texto para contraseña
     fun updatePassword(password: String) {
         _state.update {
             it.copy(
@@ -83,7 +86,7 @@ class AuthViewModel : ViewModel() {
 
         viewModelScope.launch {
             _state.update { it.copy(login = LoginScreenState.Loading) }
-            delay(1500.milliseconds) // simulación, igual que tu addPerson()
+            delay(1500.milliseconds) // simulación de tiempo de logeo
 
             // login ficticio: acepta cualquier email/password válidos
             _state.update {
