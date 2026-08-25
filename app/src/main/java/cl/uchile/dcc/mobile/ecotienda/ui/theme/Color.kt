@@ -13,3 +13,6 @@ val Pink40 = Color(0xFF7D5260)
 val SoftBeige = Color(0xFFF5F1E9)
 val EcoGreen = Color(0xFF4B7039)
 val DarkBrown = Color(0xFF8B6F47)
+
+val MidleBrown = Color(0xFFECE7D6)
+

@@ -1,17 +1,12 @@
 package cl.uchile.dcc.mobile.ecotienda.ui.component
 
-import android.graphics.drawable.Icon
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material3.Card
@@ -19,7 +14,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SegmentedButtonDefaults.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -28,16 +22,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import cl.uchile.dcc.mobile.ecotienda.model.Producer
-import cl.uchile.dcc.mobile.ecotienda.model.Product
 import cl.uchile.dcc.mobile.ecotienda.ui.theme.DarkBrown
-import cl.uchile.dcc.mobile.ecotienda.ui.theme.EcoGreen
 import cl.uchile.dcc.mobile.ecotienda.ui.theme.MidleBrown
-import cl.uchile.dcc.mobile.ecotienda.ui.theme.SoftBeige
 import compose.icons.FeatherIcons
-import compose.icons.feathericons.ArrowRight
 import compose.icons.feathericons.Map
-import compose.icons.feathericons.MapPin
-import kotlinx.coroutines.launch
 
 @Composable
 fun ProducerCard(
@@ -77,7 +65,7 @@ fun ProducerCard(
             )
             Column() {
             Text(
-                text = producer.description,          // Nombre, cambiar description a nombre
+                text = producer.name,          // Nombre, cambiar description a nombre
                 style = MaterialTheme.typography.titleMedium,
                 color = textColor,
                 fontWeight = FontWeight.Bold

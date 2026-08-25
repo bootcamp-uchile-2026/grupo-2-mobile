@@ -1,5 +1,6 @@
 package cl.uchile.dcc.mobile.ecotienda.ui.component
 
+import android.text.style.BackgroundColorSpan
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -16,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import cl.uchile.dcc.mobile.ecotienda.ui.theme.MidleBrown
 import compose.icons.FeatherIcons
 import compose.icons.feathericons.Search
 
@@ -27,6 +29,8 @@ import compose.icons.feathericons.Search
 fun SearchStaticBar(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    bgColor: Color = MidleBrown,
+
 ) {
     Surface(
         onClick = onClick,
