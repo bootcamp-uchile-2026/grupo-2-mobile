@@ -81,7 +81,13 @@ fun HomeEcoTienda(
                         .padding(16.dp)
                 ) {
                     Text(
-                        text = "Salvando el planeta una compra a la vez",
+                        text = "Salvando el planeta",
+                        color = Sage,
+                        style = MaterialTheme.typography.titleSmall,
+                    )
+
+                    Text(
+                        text = "una compra a la vez",
                         color = Sage,
                         style = MaterialTheme.typography.titleSmall
                     )
