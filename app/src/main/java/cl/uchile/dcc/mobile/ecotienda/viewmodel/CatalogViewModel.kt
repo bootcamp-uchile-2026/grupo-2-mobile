@@ -19,6 +19,7 @@ class CatalogViewModel : ViewModel() {
 
     private val allProducts: List<Product> = DefaultData.Product
 
+    private val _state = MutableStateFlow(CatalogUIState())
     val state: StateFlow<CatalogUIState> = _state.asStateFlow()
 
     init {
