@@ -19,7 +19,7 @@ object DefaultData {
             productProducer = "Agua Hermosa",
             imageUrl = "https://images.pexels.com/photos/17870929/pexels-photo-17870929.jpeg",
             stock = 15,
-            category = "Moda Natura",
+            category = "Moda Natural",
             producerID = "AH1"
         ),
         Product(

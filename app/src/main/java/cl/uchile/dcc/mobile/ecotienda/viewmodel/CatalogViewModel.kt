@@ -15,16 +15,10 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 
-// Viewmodel de catalogo
 class CatalogViewModel : ViewModel() {
 
     private val allProducts: List<Product> = DefaultData.Product
 
-    private val _state = MutableStateFlow(CatalogUIState(
-        categories = listOf(CatalogCategories.TODOS) +
-                allProducts.map { it.category }.distinct()
-    )
-    )
     val state: StateFlow<CatalogUIState> = _state.asStateFlow()
 
     init {

@@ -2,7 +2,6 @@ package cl.uchile.dcc.mobile.ecotienda.ui.screenstates
 
 import cl.uchile.dcc.mobile.ecotienda.model.Product
 
-//FormState de catalogo
 object CatalogCategories {
     const val TODOS = "Todos"
     val all = listOf(
