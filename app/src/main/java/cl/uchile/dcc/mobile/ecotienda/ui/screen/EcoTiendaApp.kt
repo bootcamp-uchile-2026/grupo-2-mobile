@@ -48,6 +48,7 @@ import compose.icons.feathericons.User
 import kotlinx.coroutines.launch
 
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EcoTiendaApp(
@@ -150,7 +151,19 @@ fun EcoTiendaApp(
             composable(ScreenRoutes.CATALOG.route) {
                 Catalog(
                     modifier = Modifier
-                        .padding(innerPadding)
+                        .padding(innerPadding),
+                    onProductClick = { product ->
+                        productViewModel.selectProduct(product) // Usamos productViewModel
+                        navController.navigate(ScreenRoutes.PRODUCTPAGE.route)
+                    },
+
+                    // ACCIÓN 2: Agregar al carro al tocar el botón verde
+                    onAgregarClick = { product ->
+                        cartViewModel.addToCart(product, 1) // Usamos cartViewModel
+                        scope.launch {
+                            snackbarHostState.showSnackbar("Añadido: ${product.productName}")
+                        }
+                    }
                 )
             }
             composable(ScreenRoutes.SEARCH.route) {
