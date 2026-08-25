@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -40,7 +41,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import cl.uchile.dcc.mobile.ecotienda.ui.component.FigureIconButton
 import cl.uchile.dcc.mobile.ecotienda.ui.screenstates.LoginScreenState
-import cl.uchile.dcc.mobile.ecotienda.ui.theme.DarkBrown
 import cl.uchile.dcc.mobile.ecotienda.viewmodel.AuthViewModel
 import compose.icons.FeatherIcons
 import compose.icons.feathericons.ArrowLeft

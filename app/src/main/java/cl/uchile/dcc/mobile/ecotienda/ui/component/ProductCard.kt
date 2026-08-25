@@ -1,16 +1,13 @@
 package cl.uchile.dcc.mobile.ecotienda.ui.component
 
-import android.R.attr.clickable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -27,6 +24,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import cl.uchile.dcc.mobile.ecotienda.model.Product
+import cl.uchile.dcc.mobile.ecotienda.ui.theme.ecoTiendaColors
 import coil3.compose.AsyncImage
 
 @Composable
@@ -102,7 +100,7 @@ fun ProductCard(
                     .align(Alignment.BottomEnd)
                     .padding(12.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF4CAF50) // verde como en la foto
+                    containerColor = MaterialTheme.ecoTiendaColors.cl1
                 ),
                 shape = RoundedCornerShape(50)
             ) {
