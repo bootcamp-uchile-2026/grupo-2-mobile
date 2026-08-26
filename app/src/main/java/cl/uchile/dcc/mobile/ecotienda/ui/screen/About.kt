@@ -1,7 +1,5 @@
 package cl.uchile.dcc.mobile.ecotienda.ui.screen
 
-import android.text.Layout
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -11,36 +9,25 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
 import cl.uchile.dcc.mobile.ecotienda.model.Producer
-import cl.uchile.dcc.mobile.ecotienda.model.Product
 import cl.uchile.dcc.mobile.ecotienda.ui.component.GeneralCard
 import cl.uchile.dcc.mobile.ecotienda.ui.component.ProducerCard
-import cl.uchile.dcc.mobile.ecotienda.ui.component.ProductCard
-import cl.uchile.dcc.mobile.ecotienda.ui.theme.DarkBrown
-import cl.uchile.dcc.mobile.ecotienda.ui.theme.SoftBeige
-import kotlin.hashCode
+import cl.uchile.dcc.mobile.ecotienda.ui.theme.ecoTiendaColors
 
 // Pagina de acerca de nosotros, presentando los productores
 @Composable
 fun About(
     modifier: Modifier,
     producers: List<Producer>,
-    textColor: Color = DarkBrown,
+    textColor: Color = MaterialTheme.ecoTiendaColors.cl3,
     onProducerClick: (Producer) -> Unit
 ) {
     // 1. Eliminamos pagerState ya que no lo usaremos para scroll vertical
