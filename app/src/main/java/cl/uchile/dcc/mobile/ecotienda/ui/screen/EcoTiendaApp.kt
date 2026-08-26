@@ -11,9 +11,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -44,6 +47,7 @@ import cl.uchile.dcc.mobile.ecotienda.viewmodel.CartViewModel
 import compose.icons.FeatherIcons
 import compose.icons.feathericons.User
 import kotlinx.coroutines.launch
+
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -78,16 +82,16 @@ fun EcoTiendaApp(
     val cartState by cartViewModel.cart.collectAsState()
 
     Scaffold(
+        containerColor = MaterialTheme.colorScheme.background, // Esto usa md_theme_light_background
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             if (currentScreen.showTopBar) {
-                Column(
-                    modifier = Modifier.padding(top = 36.dp)
-                ) {
+
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                        .windowInsetsPadding(WindowInsets.statusBars),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
@@ -102,7 +106,6 @@ fun EcoTiendaApp(
                         callBack = { navController.navigate(route = "LOGIN") },
                         icon = Icons.Filled.Person,
                     )
-                }
                 }
             }
         },
@@ -150,7 +153,19 @@ fun EcoTiendaApp(
             composable(ScreenRoutes.CATALOG.route) {
                 Catalog(
                     modifier = Modifier
-                        .padding(innerPadding)
+                        .padding(innerPadding),
+                    onProductClick = { product ->
+                        productViewModel.selectProduct(product) // Usamos productViewModel
+                        navController.navigate(ScreenRoutes.PRODUCTPAGE.route)
+                    },
+
+                    // ACCIÓN 2: Agregar al carro al tocar el botón verde
+                    onAgregarClick = { product ->
+                        cartViewModel.addToCart(product, 1) // Usamos cartViewModel
+                        scope.launch {
+                            snackbarHostState.showSnackbar("Añadido: ${product.productName}")
+                        }
+                    }
                 )
             }
             composable(ScreenRoutes.SEARCH.route) {
@@ -171,11 +186,13 @@ fun EcoTiendaApp(
                 )
             }
             composable(ScreenRoutes.PRODUCERPAGE.route) {
-                // 2. Si hay un productor seleccionado, mostramos su página
+                // Si hay un productor seleccionado, mostramos su página
                selectedProducer?.let { producer ->
                     ProducerPage(
                         producer = producer,
-                        onBack = { navController.navigate("ABOUT") }
+                        onBack = { navController.popBackStack() },
+                        modifier = Modifier
+                            .padding(innerPadding)
                     )
                 }
             }
@@ -202,6 +219,7 @@ fun EcoTiendaApp(
                 Login(
                     modifier = Modifier.padding(innerPadding),
                     snackbarHostState = snackbarHostState,
+                    onBack = { navController.popBackStack() },
                 )
             }
 

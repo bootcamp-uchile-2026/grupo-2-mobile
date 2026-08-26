@@ -1,40 +1,47 @@
 package cl.uchile.dcc.mobile.ecotienda.ui.screen
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.ChevronRight
-import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import cl.uchile.dcc.mobile.ecotienda.R
 import cl.uchile.dcc.mobile.ecotienda.model.Product
+import cl.uchile.dcc.mobile.ecotienda.ui.component.HuellaVerdeSection
 import cl.uchile.dcc.mobile.ecotienda.ui.component.ProductCard
-import cl.uchile.dcc.mobile.ecotienda.viewmodel.CartViewModel
+import cl.uchile.dcc.mobile.ecotienda.ui.theme.Sage
+import cl.uchile.dcc.mobile.ecotienda.ui.theme.md_theme_light_primary
 import kotlinx.coroutines.launch
 
+
 @Composable
-fun HomeEcoTienda (
+fun HomeEcoTienda(
     modifier: Modifier,
     snackbarHostState: SnackbarHostState,
     productos: List<Product>,
@@ -49,8 +56,42 @@ fun HomeEcoTienda (
     // Usamos un Column como base para que el carrusel no ocupe
     // necesariamente toda la pantalla vertical si no quieres.
     Column(
-        modifier = modifier.fillMaxSize()
+        modifier = modifier
+            .fillMaxSize()
     ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.CenterHorizontally)
+
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(150.dp)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.logo),
+                    contentDescription = "Imagen local",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp),
+                    contentScale = ContentScale.Crop
+                )
+            }
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+
+        ) {
+            Text(
+                text = "Salvando el planeta una compra a la vez",
+                color = md_theme_light_primary,
+                style = MaterialTheme.typography.titleMedium,
+            )
+        }
 
         Box(
             modifier = Modifier.fillMaxWidth(),
@@ -95,6 +136,7 @@ fun HomeEcoTienda (
                 }
             }
         }
+        HuellaVerdeSection()
 
     }
 }

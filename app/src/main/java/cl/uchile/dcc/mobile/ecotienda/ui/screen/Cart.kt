@@ -12,10 +12,16 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import cl.uchile.dcc.mobile.ecotienda.model.Cart
 import cl.uchile.dcc.mobile.ecotienda.ui.component.FigureIconButton
+import cl.uchile.dcc.mobile.ecotienda.viewmodel.AuthViewModel
+import cl.uchile.dcc.mobile.ecotienda.viewmodel.CartViewModel
 import compose.icons.FeatherIcons
 import compose.icons.feathericons.ArrowLeft
 
@@ -23,8 +29,30 @@ import compose.icons.feathericons.ArrowLeft
 fun Cart (
     modifier: Modifier,
     cart: Cart,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    authViewModel: AuthViewModel = viewModel(),
+    cartViewModel: CartViewModel = viewModel()
+
 ) {
+    val ui by authViewModel.state.collectAsState()
+
+    LaunchedEffect(Unit) {
+        if (!ui.isLoggedIn) {
+            authViewModel.requestLoginSheet()
+        }
+    }
+
+    if (ui.showLoginSheet) {
+        LoginBottomSheet(
+            form = ui.form,
+            loginState = ui.login,
+            onEmailChange = authViewModel::updateEmail,
+            onPasswordChange = authViewModel::updatePassword,
+            onLogin = authViewModel::login,
+            onDismiss = authViewModel::dismissLoginSheet
+        )
+    }
+
     Column(
         modifier = modifier
             .padding(16.dp)

@@ -4,17 +4,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AlertDialogDefaults.containerColor
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -27,20 +19,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import cl.uchile.dcc.mobile.ecotienda.ui.theme.SoftBeige
+import cl.uchile.dcc.mobile.ecotienda.ui.theme.ecoTiendaColors
 import coil3.compose.AsyncImage
 
 @Composable
 fun GeneralCard(
     modifier: Modifier = Modifier,
-    containerColor: Color = SoftBeige,
+    containerColor: Color = MaterialTheme.ecoTiendaColors.cl2,
     imageUrl: String,
     text1: String,
     text2: String
 ) {
     Card(
         modifier = Modifier
-            .height(200.dp)
+            .height(170.dp)
             .padding(8.dp),
         colors = CardDefaults.cardColors(
             containerColor = containerColor
@@ -61,29 +53,24 @@ fun GeneralCard(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .align(Alignment.BottomCenter)
-                    .background(
-                        Brush.verticalGradient(
-                            colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.7f))
-                        )
-                    )
+                    .align(Alignment.TopCenter)
                     .padding(8.dp)
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Top,
+                    verticalArrangement = Arrangement.SpaceAround,
                     modifier = modifier
                         .padding(top = 24.dp)
                         .fillMaxWidth(1f)) {
                     Text(
                         text = text1,          // "Ciclo Vivo"
-                        style = MaterialTheme.typography.titleMedium,
+                        style = MaterialTheme.typography.titleLarge,
                         color = Color.White,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
                         text = text2,          // "Ciclo Vivo"
-                        style = MaterialTheme.typography.titleMedium,
+                        style = MaterialTheme.typography.titleLarge,
                         color = Color.White,
                         fontWeight = FontWeight.Bold
                     )
