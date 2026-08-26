@@ -13,6 +13,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
@@ -41,6 +43,8 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import cl.uchile.dcc.mobile.ecotienda.ui.component.FigureIconButton
 import cl.uchile.dcc.mobile.ecotienda.ui.screenstates.LoginScreenState
+import cl.uchile.dcc.mobile.ecotienda.ui.theme.md_theme_light_secondaryContainer
+import cl.uchile.dcc.mobile.ecotienda.ui.theme.md_theme_light_tertiaryContainer
 import cl.uchile.dcc.mobile.ecotienda.viewmodel.AuthViewModel
 import compose.icons.FeatherIcons
 import compose.icons.feathericons.ArrowLeft
@@ -164,20 +168,25 @@ fun Login(
                 shape = RoundedCornerShape(50.dp),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(50.dp)
+                    .height(50.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = md_theme_light_tertiaryContainer
+                )
             ) {
                 Text(text = "Crea una cuenta")
             }
 
         }
         Spacer(modifier = Modifier.height(20.dp))
-        Box(modifier = Modifier.padding(40.dp, 0.dp, 40.dp, 0.dp)) {
+        Box(
+            modifier = Modifier
+                .padding(40.dp, 0.dp, 40.dp, 0.dp)) {
             Button(
                 onClick = { },
                 shape = RoundedCornerShape(50.dp),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(50.dp)
+                    .height(50.dp),
             ) {
                 Text(text = "Continua como invitado")
             }

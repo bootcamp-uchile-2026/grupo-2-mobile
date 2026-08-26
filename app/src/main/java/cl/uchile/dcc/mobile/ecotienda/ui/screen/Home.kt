@@ -2,9 +2,11 @@ package cl.uchile.dcc.mobile.ecotienda.ui.screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -31,8 +33,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import cl.uchile.dcc.mobile.ecotienda.R
 import cl.uchile.dcc.mobile.ecotienda.model.Product
+import cl.uchile.dcc.mobile.ecotienda.ui.component.HuellaVerdeSection
 import cl.uchile.dcc.mobile.ecotienda.ui.component.ProductCard
 import cl.uchile.dcc.mobile.ecotienda.ui.theme.Sage
+import cl.uchile.dcc.mobile.ecotienda.ui.theme.md_theme_light_primary
 import kotlinx.coroutines.launch
 
 
@@ -55,7 +59,7 @@ fun HomeEcoTienda(
         modifier = modifier
             .fillMaxSize()
     ) {
-        Card(
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.CenterHorizontally)
@@ -64,36 +68,29 @@ fun HomeEcoTienda(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(200.dp)
+                    .height(150.dp)
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.image),
+                    painter = painterResource(id = R.drawable.logo),
                     contentDescription = "Imagen local",
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(200.dp),
                     contentScale = ContentScale.Crop
                 )
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .align(Alignment.BottomCenter)
-                        .padding(16.dp)
-                ) {
-                    Text(
-                        text = "Salvando el planeta",
-                        color = Sage,
-                        style = MaterialTheme.typography.titleSmall,
-                    )
-
-                    Text(
-                        text = "una compra a la vez",
-                        color = Sage,
-                        style = MaterialTheme.typography.titleSmall
-                    )
-
-                }
             }
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+
+        ) {
+            Text(
+                text = "Salvando el planeta una compra a la vez",
+                color = md_theme_light_primary,
+                style = MaterialTheme.typography.titleMedium,
+            )
         }
 
         Box(
@@ -139,6 +136,7 @@ fun HomeEcoTienda(
                 }
             }
         }
+        HuellaVerdeSection()
 
     }
 }

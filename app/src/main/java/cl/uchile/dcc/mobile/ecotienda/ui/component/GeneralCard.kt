@@ -32,7 +32,7 @@ fun GeneralCard(
 ) {
     Card(
         modifier = Modifier
-            .height(200.dp)
+            .height(170.dp)
             .padding(8.dp),
         colors = CardDefaults.cardColors(
             containerColor = containerColor
@@ -53,29 +53,24 @@ fun GeneralCard(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .align(Alignment.BottomCenter)
-                    .background(
-                        Brush.verticalGradient(
-                            colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.7f))
-                        )
-                    )
+                    .align(Alignment.TopCenter)
                     .padding(8.dp)
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Top,
+                    verticalArrangement = Arrangement.SpaceAround,
                     modifier = modifier
                         .padding(top = 24.dp)
                         .fillMaxWidth(1f)) {
                     Text(
                         text = text1,          // "Ciclo Vivo"
-                        style = MaterialTheme.typography.titleMedium,
+                        style = MaterialTheme.typography.titleLarge,
                         color = Color.White,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
                         text = text2,          // "Ciclo Vivo"
-                        style = MaterialTheme.typography.titleMedium,
+                        style = MaterialTheme.typography.titleLarge,
                         color = Color.White,
                         fontWeight = FontWeight.Bold
                     )
