@@ -14,6 +14,8 @@ class CartViewModel : ViewModel() {
 
     fun addToCart(product: Product, quantity: Int) {
         _cart.update { currentCart ->
+            val newItem = product.toCartItem(quantity)
+            val updatedItems = currentCart.items + newItem
             currentCart.copy(items = updatedItems)
         }
     }

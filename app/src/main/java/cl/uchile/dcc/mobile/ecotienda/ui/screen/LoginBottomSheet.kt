@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import cl.uchile.dcc.mobile.ecotienda.ui.screenstates.LoginFormState
 import cl.uchile.dcc.mobile.ecotienda.ui.screenstates.LoginScreenState
 
+// ui/component/LoginBottomSheet.kt
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginBottomSheet(
@@ -30,6 +31,7 @@ fun LoginBottomSheet(
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
     onLogin: () -> Unit,
+    onDismiss: () -> Unit
 ) {
     val sheetState = rememberModalBottomSheetState()
 
