@@ -39,6 +39,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import cl.uchile.dcc.mobile.ecotienda.model.DefaultData
 import cl.uchile.dcc.mobile.ecotienda.model.Product
+import cl.uchile.dcc.mobile.ecotienda.ui.component.AccountSidePanel
 import cl.uchile.dcc.mobile.ecotienda.ui.component.BottomNavigationBar
 import cl.uchile.dcc.mobile.ecotienda.ui.component.SearchStaticBar
 import cl.uchile.dcc.mobile.ecotienda.viewmodel.MainScreenViewModel
@@ -113,7 +114,7 @@ fun EcoTiendaApp(
                     ) {
                         FigureIconButton(
                             label = "Usuario",
-                            callBack = { navController.navigate(ScreenRoutes.ACCOUNT.route) },
+                            callBack = { authViewModel.requestLoginSheet() },
                             icon = Icons.Filled.Person,
                         )
                         Text(
@@ -146,7 +147,7 @@ fun EcoTiendaApp(
     { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = ScreenRoutes.ACCOUNT.route, // antes: HOME
+            startDestination = ScreenRoutes.HOME.route, // antes: HOME
         ) {
             composable(ScreenRoutes.HOME.route) {
                 HomeEcoTienda(
@@ -290,4 +291,19 @@ fun EcoTiendaApp(
 
         }
     }
+    AccountSidePanel(
+        visible = authState.showLoginSheet,
+        onDismiss = { authViewModel.dismissLoginSheet() }
+    ) {
+        AccountPanelContent(
+            authViewModel = authViewModel,
+            snackbarHostState = snackbarHostState,
+            onGoHome = { authViewModel.dismissLoginSheet() },
+            onOpenOrders = {
+                authViewModel.dismissLoginSheet()
+                navController.navigate(ScreenRoutes.ORDERS.route)
+            }
+        )
+    }
+
 }

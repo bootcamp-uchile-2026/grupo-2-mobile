@@ -62,14 +62,6 @@ fun AccountScreen(
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
-        Spacer(Modifier.height(16.dp))
-
-        Button(
-            onClick = onGoHome,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Ir al inicio")
-        }
 
         Spacer(Modifier.height(24.dp))
 
@@ -77,7 +69,8 @@ fun AccountScreen(
             headlineContent = { Text("Perfil") },
             leadingContent = { Icon(Icons.Filled.Person, null) },
             trailingContent = { Icon(Icons.Filled.ChevronRight, null) },
-            modifier = Modifier.clickable { /* más adelante editar perfil */ }
+            modifier = Modifier
+                .clickable { /* más adelante editar perfil */ }
         )
         HorizontalDivider()
         ListItem(
@@ -96,6 +89,14 @@ fun AccountScreen(
             Icon(Icons.Filled.Logout, null)
             Spacer(Modifier.width(8.dp))
             Text("Cerrar sesión")
+        }
+
+        Spacer(Modifier.height(16.dp))
+        Button(
+            onClick = onGoHome,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Ir al inicio")
         }
     }
 }

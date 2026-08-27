@@ -32,6 +32,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -119,7 +120,7 @@ fun Login(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         OutlinedTextField(
             value = form.password,
@@ -168,10 +169,10 @@ fun Login(
                     .fillMaxWidth()
                     .height(50.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = md_theme_light_tertiaryContainer
+                    containerColor = Color.LightGray
                 )
             ) {
-                Text(text = "Crea una cuenta")
+                Text(text = "Registrate")
             }
 
         }
@@ -184,7 +185,7 @@ fun Login(
                 onClick = { authViewModel.continueAsGuest() },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(text = "Continua como invitado")
+                Text(text = "Invitado")
             }
         }
     }
