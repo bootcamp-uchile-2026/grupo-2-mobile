@@ -25,6 +25,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import cl.uchile.dcc.mobile.ecotienda.model.Product
 import cl.uchile.dcc.mobile.ecotienda.ui.theme.ecoTiendaColors
+import cl.uchile.dcc.mobile.ecotienda.ui.theme.md_theme_light_primary
+import cl.uchile.dcc.mobile.ecotienda.utils.formatAsCurrency
 import coil3.compose.AsyncImage
 
 @Composable
@@ -85,7 +87,7 @@ fun ProductCard(
                     Spacer(modifier = Modifier.height(8.dp))
 
                     Text(
-                        text = product.price.toString(),          // "$4.990"
+                        text = product.price.formatAsCurrency(),          // "$4.990"
                         style = MaterialTheme.typography.titleLarge,
                         color = Color.White,
                         fontWeight = FontWeight.Bold

@@ -20,6 +20,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
@@ -29,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
@@ -41,9 +43,11 @@ import cl.uchile.dcc.mobile.ecotienda.ui.component.BottomNavigationBar
 import cl.uchile.dcc.mobile.ecotienda.ui.component.SearchStaticBar
 import cl.uchile.dcc.mobile.ecotienda.viewmodel.MainScreenViewModel
 import cl.uchile.dcc.mobile.ecotienda.ui.component.FigureIconButton
+import cl.uchile.dcc.mobile.ecotienda.ui.theme.ecoTiendaColors
 import cl.uchile.dcc.mobile.ecotienda.viewmodel.ProducerDetailViewModel
 import cl.uchile.dcc.mobile.ecotienda.viewmodel.ProductDetailViewModel
 import cl.uchile.dcc.mobile.ecotienda.viewmodel.CartViewModel
+import cl.uchile.dcc.mobile.ecotienda.viewmodel.AuthViewModel
 import compose.icons.FeatherIcons
 import compose.icons.feathericons.User
 import kotlinx.coroutines.launch
@@ -57,6 +61,7 @@ fun EcoTiendaApp(
     producerViewModel: ProducerDetailViewModel = viewModel(),
     productViewModel: ProductDetailViewModel = viewModel(),
     cartViewModel: CartViewModel = viewModel(),
+    authViewModel: AuthViewModel = viewModel(),
 ) {
     // Implementación de navcontroller
     val navController = rememberNavController()
@@ -80,6 +85,7 @@ fun EcoTiendaApp(
     val selectedProducer by producerViewModel.selectedProducer.collectAsState()
     val productDetailState by productViewModel.uiState.collectAsState()
     val cartState by cartViewModel.cart.collectAsState()
+    val authState by authViewModel.state.collectAsState()
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background, // Esto usa md_theme_light_background
@@ -101,11 +107,25 @@ fun EcoTiendaApp(
                         modifier = Modifier.weight(1f)
                     )
 
-                    FigureIconButton(
-                        "Usuario",
-                        callBack = { navController.navigate(route = "LOGIN") },
-                        icon = Icons.Filled.Person,
-                    )
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        FigureIconButton(
+                            label = "Usuario",
+                            callBack = { navController.navigate(route = "LOGIN") },
+                            icon = Icons.Filled.Person,
+                        )
+                        Text(
+                            text = if (authState.isLoggedIn) authState.userEmail?.split("@")?.get(0) ?: "Usuario" 
+                                   else if (authState.isGuest) "Invitado" 
+                                   else "Ingresar",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.ecoTiendaColors.cl3,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
                 }
             }
         },
@@ -135,6 +155,7 @@ fun EcoTiendaApp(
                     // Se pasa estado de snackbarHostState
                     snackbarHostState = snackbarHostState,
                     productos = DefaultData.Product,
+                    authViewModel = authViewModel,
                     // ACCIÓN 1: Ir al detalle al tocar la tarjeta
                     onProductClick = { product ->
                         productViewModel.selectProduct(product) // Usamos productViewModel
@@ -211,6 +232,8 @@ fun EcoTiendaApp(
                     modifier = Modifier
                     .padding(innerPadding),
                     cart = cartState,
+                    authViewModel = authViewModel,
+                    cartViewModel = cartViewModel,
                     onBack = { navController.popBackStack() }
                 )
             }

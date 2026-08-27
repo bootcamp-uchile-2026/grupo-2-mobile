@@ -31,7 +31,8 @@ fun LoginBottomSheet(
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
     onLogin: () -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    onContinueAsGuest: () -> Unit = {}
 ) {
     val sheetState = rememberModalBottomSheetState()
 
@@ -82,8 +83,8 @@ fun LoginBottomSheet(
                     Text("Ingresar")
                 }
             }
-            TextButton(onClick = onDismiss) {
-                Text("Continuar como invitado") // opcional
+            TextButton(onClick = onContinueAsGuest) {
+                Text("Continuar como invitado")
             }
         }
     }

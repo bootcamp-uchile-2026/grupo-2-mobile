@@ -59,6 +59,10 @@ class AuthViewModel : ViewModel() {
         _state.update { it.copy(showLoginSheet = false) }
     }
 
+    fun continueAsGuest() {
+        _state.update { it.copy(isGuest = true, showLoginSheet = false) }
+    }
+
     fun login() {
         val form = _state.value.form
         val emailError = when {
@@ -93,6 +97,8 @@ class AuthViewModel : ViewModel() {
                 it.copy(
                     login = LoginScreenState.Success(form.email),
                     isLoggedIn = true,
+                    isGuest = false,
+                    userEmail = form.email,
                     showLoginSheet = false
                 )
             }
@@ -103,5 +109,10 @@ class AuthViewModel : ViewModel() {
         _state.update {
             AuthUIState() // reset
         }
+    }
+
+    // Eliminar snackbarhostate de homre una vez logeado o invitado
+    fun markWelcomeShown() {
+        _state.update { it.copy(welcomeMessageShown = true) }
     }
 }

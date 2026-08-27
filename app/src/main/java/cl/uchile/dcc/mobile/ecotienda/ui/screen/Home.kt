@@ -21,9 +21,13 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,13 +35,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import cl.uchile.dcc.mobile.ecotienda.R
 import cl.uchile.dcc.mobile.ecotienda.model.Product
 import cl.uchile.dcc.mobile.ecotienda.ui.component.HuellaVerdeSection
 import cl.uchile.dcc.mobile.ecotienda.ui.component.ProductCard
 import cl.uchile.dcc.mobile.ecotienda.ui.theme.Sage
 import cl.uchile.dcc.mobile.ecotienda.ui.theme.md_theme_light_primary
+import cl.uchile.dcc.mobile.ecotienda.viewmodel.AuthViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 
 
 @Composable
@@ -47,11 +55,42 @@ fun HomeEcoTienda(
     productos: List<Product>,
     onAgregarClick: (Product) -> Unit,
     onProductClick: (Product) -> Unit,
+    authViewModel: AuthViewModel = viewModel()
 ) {
     if (productos.isEmpty()) return
 
     val pagerState = rememberPagerState(pageCount = { productos.size })
     val scope = rememberCoroutineScope()
+
+    val ui by authViewModel.state.collectAsState()
+
+    LaunchedEffect(ui.isLoggedIn, ui.isGuest) {
+        if (!ui.isLoggedIn && !ui.isGuest) {
+            authViewModel.requestLoginSheet()
+        }
+
+        // Solo mostramos si no se ha mostrado antes en esta sesión
+        if ((ui.isLoggedIn || ui.isGuest) && !ui.welcomeMessageShown) {
+            authViewModel.markWelcomeShown() // Lo marcamos como visto PRIMERO
+
+            val message = if (ui.isLoggedIn) "Bienvenido ${ui.userEmail ?: ui.form.email}"
+            else "Navegando como invitado"
+
+            snackbarHostState.showSnackbar(message = message)
+        }
+    }
+
+    if (ui.showLoginSheet) {
+        LoginBottomSheet(
+            form = ui.form,
+            loginState = ui.login,
+            onEmailChange = authViewModel::updateEmail,
+            onPasswordChange = authViewModel::updatePassword,
+            onLogin = authViewModel::login,
+            onDismiss = authViewModel::dismissLoginSheet,
+            onContinueAsGuest = authViewModel::continueAsGuest
+        )
+    }
 
     // Usamos un Column como base para que el carrusel no ocupe
     // necesariamente toda la pantalla vertical si no quieres.

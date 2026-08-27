@@ -18,5 +18,8 @@ data class AuthUIState(
     val form: LoginFormState = LoginFormState(),
     val login: LoginScreenState = LoginScreenState.Idle,
     val isLoggedIn: Boolean = false,
-    val showLoginSheet: Boolean = false
+    val isGuest: Boolean = false,
+    val userEmail: String? = null,
+    val showLoginSheet: Boolean = false,
+    val welcomeMessageShown: Boolean = false
 )
