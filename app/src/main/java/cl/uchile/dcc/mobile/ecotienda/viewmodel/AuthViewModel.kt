@@ -103,7 +103,7 @@ class AuthViewModel : ViewModel() {
 
     fun logout() {
         _state.update {
-            AuthUIState() // reset
+            AuthUIState(showLoginSheet = true)
         }
     }
 
