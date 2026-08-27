@@ -19,6 +19,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -47,6 +48,8 @@ import cl.uchile.dcc.mobile.ecotienda.ui.theme.md_theme_light_tertiaryContainer
 import cl.uchile.dcc.mobile.ecotienda.viewmodel.AuthViewModel
 import compose.icons.FeatherIcons
 import compose.icons.feathericons.ArrowLeft
+import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun Login(
@@ -58,9 +61,18 @@ fun Login(
     // Observamos el estado global de autenticación
     val ui by authViewModel.state.collectAsState()
 
-    // Efecto para volver atrás automáticamente cuando el login sea exitoso
+    // Vuelve atrás automáticamente cuando el login sea correcto
     LaunchedEffect(ui.isLoggedIn) {
         if (ui.isLoggedIn) {
+            snackbarHostState.showSnackbar(
+                message = "Bienvenido ${ui.form.email}",
+                duration = SnackbarDuration.Short
+            )
+
+            // Esperar 2 segundos (2000 ms) antes de volver atrás
+            delay(1000.milliseconds)
+
+            // Backstack
             onBack()
         }
     }
@@ -140,7 +152,7 @@ fun Login(
 
         Spacer(modifier = Modifier.height(20.dp))
         ClickableText(
-            text = AnnotatedString("¿Password olvidad?"),
+            text = AnnotatedString("¿Password olvidada?"),
             onClick = { },
             style = TextStyle(
                 fontSize = 14.sp,

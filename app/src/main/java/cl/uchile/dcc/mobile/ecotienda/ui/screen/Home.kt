@@ -54,7 +54,7 @@ fun HomeEcoTienda(
     val scope = rememberCoroutineScope()
 
     // Usamos un Column como base para que el carrusel no ocupe
-    // necesariamente toda la pantalla vertical si no quieres.
+    // necesariamente toda la pantalla vertical
     Column(
         modifier = modifier
             .fillMaxSize()

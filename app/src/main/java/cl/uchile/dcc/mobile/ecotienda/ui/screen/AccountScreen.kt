@@ -18,8 +18,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import cl.uchile.dcc.mobile.ecotienda.viewmodel.AuthViewModel
 
-// AccounScreen es la mezcla de las pantalla Login y account
-// Pertenece a Login/Accoun
 @Composable
 fun AccountScreen(
     modifier: Modifier = Modifier,
@@ -71,8 +69,6 @@ fun AccountScreen(
             headlineContent = { Text("Perfil") },
             leadingContent = { Icon(Icons.Filled.Person, null) },
             trailingContent = { Icon(Icons.Filled.ChevronRight, null) },
-            modifier = Modifier
-                .clickable { /* más adelante editar perfil */ }
         )
         HorizontalDivider()
         ListItem(
@@ -91,14 +87,6 @@ fun AccountScreen(
             Icon(Icons.Filled.Logout, null)
             Spacer(Modifier.width(8.dp))
             Text("Cerrar sesión")
-        }
-
-        Spacer(Modifier.height(16.dp))
-        Button(
-            onClick = onGoHome,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Ir al inicio")
         }
     }
 }
