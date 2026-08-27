@@ -40,23 +40,6 @@ fun Cart(
         cartViewModel.previousStep()
     }
 
-    LaunchedEffect(Unit) {
-        if (!authUi.isLoggedIn) {
-            authViewModel.requestLoginSheet()
-        }
-    }
-
-    if (authUi.showLoginSheet) {
-        LoginBottomSheet(
-            form = authUi.form,
-            loginState = authUi.login,
-            onEmailChange = authViewModel::updateEmail,
-            onPasswordChange = authViewModel::updatePassword,
-            onLogin = authViewModel::login,
-            onDismiss = authViewModel::dismissLoginSheet
-        )
-    }
-
     Column(
         modifier = modifier
             .fillMaxSize()

@@ -19,6 +19,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -56,10 +57,21 @@ fun Login(
     modifier: Modifier,
     snackbarHostState: SnackbarHostState,
     onBack: () -> Unit,
-    authViewModel: AuthViewModel = viewModel() // Viewmodel de Login
+    authViewModel: AuthViewModel = viewModel(), // Viewmodel de Login
+    onSuccess: () -> Unit = {},
 ) {
     // Observamos el estado global de autenticación
     val ui by authViewModel.state.collectAsState()
+
+    val authState by authViewModel.state.collectAsState()
+    val form = authState.form
+
+// Cuando el fake login o el invitado terminan, avisamos al NavHost
+    LaunchedEffect(authState.isLoggedIn, authState.isGuest) {
+        if (authState.isLoggedIn || authState.isGuest) {
+            onSuccess()
+        }
+    }
 
     // Vuelve atrás automáticamente cuando el login sea correcto
     LaunchedEffect(ui.isLoggedIn) {
@@ -97,55 +109,41 @@ fun Login(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        TextField(
-            label = { Text(text = "Email") },
-            value = ui.form.email,
-            onValueChange = authViewModel::updateEmail,
-            isError = ui.form.emailError != null,
-            supportingText = {
-                // Cambiamos el .let por un if simple para ayudar al compilador
-                if (ui.form.emailError != null) {
-                    Text(text = ui.form.emailError!!)
-                }
-            },
+        OutlinedTextField(
+            value = form.email,
+            onValueChange = { authViewModel.updateEmail(it) },
+            label = { Text("Email") },
+            isError = form.emailError != null,
+            supportingText = { form.emailError?.let { Text(it) } },
+            singleLine = true,
             modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        TextField(
-            label = { Text(text = "Contraseña") },
-            value = ui.form.password,
+        OutlinedTextField(
+            value = form.password,
+            onValueChange = { authViewModel.updatePassword(it) },
+            label = { Text("Contraseña") },
+            isError = form.passwordError != null,
+            supportingText = { form.passwordError?.let { Text(it) } },
             visualTransformation = PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            onValueChange = authViewModel::updatePassword,
-            isError = ui.form.passwordError != null,
-            supportingText = {
-                // Lo mismo aquí, usar if evita el error de inferencia de tipo T
-                if (ui.form.passwordError != null) {
-                    Text(text = ui.form.passwordError!!)
-                }
-            },
+            singleLine = true,
             modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(20.dp))
         Box(modifier = Modifier.padding(40.dp, 0.dp, 40.dp, 0.dp)) {
             Button(
-                onClick = authViewModel::login,
-                enabled = ui.login !is LoginScreenState.Loading,
+                onClick = { authViewModel.login() },
+                enabled = authState.login !is LoginScreenState.Loading,
+                modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(50.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp)
             ) {
-                if (ui.login is LoginScreenState.Loading) {
-                    CircularProgressIndicator(
-                        color = MaterialTheme.colorScheme.onPrimary,
-                        modifier = Modifier.size(24.dp)
-                    )
+                if (authState.login is LoginScreenState.Loading) {
+                    CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
                 } else {
-                    Text(text = "Ingresa")
+                    Text("Ingresar")
                 }
             }
         }
@@ -164,7 +162,7 @@ fun Login(
         Spacer(modifier = Modifier.height(20.dp))
         Box(modifier = Modifier.padding(40.dp, 0.dp, 40.dp, 0.dp)) {
             Button(
-                onClick = { },
+                onClick = {  },
                 shape = RoundedCornerShape(50.dp),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -182,11 +180,9 @@ fun Login(
             modifier = Modifier
                 .padding(40.dp, 0.dp, 40.dp, 0.dp)) {
             Button(
-                onClick = { },
                 shape = RoundedCornerShape(50.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp),
+                onClick = { authViewModel.continueAsGuest() },
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Text(text = "Continua como invitado")
             }

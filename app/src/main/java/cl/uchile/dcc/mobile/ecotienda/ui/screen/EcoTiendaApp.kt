@@ -71,7 +71,7 @@ fun EcoTiendaApp(
     val scope = rememberCoroutineScope()
     val density = LocalDensity.current
 
-    // 1. Observamos la entrada actual del BackStack
+    // BackStack
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
@@ -113,7 +113,7 @@ fun EcoTiendaApp(
                     ) {
                         FigureIconButton(
                             label = "Usuario",
-                            callBack = { navController.navigate(route = "LOGIN") },
+                            callBack = { navController.navigate(ScreenRoutes.ACCOUNT.route) },
                             icon = Icons.Filled.Person,
                         )
                         Text(
@@ -146,7 +146,7 @@ fun EcoTiendaApp(
     { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = ScreenRoutes.HOME.route,
+            startDestination = ScreenRoutes.ACCOUNT.route, // antes: HOME
         ) {
             composable(ScreenRoutes.HOME.route) {
                 HomeEcoTienda(
@@ -243,6 +243,48 @@ fun EcoTiendaApp(
                     modifier = Modifier.padding(innerPadding),
                     snackbarHostState = snackbarHostState,
                     onBack = { navController.popBackStack() },
+                )
+            }
+
+            composable(ScreenRoutes.ACCOUNT.route) {
+                AccountGate(
+                    modifier = Modifier.padding(innerPadding),
+                    authViewModel = authViewModel,
+                    snackbarHostState = snackbarHostState,
+                    onEnterApp = {
+                        navController.navigate(ScreenRoutes.HOME.route) {
+                            popUpTo(ScreenRoutes.ACCOUNT.route) { inclusive = true }
+                        }
+                    },
+                    onOpenOrders = { navController.navigate(ScreenRoutes.ORDERS.route) },
+                    onLogout = {
+                        // AuthViewModel ya deja isLoggedIn/isGuest en false
+                        // AccountGate vuelve a mostrar Login solo
+                    }
+                )
+            }
+
+            composable(ScreenRoutes.LOGIN.route) {
+                // por si algo viejo navega a LOGIN
+                AccountGate(
+                    modifier = Modifier.padding(innerPadding),
+                    authViewModel = authViewModel,
+                    snackbarHostState = snackbarHostState,
+                    onEnterApp = {
+                        navController.navigate(ScreenRoutes.HOME.route) {
+                            popUpTo(ScreenRoutes.LOGIN.route) { inclusive = true }
+                        }
+                    },
+                    onOpenOrders = { navController.navigate(ScreenRoutes.ORDERS.route) },
+                    onLogout = {}
+                )
+            }
+
+            composable(ScreenRoutes.ORDERS.route) {
+                // placeholder hasta que tengas compras
+                Text(
+                    "Mis compras",
+                    modifier = Modifier.padding(innerPadding).padding(16.dp)
                 )
             }
 
