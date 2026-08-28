@@ -224,8 +224,11 @@ fun EcoTiendaApp(
                     ProductPage(
                         modifier = Modifier.padding(innerPadding),
                         product = product,
-                        onAddToCart = { p, q -> cartViewModel.addToCart(p, q) },
-                        onBack = { navController.popBackStack() }
+                        onAddToCart = { p, q -> cartViewModel.addToCart(p, q)
+                            scope.launch {
+                                snackbarHostState.showSnackbar("Añadido: ${product.productName}")
+                            }},
+                        onBack = { navController.popBackStack() },
                     )
                 }
             }

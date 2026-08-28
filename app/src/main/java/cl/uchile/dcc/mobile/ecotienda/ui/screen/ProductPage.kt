@@ -36,7 +36,7 @@ fun ProductPage(
     product: Product,
     onAddToCart: (Product, Int) -> Unit,
     onBack: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberScrollState()
     var quantity by remember { mutableIntStateOf(1) }
@@ -128,7 +128,7 @@ fun ProductPage(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        // Product Description
+        // Descripcion del producto
         Text(
             text = product.description,
             style = MaterialTheme.typography.bodyMedium,
@@ -174,7 +174,7 @@ fun ProductPage(
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier.padding(horizontal = 12.dp)
                 )
-                IconButton(onClick = { quantity++ }, modifier = Modifier.size(36.dp)) {
+                IconButton(onClick = { quantity++ } , modifier = Modifier.size(36.dp)) {
                     Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(20.dp))
                 }
             }
