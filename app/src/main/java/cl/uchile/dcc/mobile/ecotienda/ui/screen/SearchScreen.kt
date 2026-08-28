@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import compose.icons.FeatherIcons
 import compose.icons.feathericons.ArrowLeft
 
+// SearchScreen es la pantalla que se agranda al usar el buscardor
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(
@@ -52,7 +53,10 @@ fun SearchScreen(
             }
         ) {
             // Aquí van las sugerencias o resultados recientes
-            Text("Sugerencias...", modifier = Modifier.padding(16.dp))
+            // Usamos sugerencias
+            Text("Natural", modifier = Modifier.padding(16.dp))
+            Text("Libre de plásticos", modifier = Modifier.padding(16.dp))
+            Text("Descuento", modifier = Modifier.padding(16.dp))
         }
     }
 }

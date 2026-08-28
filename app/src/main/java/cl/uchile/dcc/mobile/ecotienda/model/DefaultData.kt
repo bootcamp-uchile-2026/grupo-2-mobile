@@ -1,5 +1,6 @@
 package cl.uchile.dcc.mobile.ecotienda.model
 
+// Datos usados para primera iteración de la app
 object DefaultData {
     val Product = listOf(
         Product(

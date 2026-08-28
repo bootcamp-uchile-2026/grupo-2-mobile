@@ -26,6 +26,9 @@ import cl.uchile.dcc.mobile.ecotienda.viewmodel.CartViewModel
 import compose.icons.FeatherIcons
 import compose.icons.feathericons.ArrowLeft
 
+// Cart pantalla de carrito de productos
+// Navegacion Home -> carrito
+// Tiene backstack
 @Composable
 fun Cart(
     modifier: Modifier,
@@ -96,6 +99,7 @@ fun Cart(
         } else {
             Column(modifier = Modifier.weight(1f)) {
                 when (checkoutState.currentStep) {
+                    // Carrito de productos
                     CheckoutStep.CART -> {
                         LazyColumn(
                             modifier = Modifier.weight(1f),
@@ -141,7 +145,7 @@ fun Cart(
                             Text("Continuar al Envío", color = Color.White)
                         }
                     }
-
+                    // Envío
                     CheckoutStep.SHIPPING -> {
                         LazyColumn(modifier = Modifier.weight(1f)) {
                             item {
@@ -162,7 +166,7 @@ fun Cart(
                             }
                         }
                     }
-
+                    // PAgo
                     CheckoutStep.PAYMENT -> {
                         LazyColumn(modifier = Modifier.weight(1f)) {
                             item {

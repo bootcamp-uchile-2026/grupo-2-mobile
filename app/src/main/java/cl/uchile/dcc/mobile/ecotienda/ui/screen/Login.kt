@@ -53,6 +53,7 @@ import compose.icons.feathericons.ArrowLeft
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
 
+// Login pagina de ingreso a aplicación, autenticacion fake
 @Composable
 fun Login(
     modifier: Modifier,

@@ -1,5 +1,6 @@
 package cl.uchile.dcc.mobile.ecotienda.ui.screen
 
+// ENUM de categoría para mostrar productos
 enum class Category(val title: String, val icon: String? = null) {
     TODOS("Todos"),
     MERCADO("Mercado"),

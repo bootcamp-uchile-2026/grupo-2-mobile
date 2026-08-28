@@ -49,7 +49,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import androidx.compose.foundation.rememberScrollState
 
-
+// Home pagina inical de app, muestra logo, productos y detalle huella verde
 @Composable
 fun HomeEcoTienda(
     modifier: Modifier,
@@ -85,10 +85,6 @@ fun HomeEcoTienda(
 
             snackbarHostState.showSnackbar(message = message)
         }
-    }
-
-    LaunchedEffect(Unit) {
-        authViewModel.requestLoginSheet()
     }
 
     // Usamos un Column como base para que el carrusel no ocupe

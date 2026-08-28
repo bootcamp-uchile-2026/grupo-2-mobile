@@ -53,8 +53,8 @@ import compose.icons.FeatherIcons
 import compose.icons.feathericons.User
 import kotlinx.coroutines.launch
 
-
-
+// EcoTiendaApp es el backbone de la aplicación
+// Contiene Scafold, TopBar, BottomBar, Navcontroller e invoca a ViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EcoTiendaApp(
@@ -89,7 +89,8 @@ fun EcoTiendaApp(
     val authState by authViewModel.state.collectAsState()
 
     Scaffold(
-        containerColor = MaterialTheme.colorScheme.background, // Esto usa md_theme_light_background
+        containerColor = MaterialTheme.colorScheme.background,
+        // Mensajes
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             if (currentScreen.showTopBar) {
@@ -114,7 +115,7 @@ fun EcoTiendaApp(
                     ) {
                         FigureIconButton(
                             label = "Usuario",
-                            callBack = { authViewModel.requestLoginSheet() },
+                            callBack = { navController.navigate(ScreenRoutes.ACCOUNT.route) },
                             icon = Icons.Filled.Person,
                         )
                         Text(
@@ -147,7 +148,7 @@ fun EcoTiendaApp(
     { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = ScreenRoutes.HOME.route, // antes: HOME
+            startDestination = ScreenRoutes.LOGIN.route, // Cambio a Login First
         ) {
             composable(ScreenRoutes.HOME.route) {
                 HomeEcoTienda(
@@ -157,13 +158,13 @@ fun EcoTiendaApp(
                     snackbarHostState = snackbarHostState,
                     productos = DefaultData.Product,
                     authViewModel = authViewModel,
-                    // ACCIÓN 1: Ir al detalle al tocar la tarjeta
+                    // Ir al detalle al tocar la tarjeta
                     onProductClick = { product ->
                         productViewModel.selectProduct(product) // Usamos productViewModel
                         navController.navigate(ScreenRoutes.PRODUCTPAGE.route)
                     },
 
-                    // ACCIÓN 2: Agregar al carro al tocar el botón verde
+                    // Agregar al carro al tocar el botón verde
                     onAgregarClick = { product ->
                         cartViewModel.addToCart(product, 1) // Usamos cartViewModel
                         scope.launch {
@@ -181,7 +182,7 @@ fun EcoTiendaApp(
                         navController.navigate(ScreenRoutes.PRODUCTPAGE.route)
                     },
 
-                    // ACCIÓN 2: Agregar al carro al tocar el botón verde
+                    // Agregar al carro al tocar el botón verde
                     onAgregarClick = { product ->
                         cartViewModel.addToCart(product, 1) // Usamos cartViewModel
                         scope.launch {
@@ -239,14 +240,6 @@ fun EcoTiendaApp(
                 )
             }
 
-            composable(ScreenRoutes.LOGIN.route) {
-                Login(
-                    modifier = Modifier.padding(innerPadding),
-                    snackbarHostState = snackbarHostState,
-                    onBack = { navController.popBackStack() },
-                )
-            }
-
             composable(ScreenRoutes.ACCOUNT.route) {
                 AccountGate(
                     modifier = Modifier.padding(innerPadding),
@@ -282,7 +275,7 @@ fun EcoTiendaApp(
             }
 
             composable(ScreenRoutes.ORDERS.route) {
-                // placeholder hasta que tengas compras
+                // placeholder hasta que tener datos de compras
                 Text(
                     "Mis compras",
                     modifier = Modifier.padding(innerPadding).padding(16.dp)
@@ -291,6 +284,7 @@ fun EcoTiendaApp(
 
         }
     }
+    // Sidepanel para login/account
     AccountSidePanel(
         visible = authState.showLoginSheet,
         onDismiss = { authViewModel.dismissLoginSheet() }
