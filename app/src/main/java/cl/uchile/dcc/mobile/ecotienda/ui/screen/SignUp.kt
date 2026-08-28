@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 
+// SingUP pagina para crear cuenta, no fue implementada
 @Composable
 fun SignUp() {
 }

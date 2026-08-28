@@ -18,6 +18,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import cl.uchile.dcc.mobile.ecotienda.viewmodel.AuthViewModel
 
+// AccounScreen es la mezcla de las pantalla Login y account
+// Pertenece a Login/Accoun
 @Composable
 fun AccountScreen(
     modifier: Modifier = Modifier,

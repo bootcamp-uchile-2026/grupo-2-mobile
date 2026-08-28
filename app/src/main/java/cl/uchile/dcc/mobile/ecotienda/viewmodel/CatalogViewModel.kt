@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 
+// Viewmodel de catalogo
 class CatalogViewModel : ViewModel() {
 
     private val allProducts: List<Product> = DefaultData.Product

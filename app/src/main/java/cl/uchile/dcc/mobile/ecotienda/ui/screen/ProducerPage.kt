@@ -14,8 +14,11 @@ import androidx.compose.ui.unit.dp
 import cl.uchile.dcc.mobile.ecotienda.model.Producer
 
 @Composable
-fun ProducerPage(producer: Producer, onBack: () -> Unit) {
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+fun ProducerPage(modifier: Modifier, producer: Producer, onBack: () -> Unit) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(16.dp)) {
         Text(text = producer.name, style = MaterialTheme.typography.headlineMedium)
         Text(text = "Ubicación: ${producer.location}")
         Spacer(modifier = Modifier.height(16.dp))

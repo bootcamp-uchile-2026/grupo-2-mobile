@@ -52,6 +52,7 @@ fun SearchScreen(
             }
         ) {
             // Aquí van las sugerencias o resultados recientes
+            Text("Sugerencias...", modifier = Modifier.padding(16.dp))
         }
     }
 }

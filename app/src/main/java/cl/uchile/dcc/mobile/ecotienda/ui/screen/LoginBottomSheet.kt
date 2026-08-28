@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
 import cl.uchile.dcc.mobile.ecotienda.ui.screenstates.LoginFormState
 import cl.uchile.dcc.mobile.ecotienda.ui.screenstates.LoginScreenState
 
-// ui/component/LoginBottomSheet.kt
+// Bottom sheet fue reemplzado por accountpanelcontent
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginBottomSheet(

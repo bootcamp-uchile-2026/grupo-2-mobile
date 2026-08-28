@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.ui.graphics.vector.ImageVector
 
+// ScreenRoutes ENUM de pantallas en la app
 enum class ScreenRoutes(
     val title: String,
     val route: String,

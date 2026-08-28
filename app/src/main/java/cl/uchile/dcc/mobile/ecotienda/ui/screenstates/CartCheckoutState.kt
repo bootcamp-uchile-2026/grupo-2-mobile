@@ -1,5 +1,6 @@
 package cl.uchile.dcc.mobile.ecotienda.ui.screenstates
 
+// ScreenState del carrito
 enum class CheckoutStep {
     CART, SHIPPING, PAYMENT
 }

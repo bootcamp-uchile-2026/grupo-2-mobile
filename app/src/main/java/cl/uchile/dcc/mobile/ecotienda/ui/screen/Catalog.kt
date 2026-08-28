@@ -48,7 +48,9 @@ import cl.uchile.dcc.mobile.ecotienda.ui.theme.ecoTiendaColors
 import cl.uchile.dcc.mobile.ecotienda.ui.theme.md_theme_light_onSecondaryContainer
 import cl.uchile.dcc.mobile.ecotienda.utils.formatAsCurrency
 
-
+// Catalog es el catalogo de productos
+// Usa prodcutos ficticios de DefaultDatta
+// Navefación Home -> Catalog
 @Composable
 fun Catalog(
     modifier: Modifier,
