@@ -106,7 +106,7 @@ class AuthViewModel : ViewModel() {
 
     fun logout() {
         _state.update {
-            AuthUIState(showLoginSheet = true)
+            AuthUIState(showLoginSheet = false)
         }
     }
 
