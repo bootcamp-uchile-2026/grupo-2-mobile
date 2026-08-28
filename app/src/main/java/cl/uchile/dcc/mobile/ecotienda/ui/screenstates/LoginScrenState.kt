@@ -1,5 +1,6 @@
 package cl.uchile.dcc.mobile.ecotienda.ui.screenstates
 
+// Formstate de ingreso app
 data class LoginFormState(
     val email: String = "",
     val password: String = "",
@@ -13,10 +14,13 @@ sealed class LoginScreenState {
     data class Success(val userEmail: String) : LoginScreenState()
     data class Error(val message: String) : LoginScreenState()
 }
-
+// Autenticaión falsa
 data class AuthUIState(
     val form: LoginFormState = LoginFormState(),
     val login: LoginScreenState = LoginScreenState.Idle,
     val isLoggedIn: Boolean = false,
-    val showLoginSheet: Boolean = false
+    val isGuest: Boolean = false,
+    val userEmail: String? = null,
+    val showLoginSheet: Boolean = false,
+    val welcomeMessageShown: Boolean = false
 )

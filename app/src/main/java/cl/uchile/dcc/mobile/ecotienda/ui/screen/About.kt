@@ -28,6 +28,7 @@ import cl.uchile.dcc.mobile.ecotienda.ui.component.ProducerCard
 import cl.uchile.dcc.mobile.ecotienda.ui.theme.ecoTiendaColors
 
 // Pagina de acerca de nosotros, presentando los productores
+// Navegación: Home -> Nosotros
 @Composable
 fun About(
     modifier: Modifier,
@@ -44,7 +45,7 @@ fun About(
         horizontalAlignment = Alignment.CenterHorizontally,
         contentPadding = PaddingValues(bottom = 24.dp) // Espacio al final
     ) {
-        // 2. El título y la GeneralCard van en un solo 'item'
+        // Titulo de seccion incluyendo compromisos
         item {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
