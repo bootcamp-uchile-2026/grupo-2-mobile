@@ -256,7 +256,10 @@ fun EcoTiendaApp(
                     onOpenOrders = { navController.navigate(ScreenRoutes.ORDERS.route) },
                     onLogout = {
                         // AuthViewModel ya deja isLoggedIn/isGuest en false
-                        // AccountGate vuelve a mostrar Login solo
+                        // Redirigir al Home tras el logout
+                        navController.navigate(ScreenRoutes.HOME.route) {
+                            popUpTo(0) { inclusive = true }
+                        }
                     }
                 )
             }
