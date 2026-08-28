@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
@@ -80,16 +81,8 @@ fun HomeEcoTienda(
         }
     }
 
-    if (ui.showLoginSheet) {
-        LoginBottomSheet(
-            form = ui.form,
-            loginState = ui.login,
-            onEmailChange = authViewModel::updateEmail,
-            onPasswordChange = authViewModel::updatePassword,
-            onLogin = authViewModel::login,
-            onDismiss = authViewModel::dismissLoginSheet,
-            onContinueAsGuest = authViewModel::continueAsGuest
-        )
+    LaunchedEffect(Unit) {
+        authViewModel.requestLoginSheet()
     }
 
     // Usamos un Column como base para que el carrusel no ocupe
@@ -97,6 +90,7 @@ fun HomeEcoTienda(
     Column(
         modifier = modifier
             .fillMaxSize()
+            .imePadding()
     ) {
         Box(
             modifier = Modifier
