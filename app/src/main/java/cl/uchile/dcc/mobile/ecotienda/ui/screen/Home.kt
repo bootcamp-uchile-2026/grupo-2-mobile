@@ -70,11 +70,11 @@ fun HomeEcoTienda(
     // Para realizar scroll por la pantalla
     val scrollState = rememberScrollState()
 
-    // Lanza la pagina de logeo
+    // Lanza la pagina de logeo (Eliminado para evitar pop-up intrusivo)
     LaunchedEffect(ui.isLoggedIn, ui.isGuest) {
-        if (!ui.isLoggedIn && !ui.isGuest) {
+        /* if (!ui.isLoggedIn && !ui.isGuest) {
             authViewModel.requestLoginSheet()
-        }
+        } */
 
         // Solo mostramos si no se ha mostrado antes en esta sesión
         if ((ui.isLoggedIn || ui.isGuest) && !ui.welcomeMessageShown) {
