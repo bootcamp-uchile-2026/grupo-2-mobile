@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 
 class ProductDetailViewModel: ViewModel() {
 
-    // 2. Definir el estado inicial usando ProductDetailUiState
+    //Definir el estado inicial usando ProductDetailUiState
     private val _uiState = MutableStateFlow(ProductDetailUiState())
     val uiState = _uiState.asStateFlow()
 

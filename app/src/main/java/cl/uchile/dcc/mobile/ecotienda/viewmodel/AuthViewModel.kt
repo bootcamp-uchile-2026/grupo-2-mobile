@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.time.delay
 import kotlin.time.Duration.Companion.milliseconds
 
 class AuthViewModel : ViewModel() {
@@ -59,6 +58,10 @@ class AuthViewModel : ViewModel() {
         _state.update { it.copy(showLoginSheet = false) }
     }
 
+    fun continueAsGuest() {
+        _state.update { it.copy(isGuest = true, showLoginSheet = false) }
+    }
+
     fun login() {
         val form = _state.value.form
         val emailError = when {
@@ -93,6 +96,8 @@ class AuthViewModel : ViewModel() {
                 it.copy(
                     login = LoginScreenState.Success(form.email),
                     isLoggedIn = true,
+                    isGuest = false,
+                    userEmail = form.email,
                     showLoginSheet = false
                 )
             }
@@ -101,7 +106,12 @@ class AuthViewModel : ViewModel() {
 
     fun logout() {
         _state.update {
-            AuthUIState() // reset
+            AuthUIState(showLoginSheet = true)
         }
+    }
+
+    // Eliminar snackbarhostate de homre una vez logeado o invitado
+    fun markWelcomeShown() {
+        _state.update { it.copy(welcomeMessageShown = true) }
     }
 }

@@ -1,106 +1,191 @@
 package cl.uchile.dcc.mobile.ecotienda.ui.screen
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import cl.uchile.dcc.mobile.ecotienda.model.Cart
-import cl.uchile.dcc.mobile.ecotienda.ui.component.FigureIconButton
+import cl.uchile.dcc.mobile.ecotienda.ui.component.*
+import cl.uchile.dcc.mobile.ecotienda.ui.screenstates.CheckoutStep
+import cl.uchile.dcc.mobile.ecotienda.ui.theme.Sage
+import cl.uchile.dcc.mobile.ecotienda.ui.theme.ecoTiendaColors
 import cl.uchile.dcc.mobile.ecotienda.viewmodel.AuthViewModel
 import cl.uchile.dcc.mobile.ecotienda.viewmodel.CartViewModel
 import compose.icons.FeatherIcons
 import compose.icons.feathericons.ArrowLeft
 
+// Cart pantalla de carrito de productos
+// Navegacion Home -> carrito
+// Tiene backstack
 @Composable
-fun Cart (
+fun Cart(
     modifier: Modifier,
     cart: Cart,
     onBack: () -> Unit,
     authViewModel: AuthViewModel = viewModel(),
     cartViewModel: CartViewModel = viewModel()
-
 ) {
     val ui by authViewModel.state.collectAsState()
+    val authUi by authViewModel.state.collectAsState()
+    val checkoutState by cartViewModel.checkoutState.collectAsState()
 
-    LaunchedEffect(Unit) {
-        if (!ui.isLoggedIn) {
-            authViewModel.requestLoginSheet()
-        }
-    }
+    // Para realizar scroll por la pantalla
+    val scrollState = rememberScrollState()
 
-    if (ui.showLoginSheet) {
-        LoginBottomSheet(
-            form = ui.form,
-            loginState = ui.login,
-            onEmailChange = authViewModel::updateEmail,
-            onPasswordChange = authViewModel::updatePassword,
-            onLogin = authViewModel::login,
-            onDismiss = authViewModel::dismissLoginSheet
-        )
+
+    BackHandler(enabled = checkoutState.currentStep != CheckoutStep.CART) {
+        cartViewModel.previousStep()
     }
 
     Column(
         modifier = modifier
+            .fillMaxSize()
             .padding(16.dp)
+            .verticalScroll(scrollState)
     ) {
-        FigureIconButton(
-            label = "Volver",
-            callBack = onBack,
-            icon = FeatherIcons.ArrowLeft,
-            enabled = true,
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            FigureIconButton(
+                label = "Volver",
+                callBack = {
+                    if (checkoutState.currentStep == CheckoutStep.CART) onBack()
+                    else cartViewModel.previousStep()
+                },
+                icon = FeatherIcons.ArrowLeft,
+                enabled = true,
+            )
+            
+            Text(
+                text = when(checkoutState.currentStep) {
+                    CheckoutStep.CART -> "1. Carrito"
+                    CheckoutStep.SHIPPING -> "2. Envío"
+                    CheckoutStep.PAYMENT -> "3. Pago"
+                },
+                style = MaterialTheme.typography.labelLarge,
+                color = Sage
+            )
+        }
 
         Text(
-            text = "Mi Carrito",
-            style = MaterialTheme.typography.headlineMedium,
+            text = when(checkoutState.currentStep) {
+                CheckoutStep.CART -> "Resumen de tu compra"
+                CheckoutStep.SHIPPING -> "Datos de Envío"
+                CheckoutStep.PAYMENT -> "Método de Pago"
+            },
+            style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(vertical = 16.dp)
         )
 
         if (cart.items.isEmpty()) {
-            Text(text = "Tu carrito está vacío")
-        } else {
-            LazyColumn(modifier = Modifier.weight(1f)) {
-                items(cart.items) { item ->
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 8.dp)
-                    ) {
-                        Text(text = item.productName, modifier = Modifier.weight(1f))
-                        Text(text = "x${item.quantity}", modifier = Modifier.padding(horizontal = 8.dp))
-                        Text(text = "$${item.subtotal}")
-                    }
-                    HorizontalDivider()
-                }
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text(text = "Tu carrito está vacío", style = MaterialTheme.typography.bodyLarge)
             }
+        } else {
+            Column(modifier = Modifier.weight(1f)) {
+                when (checkoutState.currentStep) {
+                    // Carrito de productos
+                    CheckoutStep.CART -> {
+                        LazyColumn(
+                            modifier = Modifier.weight(1f),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            items(cart.items) { item ->
+                                CartItemRow(
+                                    item = item,
+                                    onIncrement = { cartViewModel.incrementQuantity(item.productId) },
+                                    onDecrement = { cartViewModel.decrementQuantity(item.productId) },
+                                    onRemove = { cartViewModel.removeFromCart(item.productId) }
+                                )
+                            }
+                        }
 
-            Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(16.dp))
 
-            Row(modifier = Modifier.fillMaxWidth()) {
-                Text(
-                    text = "Total:",
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.weight(1f)
-                )
-                Text(
-                    text = "$${cart.total}",
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.primary
-                )
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(text = "Total:", style = MaterialTheme.typography.titleLarge)
+                                Text(
+                                    text = "$${cart.total}",
+                                    style = MaterialTheme.typography.titleLarge,
+                                    color = Sage,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        }
+
+                        Button(
+                            onClick = { cartViewModel.nextStep() },
+                            modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = Sage),
+                            shape = RoundedCornerShape(24.dp)
+                        ) {
+                            Text("Continuar al Envío", color = Color.White)
+                        }
+                    }
+                    // Envío
+                    CheckoutStep.SHIPPING -> {
+                        LazyColumn(modifier = Modifier.weight(1f)) {
+                            item {
+                                ShippingForm(
+                                    state = checkoutState.shippingForm,
+                                    onUpdate = { newState -> 
+                                        cartViewModel.updateShippingForm { newState } 
+                                    }
+                                )
+                                Spacer(modifier = Modifier.height(16.dp))
+                                OrderSummaryCard(
+                                    subtotal = cart.total,
+                                    discount = checkoutState.discountAmount,
+                                    total = cart.total - checkoutState.discountAmount,
+                                    onConfirm = { cartViewModel.nextStep() },
+                                    confirmLabel = "Continuar al Pago"
+                                )
+                            }
+                        }
+                    }
+                    // PAgo
+                    CheckoutStep.PAYMENT -> {
+                        LazyColumn(modifier = Modifier.weight(1f)) {
+                            item {
+                                PaymentSelector(
+                                    selectedMethod = checkoutState.paymentMethod,
+                                    onSelect = { cartViewModel.selectPaymentMethod(it) }
+                                )
+                                Spacer(modifier = Modifier.height(16.dp))
+                                OrderSummaryCard(
+                                    subtotal = cart.total,
+                                    discount = checkoutState.discountAmount,
+                                    total = cart.total - checkoutState.discountAmount,
+                                    onConfirm = { /* Finalizar compra */ },
+                                    confirmLabel = "Confirmar y Pagar"
+                                )
+                            }
+                        }
+                    }
+                }
             }
         }
     }

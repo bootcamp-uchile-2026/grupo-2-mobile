@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
 import cl.uchile.dcc.mobile.ecotienda.ui.screenstates.LoginFormState
 import cl.uchile.dcc.mobile.ecotienda.ui.screenstates.LoginScreenState
 
-// ui/component/LoginBottomSheet.kt
+// Bottom sheet fue reemplzado por accountpanelcontent
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginBottomSheet(
@@ -31,7 +31,8 @@ fun LoginBottomSheet(
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
     onLogin: () -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    onContinueAsGuest: () -> Unit = {}
 ) {
     val sheetState = rememberModalBottomSheetState()
 
@@ -82,8 +83,8 @@ fun LoginBottomSheet(
                     Text("Ingresar")
                 }
             }
-            TextButton(onClick = onDismiss) {
-                Text("Continuar como invitado") // opcional
+            TextButton(onClick = onContinueAsGuest) {
+                Text("Continuar como invitado")
             }
         }
     }
