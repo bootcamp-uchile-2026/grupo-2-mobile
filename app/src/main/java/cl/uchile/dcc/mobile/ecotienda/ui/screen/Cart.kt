@@ -102,36 +102,40 @@ fun Cart(
                                     onRemove = { cartViewModel.removeFromCart(item.productId) }
                                 )
                             }
-                        }
-                        
-                        Spacer(modifier = Modifier.height(16.dp))
-                        
-                        Card(
-                            modifier = Modifier.fillMaxWidth(),
-                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
-                        ) {
-                            Row(
-                                modifier = Modifier.padding(16.dp).fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(text = "Total:", style = MaterialTheme.typography.titleLarge)
-                                Text(
-                                    text = "$${cart.total}",
-                                    style = MaterialTheme.typography.titleLarge,
-                                    color = Sage,
-                                    fontWeight = FontWeight.Bold
-                                )
+
+                            item {
+                                Spacer(modifier = Modifier.height(16.dp))
+
+                                Card(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+                                ) {
+                                    Row(
+                                        modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Text(text = "Total:", style = MaterialTheme.typography.titleLarge)
+                                        Text(
+                                            text = "$${cart.total}",
+                                            style = MaterialTheme.typography.titleLarge,
+                                            color = Sage,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    }
+                                }
                             }
-                        }
-                        
-                        Button(
-                            onClick = { cartViewModel.nextStep() },
-                            modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = Sage),
-                            shape = RoundedCornerShape(24.dp)
-                        ) {
-                            Text("Continuar al Envío", color = Color.White)
+
+                            item {
+                                Button(
+                                    onClick = { cartViewModel.nextStep() },
+                                    modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+                                    colors = ButtonDefaults.buttonColors(containerColor = Sage),
+                                    shape = RoundedCornerShape(24.dp)
+                                ) {
+                                    Text("Continuar al Envío", color = Color.White)
+                                }
+                            }
                         }
                     }
 
