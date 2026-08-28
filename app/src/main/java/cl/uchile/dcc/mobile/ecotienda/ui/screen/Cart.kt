@@ -4,7 +4,9 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -36,6 +38,10 @@ fun Cart(
     val authUi by authViewModel.state.collectAsState()
     val checkoutState by cartViewModel.checkoutState.collectAsState()
 
+    // Para realizar scroll por la pantalla
+    val scrollState = rememberScrollState()
+
+
     BackHandler(enabled = checkoutState.currentStep != CheckoutStep.CART) {
         cartViewModel.previousStep()
     }
@@ -44,6 +50,7 @@ fun Cart(
         modifier = modifier
             .fillMaxSize()
             .padding(16.dp)
+            .verticalScroll(scrollState)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -103,9 +110,9 @@ fun Cart(
                                 )
                             }
                         }
-                        
+
                         Spacer(modifier = Modifier.height(16.dp))
-                        
+
                         Card(
                             modifier = Modifier.fillMaxWidth(),
                             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
@@ -124,7 +131,7 @@ fun Cart(
                                 )
                             }
                         }
-                        
+
                         Button(
                             onClick = { cartViewModel.nextStep() },
                             modifier = Modifier.fillMaxWidth().padding(top = 16.dp),

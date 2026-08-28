@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material3.Card
@@ -46,7 +47,7 @@ import cl.uchile.dcc.mobile.ecotienda.ui.theme.md_theme_light_primary
 import cl.uchile.dcc.mobile.ecotienda.viewmodel.AuthViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlin.time.Duration.Companion.milliseconds
+import androidx.compose.foundation.rememberScrollState
 
 
 @Composable
@@ -60,11 +61,16 @@ fun HomeEcoTienda(
 ) {
     if (productos.isEmpty()) return
 
+    // Determina los productos del Carrousel
     val pagerState = rememberPagerState(pageCount = { productos.size })
     val scope = rememberCoroutineScope()
 
     val ui by authViewModel.state.collectAsState()
 
+    // Para realizar scroll por la pantalla
+    val scrollState = rememberScrollState()
+
+    // Lanza la pagina de logeo
     LaunchedEffect(ui.isLoggedIn, ui.isGuest) {
         if (!ui.isLoggedIn && !ui.isGuest) {
             authViewModel.requestLoginSheet()
@@ -90,7 +96,7 @@ fun HomeEcoTienda(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .imePadding()
+            .verticalScroll(scrollState)
     ) {
         Box(
             modifier = Modifier
