@@ -82,7 +82,7 @@ fun Login(
             )
 
             // Esperar 2 segundos (2000 ms) antes de volver atrás
-            delay(1000.milliseconds)
+            delay(500.milliseconds)
 
             // Backstack
             onBack()

@@ -20,7 +20,7 @@ fun FigureIconButton(
     icon: ImageVector,
     enabled: Boolean = true,
     iconColor: Color = MaterialTheme.colorScheme.tertiary,
-    iconCircleColor: Color = MaterialTheme.colorScheme.secondary,
+    iconCircleColor: Color = MaterialTheme.colorScheme.onPrimary,
 ) {
     IconButton(
         onClick = { callBack() },

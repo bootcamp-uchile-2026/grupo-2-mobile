@@ -185,7 +185,7 @@ fun ProductPage(
                     .fillMaxWidth()
                     .height(48.dp),
                 shape = RoundedCornerShape(4.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.tertiaryContainer)
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
             ) {
                 Text("Agregar al carrito", fontWeight = FontWeight.Bold)
             }
@@ -205,13 +205,13 @@ fun ProductPage(
                 .fillMaxWidth()
                 .height(24.dp)
                 .clip(RoundedCornerShape(4.dp))
-                .background(MaterialTheme.colorScheme.secondaryContainer)
+                .background(MaterialTheme.colorScheme.secondary)
         ) {
             Box(
                 modifier = Modifier
-                    .fillMaxWidth(0.8f) // Static sustainability score
+                    .fillMaxWidth(0.8f) // Fraccion de huella verde
                     .fillMaxHeight()
-                    .background(MaterialTheme.colorScheme.secondaryContainer)
+                    .background(MaterialTheme.colorScheme.primary)
             )
         }
 
