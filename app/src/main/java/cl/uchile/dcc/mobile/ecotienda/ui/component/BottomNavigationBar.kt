@@ -13,17 +13,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import cl.uchile.dcc.mobile.ecotienda.ui.screen.ScreenRoutes
-import cl.uchile.dcc.mobile.ecotienda.ui.theme.ecoTiendaColors
 @Composable
 fun BottomNavigationBar(
     currentRoute: String?,
     onNavigateTo: (String) -> Unit,
     modifier: Modifier = Modifier,
     windowInsets: WindowInsets = WindowInsets.navigationBars,
-    containerColor: Color = MaterialTheme.ecoTiendaColors.cl2,
-    selectedColor: Color = MaterialTheme.ecoTiendaColors.cl1,
-    selectedTextColor: Color = selectedColor,
-    unselectedColor: Color = MaterialTheme.ecoTiendaColors.cl3.copy(alpha = 0.7f),
+    containerColor: Color = MaterialTheme.colorScheme.primaryContainer,
+    selectedColor: Color = MaterialTheme.colorScheme.primary,
+    selectedTextColor: Color = MaterialTheme.colorScheme.secondary,
+    unselectedColor: Color = MaterialTheme.colorScheme.tertiary,
     unselectedTextColor: Color = unselectedColor,
 ) {
     NavigationBar(

@@ -18,8 +18,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import cl.uchile.dcc.mobile.ecotienda.model.CartItem
 import cl.uchile.dcc.mobile.ecotienda.ui.screenstates.ShippingFormState
-import cl.uchile.dcc.mobile.ecotienda.ui.theme.Sage
-import cl.uchile.dcc.mobile.ecotienda.ui.theme.ecoTiendaColors
 import cl.uchile.dcc.mobile.ecotienda.utils.formatAsCurrency
 import coil3.compose.AsyncImage
 
@@ -55,7 +53,7 @@ fun CartItemRow(
             Column(modifier = Modifier.weight(1f)) {
                 Text(text = item.productName, fontWeight = FontWeight.Bold)
                 Text(text = item.productProducer, style = MaterialTheme.typography.bodySmall)
-                Text(text = item.price.formatAsCurrency(), color = Sage)
+                Text(text = item.price.formatAsCurrency(), color = MaterialTheme.colorScheme.primary)
             }
             Row(verticalAlignment = Alignment.CenterVertically) {
                 IconButton(onClick = onDecrement) {
@@ -100,13 +98,13 @@ fun OrderSummaryCard(
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 Text(text = "TOTAL A PAGAR", fontWeight = FontWeight.Bold)
-                Text(text = total.formatAsCurrency(), fontWeight = FontWeight.Bold, color = Sage)
+                Text(text = total.formatAsCurrency(), fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
             }
             Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = onConfirm,
                 modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(containerColor = Sage),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
                 shape = RoundedCornerShape(24.dp)
             ) {
                 Text(text = confirmLabel, color = Color.White)
@@ -202,7 +200,7 @@ fun PaymentSelector(
                 RadioButton(
                     selected = method == selectedMethod,
                     onClick = { onSelect(method) },
-                    colors = RadioButtonDefaults.colors(selectedColor = Sage)
+                    colors = RadioButtonDefaults.colors(selectedColor = MaterialTheme.colorScheme.secondaryContainer)
                 )
                 Text(text = method, modifier = Modifier.padding(start = 8.dp))
             }

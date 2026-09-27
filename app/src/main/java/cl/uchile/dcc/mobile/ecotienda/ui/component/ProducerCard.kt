@@ -22,7 +22,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import cl.uchile.dcc.mobile.ecotienda.model.Producer
-import cl.uchile.dcc.mobile.ecotienda.ui.theme.ecoTiendaColors
 import compose.icons.FeatherIcons
 import compose.icons.feathericons.Map
 
@@ -30,8 +29,8 @@ import compose.icons.feathericons.Map
 fun ProducerCard(
     modifier: Modifier,
     producer: Producer,
-    containerColor: Color = MaterialTheme.ecoTiendaColors.cl4,
-    textColor: Color = MaterialTheme.ecoTiendaColors.cl3,
+    containerColor: Color = MaterialTheme.colorScheme.tertiaryContainer,
+    textColor: Color = MaterialTheme.colorScheme.primary,
     onBack: () -> Unit
 ) {
     Card(

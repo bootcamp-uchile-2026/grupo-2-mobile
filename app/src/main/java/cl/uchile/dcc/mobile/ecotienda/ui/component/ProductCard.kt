@@ -25,8 +25,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import cl.uchile.dcc.mobile.ecotienda.model.Product
-import cl.uchile.dcc.mobile.ecotienda.ui.theme.ecoTiendaColors
-import cl.uchile.dcc.mobile.ecotienda.ui.theme.md_theme_light_primary
 import cl.uchile.dcc.mobile.ecotienda.utils.formatAsCurrency
 import coil3.compose.AsyncImage
 
@@ -103,7 +101,7 @@ fun ProductCard(
                     .align(Alignment.BottomEnd)
                     .padding(12.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.ecoTiendaColors.cl1
+                    containerColor = MaterialTheme.colorScheme.tertiaryContainer
                 ),
                 shape = RoundedCornerShape(50)
             ) {

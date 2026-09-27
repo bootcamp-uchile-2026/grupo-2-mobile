@@ -21,7 +21,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cl.uchile.dcc.mobile.ecotienda.model.Producer
-import cl.uchile.dcc.mobile.ecotienda.ui.theme.Sage
 import coil3.compose.AsyncImage
 
 // Página de detalle de emprendedor (cambio de nombre)
@@ -53,12 +52,12 @@ fun ProducerPage(
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(onClick = onBack) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver", tint = Sage)
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver", tint = MaterialTheme.colorScheme.secondary)
             }
             Text(
                 text = "Perfil del Emprendedor",
                 style = MaterialTheme.typography.titleMedium,
-                color = Sage
+                color = MaterialTheme.colorScheme.primary
             )
         }
 
@@ -84,7 +83,7 @@ fun ProducerPage(
                 modifier = Modifier
                     .padding(12.dp)
                     .align(Alignment.BottomStart),
-                color = Sage.copy(alpha = 0.9f),
+                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.9f),
                 shape = RoundedCornerShape(4.dp)
             ) {
                 Text(
@@ -108,7 +107,7 @@ fun ProducerPage(
         Text(
             text = producer.description,
             style = MaterialTheme.typography.headlineSmall,
-            color = Sage,
+            color = MaterialTheme.colorScheme.primary,
             fontWeight = FontWeight.SemiBold
         )
 
@@ -142,7 +141,7 @@ fun ProducerPage(
         TabRow(
             selectedTabIndex = selectedTab,
             containerColor = Color.Transparent,
-            contentColor = Sage,
+            contentColor = MaterialTheme.colorScheme.secondaryContainer,
             divider = {}
         ) {
             tabs.forEachIndexed { index, title ->
@@ -154,7 +153,7 @@ fun ProducerPage(
                             text = title,
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = if (selectedTab == index) FontWeight.Bold else FontWeight.Normal,
-                            color = if (selectedTab == index) Sage else Color.Gray
+                            color = if (selectedTab == index) MaterialTheme.colorScheme.primary else Color.Gray
                         )
                     }
                 )
@@ -202,9 +201,9 @@ fun ProducerRatingSection() {
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(end = 24.dp)
         ) {
-            Text(text = "4.8", style = MaterialTheme.typography.displaySmall, fontWeight = FontWeight.Bold, color = Sage)
+            Text(text = "4.8", style = MaterialTheme.typography.displaySmall, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
             Row {
-                repeat(5) { Icon(Icons.Default.Star, contentDescription = null, tint = Sage, modifier = Modifier.size(18.dp)) }
+                repeat(5) { Icon(Icons.Default.Star, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp)) }
             }
             Text(text = "Confianza del productor", style = MaterialTheme.typography.labelSmall, color = Color.Gray)
         }
@@ -237,7 +236,7 @@ fun ProducerReviewItem() {
         }
         Spacer(modifier = Modifier.width(8.dp))
         Row {
-            repeat(5) { Icon(Icons.Default.Star, contentDescription = null, tint = Sage, modifier = Modifier.size(12.dp)) }
+            repeat(5) { Icon(Icons.Default.Star, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(12.dp)) }
         }
     }
 }

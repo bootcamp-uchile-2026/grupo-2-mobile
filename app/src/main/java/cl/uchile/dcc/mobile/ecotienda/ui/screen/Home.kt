@@ -42,8 +42,6 @@ import cl.uchile.dcc.mobile.ecotienda.R
 import cl.uchile.dcc.mobile.ecotienda.model.Product
 import cl.uchile.dcc.mobile.ecotienda.ui.component.HuellaVerdeSection
 import cl.uchile.dcc.mobile.ecotienda.ui.component.ProductCard
-import cl.uchile.dcc.mobile.ecotienda.ui.theme.Sage
-import cl.uchile.dcc.mobile.ecotienda.ui.theme.md_theme_light_primary
 import cl.uchile.dcc.mobile.ecotienda.viewmodel.AuthViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -123,7 +121,7 @@ fun HomeEcoTienda(
         ) {
             Text(
                 text = "Salvando el planeta una compra a la vez",
-                color = md_theme_light_primary,
+                color = MaterialTheme.colorScheme.primary,
                 style = MaterialTheme.typography.titleMedium,
             )
         }

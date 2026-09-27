@@ -16,7 +16,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import cl.uchile.dcc.mobile.ecotienda.ui.theme.ecoTiendaColors
 import compose.icons.FeatherIcons
 import compose.icons.feathericons.Search
 
@@ -28,7 +27,7 @@ import compose.icons.feathericons.Search
 fun SearchStaticBar(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    bgColor: Color = MaterialTheme.ecoTiendaColors.cl4,
+    bgColor: Color = MaterialTheme.colorScheme.tertiaryContainer,
 ) {
     Surface(
         onClick = onClick,

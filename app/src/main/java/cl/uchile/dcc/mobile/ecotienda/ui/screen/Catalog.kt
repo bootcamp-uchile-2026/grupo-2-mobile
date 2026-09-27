@@ -44,8 +44,6 @@ import cl.uchile.dcc.mobile.ecotienda.ui.screenstates.CatalogScreenState
 import cl.uchile.dcc.mobile.ecotienda.viewmodel.CatalogViewModel
 import coil3.compose.AsyncImage
 import cl.uchile.dcc.mobile.ecotienda.model.Product
-import cl.uchile.dcc.mobile.ecotienda.ui.theme.ecoTiendaColors
-import cl.uchile.dcc.mobile.ecotienda.ui.theme.md_theme_light_onSecondaryContainer
 import cl.uchile.dcc.mobile.ecotienda.utils.formatAsCurrency
 
 // Catalog es el catalogo de productos
@@ -145,7 +143,7 @@ fun Catalog(
                                             .size(30.dp)
                                             .align(Alignment.End),
                                         colors = IconButtonDefaults.filledIconButtonColors(
-                                            containerColor = MaterialTheme.ecoTiendaColors.cl1
+                                            containerColor = MaterialTheme.colorScheme.tertiaryContainer
                                         )
                                     )
                                         {

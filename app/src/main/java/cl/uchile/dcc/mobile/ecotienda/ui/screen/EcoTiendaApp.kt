@@ -1,5 +1,8 @@
 package cl.uchile.dcc.mobile.ecotienda.ui.screen
 
+import android.R.attr.content
+import android.app.Activity
+import android.os.Build
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -21,7 +24,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.dynamicDarkColorScheme
+import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.collectAsState
@@ -29,9 +36,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -44,7 +55,8 @@ import cl.uchile.dcc.mobile.ecotienda.ui.component.BottomNavigationBar
 import cl.uchile.dcc.mobile.ecotienda.ui.component.SearchStaticBar
 import cl.uchile.dcc.mobile.ecotienda.viewmodel.MainScreenViewModel
 import cl.uchile.dcc.mobile.ecotienda.ui.component.FigureIconButton
-import cl.uchile.dcc.mobile.ecotienda.ui.theme.ecoTiendaColors
+import cl.uchile.dcc.mobile.ecotienda.ui.theme.extendedDark
+import cl.uchile.dcc.mobile.ecotienda.ui.theme.extendedLight
 import cl.uchile.dcc.mobile.ecotienda.viewmodel.ProducerDetailViewModel
 import cl.uchile.dcc.mobile.ecotienda.viewmodel.ProductDetailViewModel
 import cl.uchile.dcc.mobile.ecotienda.viewmodel.CartViewModel
@@ -76,7 +88,7 @@ fun EcoTiendaApp(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
-    // 2. Buscamos la pantalla en el enum (Default a HOME si es nulo)
+    // Buscamos la pantalla current
     val currentScreen = ScreenRoutes.entries.find { it.route == currentRoute } ?: ScreenRoutes.HOME
 
     // Se crea variable para registrar si el teclado esta presente en pantalla
@@ -123,7 +135,7 @@ fun EcoTiendaApp(
                                    else if (authState.isGuest) "Invitado" 
                                    else "Ingresar",
                             style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.ecoTiendaColors.cl3,
+                            color = MaterialTheme.colorScheme.primary,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )

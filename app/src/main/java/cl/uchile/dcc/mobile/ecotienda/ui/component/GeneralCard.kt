@@ -19,13 +19,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import cl.uchile.dcc.mobile.ecotienda.ui.theme.ecoTiendaColors
 import coil3.compose.AsyncImage
 
 @Composable
 fun GeneralCard(
     modifier: Modifier = Modifier,
-    containerColor: Color = MaterialTheme.ecoTiendaColors.cl2,
+    containerColor: Color = MaterialTheme.colorScheme.tertiaryContainer,
     imageUrl: String,
     text1: String,
     text2: String

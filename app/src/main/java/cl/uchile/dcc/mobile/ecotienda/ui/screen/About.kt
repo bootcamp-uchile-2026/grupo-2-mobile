@@ -24,8 +24,6 @@ import cl.uchile.dcc.mobile.ecotienda.model.Producer
 import cl.uchile.dcc.mobile.ecotienda.ui.component.CompromisosSection
 import cl.uchile.dcc.mobile.ecotienda.ui.component.GeneralCard
 import cl.uchile.dcc.mobile.ecotienda.ui.component.ProducerAvatarItem
-import cl.uchile.dcc.mobile.ecotienda.ui.component.ProducerCard
-import cl.uchile.dcc.mobile.ecotienda.ui.theme.ecoTiendaColors
 
 // Pagina de acerca de nosotros, presentando los productores
 // Navegación: Home -> Nosotros
@@ -33,7 +31,7 @@ import cl.uchile.dcc.mobile.ecotienda.ui.theme.ecoTiendaColors
 fun About(
     modifier: Modifier,
     producers: List<Producer>,
-    textColor: Color = MaterialTheme.ecoTiendaColors.cl3,
+    textColor: Color = MaterialTheme.colorScheme.primary,
     onProducerClick: (Producer) -> Unit
 ) {
     // Scroll vertical con Lazycolumn

@@ -45,8 +45,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import cl.uchile.dcc.mobile.ecotienda.ui.component.FigureIconButton
 import cl.uchile.dcc.mobile.ecotienda.ui.screenstates.LoginScreenState
-import cl.uchile.dcc.mobile.ecotienda.ui.theme.md_theme_light_secondaryContainer
-import cl.uchile.dcc.mobile.ecotienda.ui.theme.md_theme_light_tertiaryContainer
 import cl.uchile.dcc.mobile.ecotienda.viewmodel.AuthViewModel
 import compose.icons.FeatherIcons
 import compose.icons.feathericons.ArrowLeft

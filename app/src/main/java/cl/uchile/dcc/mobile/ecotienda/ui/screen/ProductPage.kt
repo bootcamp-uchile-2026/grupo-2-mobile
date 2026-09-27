@@ -24,8 +24,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cl.uchile.dcc.mobile.ecotienda.model.Product
-import cl.uchile.dcc.mobile.ecotienda.ui.theme.Sage
-import cl.uchile.dcc.mobile.ecotienda.ui.theme.Mint
 import coil3.compose.AsyncImage
 
 // Página de detalle de productos
@@ -56,12 +54,12 @@ fun ProductPage(
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(onClick = onBack) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver", tint = Sage)
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver", tint = MaterialTheme.colorScheme.primary)
             }
             Text(
                 text = "Detalle de Producto",
                 style = MaterialTheme.typography.titleMedium,
-                color = Sage
+                color = MaterialTheme.colorScheme.primary
             )
         }
 
@@ -80,7 +78,7 @@ fun ProductPage(
                     Box(
                         modifier = Modifier
                             .size(60.dp)
-                            .border(1.dp, if (index == 0) Sage else Color.LightGray, RoundedCornerShape(4.dp))
+                            .border(1.dp, if (index == 0) MaterialTheme.colorScheme.primary else Color.LightGray, RoundedCornerShape(4.dp))
                             .clip(RoundedCornerShape(4.dp))
                             .background(Color(0xFFF0F0F0))
                     ) {
@@ -122,7 +120,7 @@ fun ProductPage(
         Text(
             text = "$${product.price}",
             style = MaterialTheme.typography.headlineSmall,
-            color = Sage,
+            color = MaterialTheme.colorScheme.primary,
             fontWeight = FontWeight.SemiBold
         )
 
@@ -187,7 +185,7 @@ fun ProductPage(
                     .fillMaxWidth()
                     .height(48.dp),
                 shape = RoundedCornerShape(4.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Sage)
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.tertiaryContainer)
             ) {
                 Text("Agregar al carrito", fontWeight = FontWeight.Bold)
             }
@@ -207,13 +205,13 @@ fun ProductPage(
                 .fillMaxWidth()
                 .height(24.dp)
                 .clip(RoundedCornerShape(4.dp))
-                .background(Mint)
+                .background(MaterialTheme.colorScheme.secondaryContainer)
         ) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth(0.8f) // Static sustainability score
                     .fillMaxHeight()
-                    .background(Sage)
+                    .background(MaterialTheme.colorScheme.secondaryContainer)
             )
         }
 
@@ -223,7 +221,7 @@ fun ProductPage(
         TabRow(
             selectedTabIndex = selectedTab,
             containerColor = Color.Transparent,
-            contentColor = Sage,
+            contentColor = MaterialTheme.colorScheme.primary,
             divider = {}
         ) {
             tabs.forEachIndexed { index, title ->
@@ -235,7 +233,7 @@ fun ProductPage(
                             text = title,
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = if (selectedTab == index) FontWeight.Bold else FontWeight.Normal,
-                            color = if (selectedTab == index) Sage else Color.Gray
+                            color = if (selectedTab == index) MaterialTheme.colorScheme.primary else Color.Gray
                         )
                     }
                 )
@@ -293,10 +291,10 @@ fun RatingSection() {
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(end = 24.dp)
         ) {
-            Text(text = "4.5", style = MaterialTheme.typography.displaySmall, fontWeight = FontWeight.Bold, color = Sage)
+            Text(text = "4.5", style = MaterialTheme.typography.displaySmall, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
             Row {
-                repeat(4) { Icon(Icons.Default.Star, contentDescription = null, tint = Sage, modifier = Modifier.size(18.dp)) }
-                Icon(Icons.Outlined.StarOutline, contentDescription = null, tint = Sage, modifier = Modifier.size(18.dp))
+                repeat(4) { Icon(Icons.Default.Star, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp)) }
+                Icon(Icons.Outlined.StarOutline, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
             }
             Text(text = "Calificación sustentable", style = MaterialTheme.typography.labelSmall, color = Color.Gray)
         }
@@ -332,7 +330,7 @@ fun ReviewItem() {
         }
         Spacer(modifier = Modifier.width(8.dp))
         Row {
-            repeat(4) { Icon(Icons.Default.Star, contentDescription = null, tint = Sage, modifier = Modifier.size(12.dp)) }
+            repeat(4) { Icon(Icons.Default.Star, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(12.dp)) }
         }
     }
 }

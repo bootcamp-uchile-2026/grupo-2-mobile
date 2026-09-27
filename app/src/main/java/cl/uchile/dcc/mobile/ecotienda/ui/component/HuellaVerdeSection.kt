@@ -16,7 +16,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cl.uchile.dcc.mobile.ecotienda.ui.theme.EcoTiendaTheme
-import cl.uchile.dcc.mobile.ecotienda.ui.theme.Sage
 
 @Composable
 fun HuellaVerdeSection(
@@ -33,7 +32,7 @@ fun HuellaVerdeSection(
             text = "¿Qué es tu\nHuella Verde?",
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
-            color = Sage,
+            color = MaterialTheme.colorScheme.primary,
             lineHeight = 28.sp,
             modifier = Modifier.weight(0.45f)
         )
