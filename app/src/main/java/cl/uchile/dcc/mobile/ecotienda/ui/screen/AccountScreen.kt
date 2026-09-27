@@ -102,7 +102,8 @@ fun AccountScreen(
         ) {
             Icon(Icons.Filled.Logout, null)
             Spacer(Modifier.width(8.dp))
-            Text("Cerrar sesión")
+            Text(text = "Cerrar sesión",
+                style = MaterialTheme.typography.titleMedium)
         }
 
         Spacer(Modifier.height(16.dp))
@@ -110,7 +111,8 @@ fun AccountScreen(
             onClick = onGoHome,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Ir al inicio")
+            Text(text = "Ir al inicio",
+                style = MaterialTheme.typography.titleMedium)
         }
     }
 }

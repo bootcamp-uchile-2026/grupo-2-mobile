@@ -105,7 +105,9 @@ fun ProductCard(
                 ),
                 shape = RoundedCornerShape(50)
             ) {
-                Text("+Agregar")
+                Text(text = "+Agregar",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.secondary)
             }
 
         }

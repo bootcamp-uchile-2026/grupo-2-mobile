@@ -36,15 +36,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import cl.uchile.dcc.mobile.ecotienda.ui.component.FigureIconButton
 import cl.uchile.dcc.mobile.ecotienda.ui.screenstates.LoginScreenState
+import cl.uchile.dcc.mobile.ecotienda.ui.theme.CustomBrandParagraph
+import cl.uchile.dcc.mobile.ecotienda.ui.theme.CustomBrandTitleStyle
 import cl.uchile.dcc.mobile.ecotienda.viewmodel.AuthViewModel
 import compose.icons.FeatherIcons
 import compose.icons.feathericons.ArrowLeft
@@ -105,14 +104,14 @@ fun Login(
         )
         }
 
-        Text(text = "Ingresa aquí", style = TextStyle(fontSize = 40.sp))
+        Text(text = "Ingresa aquí", style = CustomBrandTitleStyle)
 
         Spacer(modifier = Modifier.height(20.dp))
 
         OutlinedTextField(
             value = form.email,
             onValueChange = { authViewModel.updateEmail(it) },
-            label = { Text("Email") },
+            label = { Text("Email", style = MaterialTheme.typography.bodyMedium) },
             isError = form.emailError != null,
             supportingText = { form.emailError?.let { Text(it) } },
             singleLine = true,
@@ -124,7 +123,7 @@ fun Login(
         OutlinedTextField(
             value = form.password,
             onValueChange = { authViewModel.updatePassword(it) },
-            label = { Text("Contraseña") },
+            label = { Text("Contraseña",  style = MaterialTheme.typography.bodyMedium) },
             isError = form.passwordError != null,
             supportingText = { form.passwordError?.let { Text(it) } },
             visualTransformation = PasswordVisualTransformation(),
@@ -143,7 +142,7 @@ fun Login(
                 if (authState.login is LoginScreenState.Loading) {
                     CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
                 } else {
-                    Text("Ingresar")
+                    Text("Ingresar", style = MaterialTheme.typography.bodyMedium)
                 }
             }
         }
@@ -152,10 +151,7 @@ fun Login(
         ClickableText(
             text = AnnotatedString("¿Password olvidada?"),
             onClick = { },
-            style = TextStyle(
-                fontSize = 14.sp,
-                fontFamily = FontFamily.Default
-            )
+            style = CustomBrandParagraph
         )
         Spacer(modifier = Modifier.height(20.dp))
         HorizontalDivider(thickness = 2.dp)
@@ -171,7 +167,7 @@ fun Login(
                     containerColor = Color.LightGray
                 )
             ) {
-                Text(text = "Registrate")
+                Text(text = "Registrate", style = MaterialTheme.typography.bodyMedium)
             }
 
         }
@@ -184,7 +180,7 @@ fun Login(
                 onClick = { authViewModel.continueAsGuest() },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(text = "Invitado")
+                Text(text = "Invitado", style = MaterialTheme.typography.bodyMedium)
             }
         }
     }
