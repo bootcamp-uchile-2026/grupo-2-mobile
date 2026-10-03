@@ -1,5 +1,6 @@
 package cl.uchile.dcc.mobile.ecotienda.viewmodel
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import cl.uchile.dcc.mobile.ecotienda.model.Cart
 import cl.uchile.dcc.mobile.ecotienda.model.Product
@@ -11,11 +12,18 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class CartViewModel : ViewModel() {
+class CartViewModel(
+    private val savedStateHandle: SavedStateHandle
+) : ViewModel() {
     private val _cart = MutableStateFlow(Cart())
     val cart = _cart.asStateFlow()
 
-    private val _checkoutState = MutableStateFlow(CartCheckoutState())
+    private val savedStepName: String? = savedStateHandle["checkout_step"]
+    private val restoredStep: CheckoutStep = savedStepName?.let {
+        runCatching { CheckoutStep.valueOf(it) }.getOrNull()
+    } ?: CheckoutStep.CART
+
+    private val _checkoutState = MutableStateFlow(CartCheckoutState(currentStep = restoredStep))
     val checkoutState = _checkoutState.asStateFlow()
 
     fun addToCart(product: Product, quantity: Int) {
@@ -68,6 +76,7 @@ class CartViewModel : ViewModel() {
                 CheckoutStep.SHIPPING -> CheckoutStep.PAYMENT
                 CheckoutStep.PAYMENT -> CheckoutStep.PAYMENT
             }
+            savedStateHandle["checkout_step"] = nextStep.name
             it.copy(currentStep = nextStep)
         }
     }
@@ -79,6 +88,7 @@ class CartViewModel : ViewModel() {
                 CheckoutStep.SHIPPING -> CheckoutStep.CART
                 CheckoutStep.PAYMENT -> CheckoutStep.SHIPPING
             }
+            savedStateHandle["checkout_step"] = prevStep.name
             it.copy(currentStep = prevStep)
         }
     }
@@ -94,6 +104,7 @@ class CartViewModel : ViewModel() {
     }
 
     fun clearCart() {
+        savedStateHandle["checkout_step"] = CheckoutStep.CART.name
         _cart.value = Cart()
         _checkoutState.value = CartCheckoutState()
     }

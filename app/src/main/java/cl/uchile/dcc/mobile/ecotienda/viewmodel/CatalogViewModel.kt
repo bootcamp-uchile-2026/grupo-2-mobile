@@ -1,10 +1,12 @@
 package cl.uchile.dcc.mobile.ecotienda.viewmodel
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cl.uchile.dcc.mobile.ecotienda.model.DefaultData
 import cl.uchile.dcc.mobile.ecotienda.model.Product
 import cl.uchile.dcc.mobile.ecotienda.ui.screenstates.CatalogCategories
+import cl.uchile.dcc.mobile.ecotienda.ui.screenstates.CatalogFormState
 import cl.uchile.dcc.mobile.ecotienda.ui.screenstates.CatalogScreenState
 import cl.uchile.dcc.mobile.ecotienda.ui.screenstates.CatalogUIState
 import kotlinx.coroutines.delay
@@ -16,14 +18,23 @@ import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 
 // Viewmodel de catalogo
-class CatalogViewModel : ViewModel() {
+class CatalogViewModel(
+    private val savedStateHandle: SavedStateHandle
+) : ViewModel() {
 
     private val allProducts: List<Product> = DefaultData.Product
 
-    private val _state = MutableStateFlow(CatalogUIState(
-        categories = listOf(CatalogCategories.TODOS) +
-                allProducts.map { it.category }.distinct()
-    )
+    private val initialSearch: String = savedStateHandle["search_query"] ?: ""
+    private val initialCategory: String = savedStateHandle["selected_category"] ?: CatalogCategories.TODOS
+
+    private val _state = MutableStateFlow(
+        CatalogUIState(
+            categories = listOf(CatalogCategories.TODOS) + allProducts.map { it.category }.distinct(),
+            form = CatalogFormState(
+                search = initialSearch,
+                selectedCategory = initialCategory
+            )
+        )
     )
     val state: StateFlow<CatalogUIState> = _state.asStateFlow()
 
@@ -40,11 +51,13 @@ class CatalogViewModel : ViewModel() {
     }
 
     fun updateSearch(query: String) {
+        savedStateHandle["search_query"] = query
         _state.update { it.copy(form = it.form.copy(search = query)) }
         applyFilters()
     }
 
     fun selectCategory(category: String) {
+        savedStateHandle["selected_category"] = category
         _state.update { it.copy(form = it.form.copy(selectedCategory = category)) }
         applyFilters()
     }

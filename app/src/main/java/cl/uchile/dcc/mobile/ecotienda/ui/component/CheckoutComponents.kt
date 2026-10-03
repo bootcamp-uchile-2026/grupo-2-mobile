@@ -185,7 +185,7 @@ fun PaymentSelector(
             .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f), RoundedCornerShape(8.dp))
             .padding(16.dp)
     ) {
-        Text(text = "MÉTODO DE PAGO", fontWeight = FontWeight.Bold)
+        Text(text = "MÉTODO DE PAGO", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
         Spacer(modifier = Modifier.height(12.dp))
         
         val methods = listOf("Tarjeta de Crédito", "Tarjeta de Débito", "Transferencia Bancaria", "Mercado Pago")

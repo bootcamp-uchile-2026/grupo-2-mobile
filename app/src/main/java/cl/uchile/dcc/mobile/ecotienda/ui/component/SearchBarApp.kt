@@ -49,7 +49,7 @@ fun SearchStaticBar(
             Text(
                 text = "Busca algo especial",
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.7f)
             )
         }
     }

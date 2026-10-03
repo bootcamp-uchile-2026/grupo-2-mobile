@@ -29,7 +29,18 @@ fun SearchScreen(
     var query by remember { mutableStateOf("") }
     var active by remember { mutableStateOf(true) } // Iniciamos activa para que cubra la pantalla
 
-    // Esta caja usa all the fuckin space (me coloreaba al ponerlo en español)
+    // Evita invocaciones duplicadas de onBack
+    var hasNavigatedBack by remember { mutableStateOf(false) }
+    val handleBack = remember(onBack) {
+        {
+            if (!hasNavigatedBack) {
+                hasNavigatedBack = true
+                onBack()
+            }
+        }
+    }
+
+    // Esta caja usa all the space
     Box(Modifier
         .fillMaxSize()) {
         SearchBar(
@@ -45,7 +56,7 @@ fun SearchScreen(
                 active = it
                 if (!it) onBack() // Si se desactiva, volvemos atrás
             },
-            placeholder = { Text("Busca en EcoTienda...") },
+            placeholder = { Text("Busca en Buen Origen...") },
             leadingIcon = {
                 IconButton(onClick = onBack) {
                     Icon(FeatherIcons.ArrowLeft, contentDescription = "Atrás")
