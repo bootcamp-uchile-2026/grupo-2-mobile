@@ -5,6 +5,8 @@ import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import cl.uchile.dcc.mobile.ecotienda.data.User
+import cl.uchile.dcc.mobile.ecotienda.data.database.UserRepository
 import cl.uchile.dcc.mobile.ecotienda.data.repository.BuenOrigenDataRepository
 import cl.uchile.dcc.mobile.ecotienda.data.repository.userPreferencesDataStore
 import cl.uchile.dcc.mobile.ecotienda.ui.screenstates.AuthUIState
@@ -31,6 +33,8 @@ class AuthViewModel(
         application.getSharedPreferences("ecotienda", Context.MODE_PRIVATE),
         application
     )
+
+    private val userRepository = UserRepository(application)
 
     private val savedEmail: String = savedStateHandle["user_email"] ?: ""
     private val savedIsLoggedIn: Boolean = savedStateHandle["is_logged_in"] ?: false
@@ -127,23 +131,44 @@ class AuthViewModel(
         }
 
         viewModelScope.launch {
-            configRepo.setName(form.email)
             _state.update { it.copy(login = LoginScreenState.Loading) }
-            delay(1500.milliseconds) // simulación de tiempo de logeo
+            delay(1000.milliseconds) // simulación de tiempo de logeo
 
-            savedStateHandle["user_email"] = form.email
-            savedStateHandle["is_logged_in"] = true
-            savedStateHandle["is_guest"] = false
-
-            // login ficticio: acepta cualquier email/password válidos
-            _state.update {
-                it.copy(
-                    login = LoginScreenState.Success(form.email),
-                    isLoggedIn = true,
-                    isGuest = false,
-                    userEmail = form.email,
-                    showLoginSheet = false
+            var user = userRepository.loginUser(form.email, form.password)
+            if (user == null) {
+                // Auto-registrar si no existe (para facilitar login sin pantalla de registro)
+                val newUser = User(
+                    email = form.email,
+                    password = form.password,
+                    name = form.email.substringBefore("@")
                 )
+                if (userRepository.registerUser(newUser)) {
+                    user = userRepository.loginUser(form.email, form.password)
+                }
+            }
+
+            if (user != null) {
+                configRepo.setName(user.name)
+                savedStateHandle["user_email"] = user.email
+                savedStateHandle["is_logged_in"] = true
+                savedStateHandle["is_guest"] = false
+
+                _state.update {
+                    it.copy(
+                        login = LoginScreenState.Success(user.email),
+                        isLoggedIn = true,
+                        isGuest = false,
+                        userEmail = user.email,
+                        showLoginSheet = false
+                    )
+                }
+            } else {
+                _state.update {
+                    it.copy(
+                        login = LoginScreenState.Error("Credenciales inválidas"),
+                        form = it.form.copy(passwordError = "Error al autenticar o registrar usuario")
+                    )
+                }
             }
         }
     }

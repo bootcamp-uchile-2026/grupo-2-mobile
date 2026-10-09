@@ -45,6 +45,7 @@ import cl.uchile.dcc.mobile.ecotienda.viewmodel.ProducerDetailViewModel
 import cl.uchile.dcc.mobile.ecotienda.viewmodel.ProductDetailViewModel
 import cl.uchile.dcc.mobile.ecotienda.viewmodel.CartViewModel
 import cl.uchile.dcc.mobile.ecotienda.viewmodel.AuthViewModel
+import cl.uchile.dcc.mobile.ecotienda.viewmodel.SearchViewModel
 import kotlinx.coroutines.launch
 
 // EcoTiendaApp es el backbone de la aplicación
@@ -57,6 +58,7 @@ fun EcoTiendaApp(
     productViewModel: ProductDetailViewModel = viewModel(),
     cartViewModel: CartViewModel = viewModel(),
     authViewModel: AuthViewModel = viewModel(),
+    searchViewModel: SearchViewModel = viewModel(),
 ) {
     // Implementación de navcontroller
     val navController = rememberNavController()
@@ -187,8 +189,12 @@ fun EcoTiendaApp(
             }
             composable(ScreenRoutes.SEARCH.route) {
                 SearchScreen(
-                onBack = { navController.popBackStack() },
-                onSearch = { /* TODO */ }
+                    onBack = { navController.popBackStack() },
+                    searchViewModel = searchViewModel,
+                    onProductClick = { product ->
+                        productViewModel.selectProduct(product)
+                        navController.navigate(ScreenRoutes.PRODUCTPAGE.route)
+                    }
                 )
             }
             composable(ScreenRoutes.ABOUT.route) {

@@ -1,9 +1,11 @@
 package cl.uchile.dcc.mobile.ecotienda.viewmodel
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
 import cl.uchile.dcc.mobile.ecotienda.data.Cart
 import cl.uchile.dcc.mobile.ecotienda.data.Product
+import cl.uchile.dcc.mobile.ecotienda.data.database.CartRepository
 import cl.uchile.dcc.mobile.ecotienda.data.toCartItem
 import cl.uchile.dcc.mobile.ecotienda.ui.screenstates.CartCheckoutState
 import cl.uchile.dcc.mobile.ecotienda.ui.screenstates.CheckoutStep
@@ -13,9 +15,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 class CartViewModel(
+    application: Application,
     private val savedStateHandle: SavedStateHandle
-) : ViewModel() {
-    private val _cart = MutableStateFlow(Cart())
+) : AndroidViewModel(application) {
+    private val cartRepository = CartRepository(application)
+
+    private val _cart = MutableStateFlow(Cart(items = cartRepository.getCartItems()))
     val cart = _cart.asStateFlow()
 
     private val savedStepName: String? = savedStateHandle["checkout_step"]
@@ -27,46 +32,34 @@ class CartViewModel(
     val checkoutState = _checkoutState.asStateFlow()
 
     fun addToCart(product: Product, quantity: Int) {
-        _cart.update { currentCart ->
-            val existingItem = currentCart.items.find { it.productId == product.id }
-            val updatedItems = if (existingItem != null) {
-                currentCart.items.map {
-                    if (it.productId == product.id) it.copy(quantity = it.quantity + quantity)
-                    else it
-                }
-            } else {
-                currentCart.items + product.toCartItem(quantity)
-            }
-            currentCart.copy(items = updatedItems)
+        val cartItem = product.toCartItem(quantity)
+        cartRepository.addCartItem(cartItem)
+        _cart.update {
+            Cart(items = cartRepository.getCartItems())
         }
     }
 
     fun incrementQuantity(productId: String) {
-        _cart.update { currentCart ->
-            val updatedItems = currentCart.items.map {
-                if (it.productId == productId) it.copy(quantity = it.quantity + 1)
-                else it
-            }
-            currentCart.copy(items = updatedItems)
+        val currentItem = _cart.value.items.find { it.productId == productId }
+        if (currentItem != null) {
+            val newQty = currentItem.quantity + 1
+            cartRepository.updateQuantity(productId, newQty)
+            _cart.update { Cart(items = cartRepository.getCartItems()) }
         }
     }
 
     fun decrementQuantity(productId: String) {
-        _cart.update { currentCart ->
-            val updatedItems = currentCart.items.mapNotNull {
-                if (it.productId == productId) {
-                    if (it.quantity > 1) it.copy(quantity = it.quantity - 1)
-                    else null
-                } else it
-            }
-            currentCart.copy(items = updatedItems)
+        val currentItem = _cart.value.items.find { it.productId == productId }
+        if (currentItem != null) {
+            val newQty = currentItem.quantity - 1
+            cartRepository.updateQuantity(productId, newQty)
+            _cart.update { Cart(items = cartRepository.getCartItems()) }
         }
     }
 
     fun removeFromCart(productId: String) {
-        _cart.update { currentCart ->
-            currentCart.copy(items = currentCart.items.filter { it.productId != productId })
-        }
+        cartRepository.removeCartItem(productId)
+        _cart.update { Cart(items = cartRepository.getCartItems()) }
     }
 
     fun nextStep() {
@@ -105,6 +98,7 @@ class CartViewModel(
 
     fun clearCart() {
         savedStateHandle["checkout_step"] = CheckoutStep.CART.name
+        cartRepository.clearCart()
         _cart.value = Cart()
         _checkoutState.value = CartCheckoutState()
     }

@@ -1,14 +1,22 @@
 package cl.uchile.dcc.mobile.ecotienda.ui.screen
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -16,6 +24,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import cl.uchile.dcc.mobile.ecotienda.data.Product
+import cl.uchile.dcc.mobile.ecotienda.viewmodel.SearchViewModel
 import compose.icons.FeatherIcons
 import compose.icons.feathericons.ArrowLeft
 
@@ -24,37 +35,27 @@ import compose.icons.feathericons.ArrowLeft
 @Composable
 fun SearchScreen(
     onBack: () -> Unit,
-    onSearch: (String) -> Unit
+    searchViewModel: SearchViewModel = viewModel(), // Instanciamos el ViewModel
+    onProductClick: (Product) -> Unit // Para ir al detalle al hacer click en un resultado
 ) {
-    var query by remember { mutableStateOf("") }
-    var active by remember { mutableStateOf(true) } // Iniciamos activa para que cubra la pantalla
+    val uiState by searchViewModel.uiState.collectAsState()
+    var active by remember { mutableStateOf(true) }
 
-    // Evita invocaciones duplicadas de onBack
-    var hasNavigatedBack by remember { mutableStateOf(false) }
-    val handleBack = remember(onBack) {
-        {
-            if (!hasNavigatedBack) {
-                hasNavigatedBack = true
-                onBack()
-            }
-        }
-    }
-
-    // Esta caja usa all the space
-    Box(Modifier
-        .fillMaxSize()) {
+    Box(Modifier.fillMaxSize()) {
         SearchBar(
             modifier = Modifier.align(Alignment.TopCenter),
-            query = query,
-            onQueryChange = { query = it },
-            onSearch = {
-                onSearch(it)
-                active = false
+            query = uiState.query,
+            onQueryChange = { newQuery ->
+                // Opcional: puedes buscar mientras escribe, o esperar a onSearch
+                searchViewModel.searchProducts(newQuery)
+            },
+            onSearch = { queryText ->
+                searchViewModel.searchProducts(queryText)
             },
             active = active,
             onActiveChange = {
                 active = it
-                if (!it) onBack() // Si se desactiva, volvemos atrás
+                if (!it) onBack()
             },
             placeholder = { Text("Busca en Buen Origen...") },
             leadingIcon = {
@@ -63,11 +64,24 @@ fun SearchScreen(
                 }
             }
         ) {
-            // Aquí van las sugerencias o resultados recientes
-            // Usamos sugerencias
-            Text("Natural", modifier = Modifier.padding(16.dp))
-            Text("Libre de plásticos", modifier = Modifier.padding(16.dp))
-            Text("Descuento", modifier = Modifier.padding(16.dp))
+            // Aquí mostramos los resultados obtenidos de SQLite
+            LazyColumn(
+                modifier = Modifier.fillMaxWidth(),
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(uiState.searchResults) { product ->
+                    // Puedes usar tu componente ProductCard o un ListItem sencillo
+                    ListItem(
+                        headlineContent = { Text(product.productName) },
+                        supportingContent = { Text(product.description) },
+                        trailingContent = { Text("$${product.price}") },
+                        modifier = Modifier.clickable {
+                            onProductClick(product)
+                        }
+                    )
+                }
+            }
         }
     }
 }

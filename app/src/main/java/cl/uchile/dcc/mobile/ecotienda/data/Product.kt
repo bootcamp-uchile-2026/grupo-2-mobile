@@ -3,7 +3,7 @@ package cl.uchile.dcc.mobile.ecotienda.data
 import java.util.UUID
 
 data class Product(
-    var id: String = UUID.randomUUID().toString() + "ETV1",
+    var id: String = UUID.randomUUID().toString(),
     var price: Int,
     var description: String,
     var productProducer: String, // Nombre para mostrar
