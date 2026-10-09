@@ -1,4 +1,4 @@
-package cl.uchile.dcc.mobile.ecotienda.model
+package cl.uchile.dcc.mobile.ecotienda.data
 
 data class CartItem(
     val productId: String,

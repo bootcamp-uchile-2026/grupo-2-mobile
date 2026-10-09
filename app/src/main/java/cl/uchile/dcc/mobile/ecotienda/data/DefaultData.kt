@@ -1,4 +1,4 @@
-package cl.uchile.dcc.mobile.ecotienda.model
+package cl.uchile.dcc.mobile.ecotienda.data
 
 // Datos usados para primera iteración de la app
 object DefaultData {

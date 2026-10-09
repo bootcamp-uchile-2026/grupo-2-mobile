@@ -21,7 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import cl.uchile.dcc.mobile.ecotienda.model.Producer
+import cl.uchile.dcc.mobile.ecotienda.data.Producer
 import compose.icons.FeatherIcons
 import compose.icons.feathericons.Map
 

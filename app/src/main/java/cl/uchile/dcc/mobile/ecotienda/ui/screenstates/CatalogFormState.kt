@@ -1,6 +1,6 @@
 package cl.uchile.dcc.mobile.ecotienda.ui.screenstates
 
-import cl.uchile.dcc.mobile.ecotienda.model.Product
+import cl.uchile.dcc.mobile.ecotienda.data.Product
 
 //FormState de catalogo
 object CatalogCategories {

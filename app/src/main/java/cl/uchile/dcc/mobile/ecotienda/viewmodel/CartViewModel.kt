@@ -2,9 +2,9 @@ package cl.uchile.dcc.mobile.ecotienda.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import cl.uchile.dcc.mobile.ecotienda.model.Cart
-import cl.uchile.dcc.mobile.ecotienda.model.Product
-import cl.uchile.dcc.mobile.ecotienda.model.toCartItem
+import cl.uchile.dcc.mobile.ecotienda.data.Cart
+import cl.uchile.dcc.mobile.ecotienda.data.Product
+import cl.uchile.dcc.mobile.ecotienda.data.toCartItem
 import cl.uchile.dcc.mobile.ecotienda.ui.screenstates.CartCheckoutState
 import cl.uchile.dcc.mobile.ecotienda.ui.screenstates.CheckoutStep
 import cl.uchile.dcc.mobile.ecotienda.ui.screenstates.ShippingFormState

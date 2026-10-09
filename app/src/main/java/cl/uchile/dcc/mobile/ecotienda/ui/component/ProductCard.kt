@@ -1,6 +1,5 @@
 package cl.uchile.dcc.mobile.ecotienda.ui.component
 
-import android.R.attr.clickable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -24,7 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import cl.uchile.dcc.mobile.ecotienda.model.Product
+import cl.uchile.dcc.mobile.ecotienda.data.Product
 import cl.uchile.dcc.mobile.ecotienda.utils.formatAsCurrency
 import coil3.compose.AsyncImage
 

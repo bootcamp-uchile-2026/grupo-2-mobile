@@ -3,18 +3,22 @@ package cl.uchile.dcc.mobile.ecotienda.viewmodel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cl.uchile.dcc.mobile.ecotienda.data.repository.BuenOrigenDataRepository
 import cl.uchile.dcc.mobile.ecotienda.ui.screenstates.AuthUIState
 import cl.uchile.dcc.mobile.ecotienda.ui.screenstates.LoginFormState
 import cl.uchile.dcc.mobile.ecotienda.ui.screenstates.LoginScreenState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 
 class AuthViewModel(
+    private val configRepo: BuenOrigenDataRepository,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -66,6 +70,14 @@ class AuthViewModel(
         }
     }
 
+    // Coroutine de repository
+    val userName: StateFlow<String> = configRepo.name
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = "Invitado"
+        )
+
     fun requestLoginSheet() {
         _state.update { it.copy(showLoginSheet = true) }
     }
@@ -105,6 +117,7 @@ class AuthViewModel(
         }
 
         viewModelScope.launch {
+            configRepo.setName(form.email)
             _state.update { it.copy(login = LoginScreenState.Loading) }
             delay(1500.milliseconds) // simulación de tiempo de logeo
 
@@ -131,6 +144,9 @@ class AuthViewModel(
         savedStateHandle["is_guest"] = false
         _state.update {
             AuthUIState(showLoginSheet = false)
+        }
+        viewModelScope.launch {
+            configRepo.setName("Invitado")
         }
     }
 

@@ -1,4 +1,4 @@
-package cl.uchile.dcc.mobile.ecotienda.model
+package cl.uchile.dcc.mobile.ecotienda.data
 
 import java.util.UUID
 

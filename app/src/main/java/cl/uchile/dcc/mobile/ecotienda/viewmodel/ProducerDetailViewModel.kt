@@ -2,8 +2,8 @@ package cl.uchile.dcc.mobile.ecotienda.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import cl.uchile.dcc.mobile.ecotienda.model.DefaultData
-import cl.uchile.dcc.mobile.ecotienda.model.Producer
+import cl.uchile.dcc.mobile.ecotienda.data.DefaultData
+import cl.uchile.dcc.mobile.ecotienda.data.Producer
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
