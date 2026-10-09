@@ -40,6 +40,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import cl.uchile.dcc.mobile.ecotienda.data.repository.BuenOrigenDataRepository
 import cl.uchile.dcc.mobile.ecotienda.ui.component.FigureIconButton
 import cl.uchile.dcc.mobile.ecotienda.ui.screenstates.LoginScreenState
 import cl.uchile.dcc.mobile.ecotienda.ui.theme.CustomBrandParagraph
@@ -61,7 +62,6 @@ fun Login(
 ) {
     // Observamos el estado global de autenticación
     val ui by authViewModel.state.collectAsState()
-
     val authState by authViewModel.state.collectAsState()
     val form = authState.form
 

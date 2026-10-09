@@ -35,6 +35,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import cl.uchile.dcc.mobile.ecotienda.data.DefaultData
+import cl.uchile.dcc.mobile.ecotienda.data.repository.EcoTiendaApp
 import cl.uchile.dcc.mobile.ecotienda.ui.component.AccountSidePanel
 import cl.uchile.dcc.mobile.ecotienda.ui.component.BottomNavigationBar
 import cl.uchile.dcc.mobile.ecotienda.ui.component.SearchStaticBar
@@ -51,7 +52,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EcoTiendaApp(
-    viewModel: MainScreenViewModel = viewModel(),
+    mainScreenViewModel: MainScreenViewModel = viewModel(),
     producerViewModel: ProducerDetailViewModel = viewModel(),
     productViewModel: ProductDetailViewModel = viewModel(),
     cartViewModel: CartViewModel = viewModel(),
@@ -112,8 +113,8 @@ fun EcoTiendaApp(
                             icon = Icons.Filled.Person,
                         )
                         Text(
-                            text = if (authState.isLoggedIn) authState.userEmail?.split("@")?.get(0) ?: "Usuario" 
-                                   else if (authState.isGuest) "Invitado" 
+                            text = if (authState.isLoggedIn) authState.userEmail?.split("@")?.get(0) ?: "Usuario"
+                                   else if (authState.isGuest) "Invitado"
                                    else "Ingresar",
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.primary,

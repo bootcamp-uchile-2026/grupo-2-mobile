@@ -1,9 +1,12 @@
 package cl.uchile.dcc.mobile.ecotienda.viewmodel
 
+import android.app.Application
+import android.content.Context
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cl.uchile.dcc.mobile.ecotienda.data.repository.BuenOrigenDataRepository
+import cl.uchile.dcc.mobile.ecotienda.data.repository.userPreferencesDataStore
 import cl.uchile.dcc.mobile.ecotienda.ui.screenstates.AuthUIState
 import cl.uchile.dcc.mobile.ecotienda.ui.screenstates.LoginFormState
 import cl.uchile.dcc.mobile.ecotienda.ui.screenstates.LoginScreenState
@@ -18,9 +21,16 @@ import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 
 class AuthViewModel(
-    private val configRepo: BuenOrigenDataRepository,
+    application: Application,
     private val savedStateHandle: SavedStateHandle
-) : ViewModel() {
+) : AndroidViewModel(application) {
+
+    private val app = application as? cl.uchile.dcc.mobile.ecotienda.data.repository.EcoTiendaApp
+    private val configRepo = app?.container?.buenOrigenRepository ?: BuenOrigenDataRepository(
+        application.userPreferencesDataStore,
+        application.getSharedPreferences("ecotienda", Context.MODE_PRIVATE),
+        application
+    )
 
     private val savedEmail: String = savedStateHandle["user_email"] ?: ""
     private val savedIsLoggedIn: Boolean = savedStateHandle["is_logged_in"] ?: false
