@@ -2,6 +2,7 @@ package cl.uchile.dcc.mobile.ecotienda.data.repository
 
 import android.app.Application
 import android.content.Context
+import cl.uchile.dcc.mobile.ecotienda.data.database.DatabaseSeeder
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
@@ -29,6 +30,7 @@ class EcoTiendaApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        DatabaseSeeder.seedIfEmpty(this)
         container = AppContainer(this)
     }
 }

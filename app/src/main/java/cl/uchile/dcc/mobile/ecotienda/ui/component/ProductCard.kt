@@ -37,7 +37,7 @@ fun ProductCard(
     Card(
         modifier = modifier
             .height(300.dp)
-            .padding(8.dp)        // alto aproximado
+            .padding(8.dp)
             .clickable { onProductClick() },
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)

@@ -4,6 +4,7 @@ package cl.uchile.dcc.mobile.ecotienda.data
 object DefaultData {
     val Product = listOf(
         Product(
+            id = "PRD-CEPILLO",
             productName = "Cepillo",
             price = 5990,
             description = "Cepillo",
@@ -14,6 +15,7 @@ object DefaultData {
             producerID = "CL1"
         ),
         Product(
+            id = "PRD-MOCHILA",
             productName = "Mochila",
             price = 10999,
             description = "Mochila",
@@ -24,6 +26,7 @@ object DefaultData {
             producerID = "AH1"
         ),
         Product(
+            id = "PRD-ESPONJA",
             productName = "Esponja Natural",
             price = 4990,
             description = "Esponja muy Natural",
@@ -34,6 +37,7 @@ object DefaultData {
             producerID = "MT1"
         ),
         Product(
+            id = "PRD-POLERA",
             productName = "Polera Aurora",
             price = 4990,
             description = "Producto Sustentable",
@@ -44,6 +48,7 @@ object DefaultData {
             producerID = "MT1"
         ),
         Product(
+            id = "PRD-HUESO",
             productName = "Hueso",
             price = 4990,
             description = "Producto Sustentable",

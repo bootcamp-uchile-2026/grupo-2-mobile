@@ -26,6 +26,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import cl.uchile.dcc.mobile.ecotienda.data.Product
+import cl.uchile.dcc.mobile.ecotienda.ui.component.ProductCard
+import cl.uchile.dcc.mobile.ecotienda.ui.component.ProductCardSearch
 import cl.uchile.dcc.mobile.ecotienda.viewmodel.SearchViewModel
 import compose.icons.FeatherIcons
 import compose.icons.feathericons.ArrowLeft
@@ -72,14 +74,22 @@ fun SearchScreen(
             ) {
                 items(uiState.searchResults) { product ->
                     // Puedes usar tu componente ProductCard o un ListItem sencillo
-                    ListItem(
-                        headlineContent = { Text(product.productName) },
-                        supportingContent = { Text(product.description) },
-                        trailingContent = { Text("$${product.price}") },
-                        modifier = Modifier.clickable {
-                            onProductClick(product)
-                        }
+                    ProductCardSearch(
+                        product = product,
+                        onProductClick = { onProductClick(product) },
+                        onAgregarClick = { },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 8.dp) // un poquito de margen si quieres
                     )
+//                    ListItem(
+//                        headlineContent = { Text(product.productName) },
+//                        supportingContent = { Text(product.description) },
+//                        trailingContent = { Text("$${product.price}") },
+//                        modifier = Modifier.clickable {
+//                            onProductClick(product)
+//                        }
+//                    )
                 }
             }
         }
