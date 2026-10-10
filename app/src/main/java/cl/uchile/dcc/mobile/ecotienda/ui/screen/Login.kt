@@ -54,7 +54,7 @@ fun Login(
     val authState by authViewModel.state.collectAsState()
     val form = authState.form
 
-// Cuando el fake login o el invitado terminan, avisamos al NavHost
+    // Cuando el fake login o el invitado terminan, avisamos al NavHost
     LaunchedEffect(authState.isLoggedIn, authState.isGuest) {
         if (authState.isLoggedIn || authState.isGuest) {
             onSuccess()

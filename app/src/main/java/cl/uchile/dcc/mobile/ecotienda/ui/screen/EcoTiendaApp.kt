@@ -20,6 +20,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.collectAsState
@@ -72,7 +73,7 @@ fun EcoTiendaApp(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
-    // Buscamos la pantalla current
+    // Buscamos la pantalla actual
     val currentScreen = ScreenRoutes.entries.find { it.route == currentRoute } ?: ScreenRoutes.HOME
 
     // Se crea variable para registrar si el teclado esta presente en pantalla
@@ -265,7 +266,15 @@ fun EcoTiendaApp(
             }
 
             composable(ScreenRoutes.LOGIN.route) {
-                // por si algo viejo navega a LOGIN
+                // Si la sesión ya existe al abrir la app, ir automáticamente a HOME
+                LaunchedEffect(authState.isLoggedIn, authState.isGuest) {
+                    if (authState.isLoggedIn || authState.isGuest) {
+                        navController.navigate(ScreenRoutes.HOME.route) {
+                            popUpTo(ScreenRoutes.LOGIN.route) { inclusive = true }
+                        }
+                    }
+                }
+
                 AccountGate(
                     modifier = Modifier.padding(innerPadding),
                     authViewModel = authViewModel,

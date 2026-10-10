@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -39,6 +40,29 @@ class AuthViewModel(
     private val savedEmail: String = savedStateHandle["user_email"] ?: ""
     private val savedIsLoggedIn: Boolean = savedStateHandle["is_logged_in"] ?: false
     private val savedIsGuest: Boolean = savedStateHandle["is_guest"] ?: false
+
+
+    init {
+        // Al iniciar el ViewModel, leemos la sesión guardada en DataStore
+        viewModelScope.launch {
+            combine(
+                configRepo.isLoggedIn,
+                configRepo.isGuest,
+                configRepo.userEmail
+            ) { isLoggedIn, isGuest, userEmail ->
+                Triple(isLoggedIn, isGuest, userEmail)
+            }.collect { (isLoggedIn, isGuest, userEmail) ->
+                _state.update { current ->
+                    current.copy(
+                        isLoggedIn = isLoggedIn,
+                        isGuest = isGuest,
+                        userEmail = userEmail,
+                        form = if (!userEmail.isNullOrBlank()) current.form.copy(email = userEmail) else current.form
+                    )
+                }
+            }
+        }
+    }
 
     // Uso de AuthUiState para login
     private val _state = MutableStateFlow(
@@ -100,9 +124,17 @@ class AuthViewModel(
         _state.update { it.copy(showLoginSheet = false) }
     }
 
+    // Sesión de invitado
     fun continueAsGuest() {
-        savedStateHandle["is_guest"] = true
-        _state.update { it.copy(isGuest = true, showLoginSheet = false) }
+        viewModelScope.launch {
+            configRepo.saveSession(
+                isLoggedIn = false,
+                isGuest = true,
+                email = null,
+                name = "Invitado"
+            )
+            _state.update { it.copy(isGuest = true, isLoggedIn = false, userEmail = null, showLoginSheet = false) }
+        }
     }
 
     fun login() {
@@ -148,7 +180,12 @@ class AuthViewModel(
             }
 
             if (user != null) {
-                configRepo.setName(user.name)
+                configRepo.saveSession(
+                    isLoggedIn = true,
+                    isGuest = false,
+                    email = user.email,
+                    name = user.name
+                )
                 savedStateHandle["user_email"] = user.email
                 savedStateHandle["is_logged_in"] = true
                 savedStateHandle["is_guest"] = false
@@ -181,11 +218,11 @@ class AuthViewModel(
             AuthUIState(showLoginSheet = false)
         }
         viewModelScope.launch {
-            configRepo.setName("Invitado")
+            configRepo.clearSession()
         }
     }
 
-    // Eliminar snackbarhostate de homre una vez logeado o invitado
+    // Eliminar snackbarhostate de nombre una vez logeado o invitado
     fun markWelcomeShown() {
         _state.update { it.copy(welcomeMessageShown = true) }
     }
