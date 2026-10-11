@@ -148,18 +148,24 @@ class ProductRepository(
 
     // Metodo para buscar productos
     fun searchProducts(query: String): List<Product> {
+
+        // Si la búsqueda está en blanco (ej: solo espacios), retornamos todos los productos
+        if (query.isBlank()) return getAllProduct()
+
         val products = mutableListOf<Product>()
         val db = dbHelper.readableDatabase
 
-        val selection = "name LIKE ? OR description LIKE ?"
-        val selectionArgs = arrayOf("%$query%", "%$query%")
+        val selection = "name LIKE ? OR description LIKE ? OR category LIKE ? OR productProducer LIKE ?"
+        val selectionArgs = arrayOf("%$query%", "%$query%", "%$query%", "%$query%")
 
         val cursor = db.query(
             BuenOrigenOpenHelper.TABLE_PRODUCT_REGISTRY,
             null,
             selection,
             selectionArgs,
-            null, null, null
+            null,
+            null,
+            null
         )
 
         with(cursor) {

@@ -191,10 +191,36 @@ fun EcoTiendaApp(
             composable(ScreenRoutes.SEARCH.route) {
                 SearchScreen(
                     onBack = { navController.popBackStack() },
+                    onSubmitSearch = { query ->
+                        searchViewModel.onSearchSubmitted(query)
+                        navController.navigate(ScreenRoutes.SEARCH_RESULTS.route)
+                    },
                     searchViewModel = searchViewModel,
                     onProductClick = { product ->
                         productViewModel.selectProduct(product)
                         navController.navigate(ScreenRoutes.PRODUCTPAGE.route)
+                    },
+                    onAddToCart = { product ->
+                        cartViewModel.addToCart(product, 1)
+                        scope.launch {
+                            snackbarHostState.showSnackbar("Añadido: ${product.productName}")
+                        }
+                    }
+                )
+            }
+            composable(ScreenRoutes.SEARCH_RESULTS.route) {
+                SearchResultsScreen(
+                    searchViewModel = searchViewModel,
+                    onBack = { navController.popBackStack() },
+                    onProductClick = { product ->
+                        productViewModel.selectProduct(product)
+                        navController.navigate(ScreenRoutes.PRODUCTPAGE.route)
+                    },
+                    onAddToCart = { product ->
+                        cartViewModel.addToCart(product, 1)
+                        scope.launch {
+                            snackbarHostState.showSnackbar("Añadido: ${product.productName}")
+                        }
                     }
                 )
             }

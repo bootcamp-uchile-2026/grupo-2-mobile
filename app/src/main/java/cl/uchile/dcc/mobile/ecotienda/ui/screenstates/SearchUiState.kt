@@ -4,6 +4,8 @@ import cl.uchile.dcc.mobile.ecotienda.data.Product
 
 data class SearchUiState(
     val query: String = "",
-    val searchResults: List<Product> = emptyList(), // <--- ¡Aquí está!
-    val isLoading: Boolean = false
+    val searchResults: List<Product> = emptyList(),
+    val isLoading: Boolean = false,
+    // Nos indica si se presiona el boton de búsqueda en la pantalla de busqueda
+    val isSearchSubmitted: Boolean = false
 )

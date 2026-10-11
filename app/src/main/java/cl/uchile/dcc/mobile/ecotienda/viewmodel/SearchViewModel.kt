@@ -19,11 +19,37 @@ class SearchViewModel(
     private val _uiState = MutableStateFlow(SearchUiState())
     val uiState = _uiState.asStateFlow()
 
+    // Se usa ientras el usuario escribe en el TextField
+    fun onQueryChange(newQuery: String) {
+        _uiState.update { it.copy(query = newQuery, isSearchSubmitted = false) }
+        searchProducts(newQuery)
+    }
+
+    // Se usa cuando el usuario presiona "Buscar" o Enter
+    fun onSearchSubmitted(query: String) {
+        _uiState.update {
+            it.copy(
+                query = query,
+                isLoading = true,
+                isSearchSubmitted = true
+            )
+        }
+        viewModelScope.launch {
+            val results = productRepository.searchProducts(query)
+            _uiState.update {
+                it.copy(
+                    searchResults = results,
+                    isLoading = false
+                )
+            }
+        }
+    }
+
     fun searchProducts(query: String) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
 
-            // Llamamos al método SQLite que vimos antes
+            // Llamamos al metodo searchProducts
             val results = productRepository.searchProducts(query)
 
             // Guardamos los resultados en el estado
@@ -31,7 +57,7 @@ class SearchViewModel(
                 it.copy(
                     query = query,
                     searchResults = results,
-                    isLoading = false
+                    isLoading = false,
                 )
             }
         }
