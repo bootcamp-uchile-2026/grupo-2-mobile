@@ -17,10 +17,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+<<<<<<< HEAD
 import cl.uchile.dcc.mobile.ecotienda.model.Producer
 import cl.uchile.dcc.mobile.ecotienda.ui.component.GeneralCard
 import cl.uchile.dcc.mobile.ecotienda.ui.component.ProducerCard
 import cl.uchile.dcc.mobile.ecotienda.ui.theme.ecoTiendaColors
+=======
+import cl.uchile.dcc.mobile.ecotienda.data.Producer
+import cl.uchile.dcc.mobile.ecotienda.ui.component.CompromisosSection
+import cl.uchile.dcc.mobile.ecotienda.ui.component.GeneralCard
+import cl.uchile.dcc.mobile.ecotienda.ui.component.ProducerAvatarItem
+>>>>>>> feature/data-sqlite
 
 // Pagina de acerca de nosotros, presentando los productores
 // Navegación: Home -> Nosotros
@@ -28,7 +35,7 @@ import cl.uchile.dcc.mobile.ecotienda.ui.theme.ecoTiendaColors
 fun About(
     modifier: Modifier,
     producers: List<Producer>,
-    textColor: Color = MaterialTheme.ecoTiendaColors.cl3,
+    textColor: Color = MaterialTheme.colorScheme.primary,
     onProducerClick: (Producer) -> Unit
 ) {
     // 1. Eliminamos pagerState ya que no lo usaremos para scroll vertical

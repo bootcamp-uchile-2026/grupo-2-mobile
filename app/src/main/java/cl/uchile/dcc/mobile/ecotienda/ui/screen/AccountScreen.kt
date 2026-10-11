@@ -14,7 +14,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import cl.uchile.dcc.mobile.ecotienda.viewmodel.AuthViewModel
 
@@ -40,12 +40,12 @@ fun AccountScreen(
         modifier = modifier
             .fillMaxSize()
             .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Surface(
             modifier = Modifier.size(88.dp),
             shape = CircleShape,
-            color = MaterialTheme.colorScheme.primaryContainer
+            color = MaterialTheme.colorScheme.primary
         ) {
             Box(contentAlignment = Alignment.Center) {
                 Text(
@@ -79,14 +79,31 @@ fun AccountScreen(
             headlineContent = { Text("Perfil") },
             leadingContent = { Icon(Icons.Filled.Person, null) },
             trailingContent = { Icon(Icons.Filled.ChevronRight, null) },
+<<<<<<< HEAD
             modifier = Modifier.clickable { /* más adelante editar perfil */ }
+=======
+            modifier = Modifier
+                .clickable { /* más adelante editar perfil */ },
+            colors = ListItemDefaults.colors(
+                containerColor = MaterialTheme.colorScheme.onPrimary,
+                headlineColor = MaterialTheme.colorScheme.onSurface,             // Color del texto
+                leadingIconColor = MaterialTheme.colorScheme.primary,           // Color del ícono principal
+                trailingIconColor = MaterialTheme.colorScheme.primary
+            )
+>>>>>>> feature/data-sqlite
         )
         HorizontalDivider()
         ListItem(
             headlineContent = { Text("Mis compras") },
             leadingContent = { Icon(Icons.Filled.ShoppingBag, null) },
             trailingContent = { Icon(Icons.Filled.ChevronRight, null) },
-            modifier = Modifier.clickable(onClick = onOpenOrders)
+            modifier = Modifier.clickable(onClick = onOpenOrders),
+            colors = ListItemDefaults.colors(
+                containerColor = MaterialTheme.colorScheme.onPrimary,
+                headlineColor = MaterialTheme.colorScheme.onSurface,             // Color del texto
+                leadingIconColor = MaterialTheme.colorScheme.primary,           // Color del ícono principal
+                trailingIconColor = MaterialTheme.colorScheme.primary
+            )
         )
         HorizontalDivider()
 
@@ -97,7 +114,20 @@ fun AccountScreen(
         ) {
             Icon(Icons.Filled.Logout, null)
             Spacer(Modifier.width(8.dp))
-            Text("Cerrar sesión")
+            Text(text = "Cerrar sesión",
+                style = MaterialTheme.typography.titleMedium)
         }
+<<<<<<< HEAD
+=======
+
+        Spacer(Modifier.height(16.dp))
+        Button(
+            onClick = onGoHome,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(text = "Ir al inicio",
+                style = MaterialTheme.typography.titleMedium)
+        }
+>>>>>>> feature/data-sqlite
     }
 }

@@ -27,13 +27,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+<<<<<<< HEAD
 import cl.uchile.dcc.mobile.ecotienda.ui.theme.SoftBeige
+=======
+>>>>>>> feature/data-sqlite
 import coil3.compose.AsyncImage
 
 @Composable
 fun GeneralCard(
     modifier: Modifier = Modifier,
+<<<<<<< HEAD
     containerColor: Color = SoftBeige,
+=======
+    containerColor: Color = MaterialTheme.colorScheme.tertiaryContainer,
+>>>>>>> feature/data-sqlite
     imageUrl: String,
     text1: String,
     text2: String

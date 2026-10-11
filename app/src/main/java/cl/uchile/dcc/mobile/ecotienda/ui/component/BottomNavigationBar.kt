@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import cl.uchile.dcc.mobile.ecotienda.ui.screen.ScreenRoutes
+<<<<<<< HEAD
 import cl.uchile.dcc.mobile.ecotienda.ui.theme.DarkBrown
 import cl.uchile.dcc.mobile.ecotienda.ui.theme.EcoGreen
 import cl.uchile.dcc.mobile.ecotienda.ui.theme.SoftBeige
@@ -20,16 +21,25 @@ import cl.uchile.dcc.mobile.ecotienda.ui.theme.SoftBeige
 // Genera una barra de navegacion abajo con atajos a las pantallas: HOME, CATALOG, ABOUT, CART
 // ejemplo: BottomNavigationBar ("HOME", callBack = { }, Colors) Crea una barra con atajos
 
+=======
+>>>>>>> feature/data-sqlite
 @Composable
 fun BottomNavigationBar(
     currentRoute: String?,
     onNavigateTo: (String) -> Unit,
     modifier: Modifier = Modifier,
     windowInsets: WindowInsets = WindowInsets.navigationBars,
+<<<<<<< HEAD
     containerColor: Color = SoftBeige,
     selectedColor: Color = EcoGreen,
     selectedTextColor: Color = selectedColor,
     unselectedColor: Color = DarkBrown.copy(alpha = 0.7f),
+=======
+    containerColor: Color = MaterialTheme.colorScheme.tertiaryContainer,
+    selectedColor: Color = MaterialTheme.colorScheme.primary,
+    selectedTextColor: Color = MaterialTheme.colorScheme.secondary,
+    unselectedColor: Color = MaterialTheme.colorScheme.tertiary,
+>>>>>>> feature/data-sqlite
     unselectedTextColor: Color = unselectedColor,
 
     )

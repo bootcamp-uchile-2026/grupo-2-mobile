@@ -13,14 +13,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import cl.uchile.dcc.mobile.ecotienda.model.Cart
+import cl.uchile.dcc.mobile.ecotienda.data.Cart
 import cl.uchile.dcc.mobile.ecotienda.ui.component.*
 import cl.uchile.dcc.mobile.ecotienda.ui.screenstates.CheckoutStep
-import cl.uchile.dcc.mobile.ecotienda.ui.theme.Sage
-import cl.uchile.dcc.mobile.ecotienda.ui.theme.ecoTiendaColors
 import cl.uchile.dcc.mobile.ecotienda.viewmodel.AuthViewModel
 import cl.uchile.dcc.mobile.ecotienda.viewmodel.CartViewModel
 import compose.icons.FeatherIcons
@@ -94,7 +91,7 @@ fun Cart(
                     CheckoutStep.PAYMENT -> "3. Pago"
                 },
                 style = MaterialTheme.typography.labelLarge,
-                color = Sage
+                color = MaterialTheme.colorScheme.primary
             )
         }
 
@@ -147,7 +144,7 @@ fun Cart(
                                 Text(
                                     text = "$${cart.total}",
                                     style = MaterialTheme.typography.titleLarge,
-                                    color = Sage,
+                                    color = MaterialTheme.colorScheme.primary,
                                     fontWeight = FontWeight.Bold
                                 )
                             }
@@ -156,7 +153,7 @@ fun Cart(
                         Button(
                             onClick = { cartViewModel.nextStep() },
                             modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = Sage),
+                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.tertiaryContainer),
                             shape = RoundedCornerShape(24.dp)
                         ) {
                             Text("Continuar al Envío", color = Color.White)

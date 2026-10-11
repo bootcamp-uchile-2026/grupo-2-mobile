@@ -21,9 +21,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+<<<<<<< HEAD
 import cl.uchile.dcc.mobile.ecotienda.model.Producer
 import cl.uchile.dcc.mobile.ecotienda.ui.theme.DarkBrown
 import cl.uchile.dcc.mobile.ecotienda.ui.theme.MidleBrown
+=======
+import cl.uchile.dcc.mobile.ecotienda.data.Producer
+>>>>>>> feature/data-sqlite
 import compose.icons.FeatherIcons
 import compose.icons.feathericons.Map
 
@@ -31,8 +35,13 @@ import compose.icons.feathericons.Map
 fun ProducerCard(
     modifier: Modifier,
     producer: Producer,
+<<<<<<< HEAD
     containerColor: Color = MidleBrown,
     textColor: Color = DarkBrown,
+=======
+    containerColor: Color = MaterialTheme.colorScheme.tertiaryContainer,
+    textColor: Color = MaterialTheme.colorScheme.primary,
+>>>>>>> feature/data-sqlite
     onBack: () -> Unit
 ) {
     Card(

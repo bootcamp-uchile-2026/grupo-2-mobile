@@ -28,8 +28,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import cl.uchile.dcc.mobile.ecotienda.ui.theme.Mint
-import cl.uchile.dcc.mobile.ecotienda.ui.theme.Sage
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -44,7 +42,7 @@ fun CompromisosSection(modifier: Modifier = Modifier) {
             text = "NUESTROS COMPROMISOS",
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
-            color = Sage,
+            color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.padding(bottom = 24.dp)
         )
 
@@ -95,13 +93,13 @@ fun CompromisoItem(
         Box(
             modifier = Modifier
                 .size(60.dp)
-                .background(Mint, CircleShape),
+                .background(MaterialTheme.colorScheme.tertiaryContainer, CircleShape),
             contentAlignment = Alignment.Center
         ) {
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                tint = Sage,
+                tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(32.dp)
             )
         }
@@ -110,14 +108,14 @@ fun CompromisoItem(
             text = title,
             style = MaterialTheme.typography.bodyLarge,
             fontWeight = FontWeight.Bold,
-            color = Sage,
+            color = MaterialTheme.colorScheme.primary,
             textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
             text = description,
             style = MaterialTheme.typography.bodySmall,
-            color = Sage,
+            color = MaterialTheme.colorScheme.primary,
             textAlign = TextAlign.Center,
             lineHeight = 16.sp
         )

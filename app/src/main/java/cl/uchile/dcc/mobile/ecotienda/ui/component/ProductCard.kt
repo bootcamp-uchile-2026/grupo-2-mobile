@@ -22,9 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import cl.uchile.dcc.mobile.ecotienda.model.Product
-import cl.uchile.dcc.mobile.ecotienda.ui.theme.ecoTiendaColors
-import cl.uchile.dcc.mobile.ecotienda.ui.theme.md_theme_light_primary
+import cl.uchile.dcc.mobile.ecotienda.data.Product
 import cl.uchile.dcc.mobile.ecotienda.utils.formatAsCurrency
 import coil3.compose.AsyncImage
 
@@ -37,7 +35,12 @@ fun ProductCard(
     Card(
         modifier = modifier
             .height(300.dp)
+<<<<<<< HEAD
             .padding(8.dp),        // alto aproximado
+=======
+            .padding(8.dp)
+            .clickable { onProductClick() },
+>>>>>>> feature/data-sqlite
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
     ) {
@@ -99,11 +102,13 @@ fun ProductCard(
                     .align(Alignment.BottomEnd)
                     .padding(12.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.ecoTiendaColors.cl1
+                    containerColor = MaterialTheme.colorScheme.tertiaryContainer
                 ),
                 shape = RoundedCornerShape(50)
             ) {
-                Text("+Agregar")
+                Text(text = "+Agregar",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.secondary)
             }
 
         }

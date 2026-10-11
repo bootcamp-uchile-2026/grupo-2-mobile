@@ -56,6 +56,7 @@ enum class ScreenRoutes(
     ),
 
     // Sin ninguna barra (ni bottom ni top)
+<<<<<<< HEAD
     LOGIN(
         showTopBar = false,
         showBottomBar = false,
@@ -79,4 +80,11 @@ enum class ScreenRoutes(
         route = "SEARCH",
         icon = Icons.Filled.Search
     );
+=======
+    LOGIN(showTopBar = false, showBottomBar = false, title = "Ingreso de Usuarios", route = "Login", icon = Icons.Filled.Person),
+    ACCOUNT(showTopBar = false, showBottomBar = false, title = "Cuenta de Usuarios", route = "Account", icon = Icons.Filled.Person),
+    CART(showTopBar = false, showBottomBar = false, title = "Carrito", route = "CART", icon = Icons.Filled.ShoppingCart),
+    SEARCH(showTopBar = false, showBottomBar = false, title = "Búsqueda", route = "SEARCH", icon = Icons.Filled.Search),
+    SEARCH_RESULTS(showTopBar = false, showBottomBar = false, title = "Resultados de búsqueda", route = "SEARCH_RESULTS", icon = Icons.Filled.Search),
+>>>>>>> feature/data-sqlite
 }

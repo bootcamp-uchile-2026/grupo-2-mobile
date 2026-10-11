@@ -17,7 +17,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+<<<<<<< HEAD
 import cl.uchile.dcc.mobile.ecotienda.ui.theme.MidleBrown
+=======
+>>>>>>> feature/data-sqlite
 import compose.icons.FeatherIcons
 import compose.icons.feathericons.Search
 
@@ -29,8 +32,12 @@ import compose.icons.feathericons.Search
 fun SearchStaticBar(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+<<<<<<< HEAD
     bgColor: Color = MidleBrown,
 
+=======
+    bgColor: Color = MaterialTheme.colorScheme.tertiaryContainer,
+>>>>>>> feature/data-sqlite
 ) {
     Surface(
         onClick = onClick,
@@ -52,7 +59,7 @@ fun SearchStaticBar(
             Text(
                 text = "Busca algo especial",
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.7f)
             )
         }
     }

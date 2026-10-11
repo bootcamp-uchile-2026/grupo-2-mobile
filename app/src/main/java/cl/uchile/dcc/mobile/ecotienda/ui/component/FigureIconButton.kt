@@ -11,9 +11,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+<<<<<<< HEAD
 import androidx.compose.ui.unit.dp
 import cl.uchile.dcc.mobile.ecotienda.ui.theme.DarkBrown
 import cl.uchile.dcc.mobile.ecotienda.ui.theme.SoftBeige
+=======
+import androidx.compose.material3.MaterialTheme
+>>>>>>> feature/data-sqlite
 
 // FigureIconButton :: String callBack icon enabled -> Icon() { }
 // Genera un Button con forma de Icon, que se puede hacer click
@@ -24,8 +28,13 @@ fun FigureIconButton(
     callBack: () -> Unit,
     icon: ImageVector,
     enabled: Boolean = true,
+<<<<<<< HEAD
     iconColor: Color = DarkBrown,
     iconCircleColor: Color = SoftBeige,
+=======
+    iconColor: Color = MaterialTheme.colorScheme.tertiary,
+    iconCircleColor: Color = MaterialTheme.colorScheme.onPrimary,
+>>>>>>> feature/data-sqlite
 ) {
     IconButton(
         onClick = { callBack() },

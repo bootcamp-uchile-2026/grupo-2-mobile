@@ -1,9 +1,10 @@
-package cl.uchile.dcc.mobile.ecotienda.model
+package cl.uchile.dcc.mobile.ecotienda.data
 
 // Datos usados para primera iteración de la app
 object DefaultData {
     val Product = listOf(
         Product(
+            id = "PRD-CEPILLO",
             productName = "Cepillo",
             price = 5990,
             description = "Cepillo",
@@ -14,6 +15,7 @@ object DefaultData {
             producerID = "CL1"
         ),
         Product(
+            id = "PRD-MOCHILA",
             productName = "Mochila",
             price = 10999,
             description = "Mochila",
@@ -24,6 +26,7 @@ object DefaultData {
             producerID = "AH1"
         ),
         Product(
+            id = "PRD-ESPONJA",
             productName = "Esponja Natural",
             price = 4990,
             description = "Esponja muy Natural",
@@ -33,6 +36,31 @@ object DefaultData {
             category = "Cuidado del Hogar",
             producerID = "MT1"
         ),
+<<<<<<< HEAD:app/src/main/java/cl/uchile/dcc/mobile/ecotienda/model/DefaultData.kt
+=======
+        Product(
+            id = "PRD-POLERA",
+            productName = "Polera Aurora",
+            price = 4990,
+            description = "Producto Sustentable",
+            productProducer = "Luis Pereira",
+            imageUrl = "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%2Fid%2FOIP.3Y-GiZiW8JptBlHORnKV4gHaHa%3Fr%3D0%26pid%3DApi&f=1&ipt=facb6669e2a63c9cf0a46b6ffb1da30bbf2681f40c68ce7c2f3386d7b61addd8&ipo=images",
+            stock = 3,
+            category = "Moda Natural",
+            producerID = "MT1"
+        ),
+        Product(
+            id = "PRD-HUESO",
+            productName = "Hueso",
+            price = 4990,
+            description = "Producto Sustentable",
+            productProducer = "Javiera Montenegro",
+            imageUrl = "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.explicit.bing.net%2Fth%2Fid%2FOIP.sySMph4VYgoi6_wSvyghgwHaGL%3Fr%3D0%26pid%3DApi&f=1&ipt=243fee6e4d3c8ef085eff927222645ca1a3135809283fc203dabd612d4904474&ipo=images",
+            stock = 3,
+            category = "Mascotas",
+            producerID = "MT1"
+        ),
+>>>>>>> feature/data-sqlite:app/src/main/java/cl/uchile/dcc/mobile/ecotienda/data/DefaultData.kt
 
         
     )
