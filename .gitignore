@@ -1,2 +1,42 @@
-# Agrega aquí los archivos y directorios que no deben incorporarse al repositorio.
-# Adapta este archivo a las tecnologías elegidas por el equipo.
+# Built application files
+*.apk
+*.aar
+*.ap_
+*.aab
+
+# Files for the ART/Dalvik VM
+*.dex
+
+# Java class files
+*.class
+
+# Generated files
+bin/
+gen/
+out/
+build/
+app/build/
+
+# Gradle files
+.gradle/
+buildOutputCleanup/
+configuration-cache/
+
+# Android Studio / IntelliJ project files
+.idea/
+*.iml
+*.iws
+*.ipr
+.artifacts/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Local configuration file (sdk path, etc)
+local.properties
