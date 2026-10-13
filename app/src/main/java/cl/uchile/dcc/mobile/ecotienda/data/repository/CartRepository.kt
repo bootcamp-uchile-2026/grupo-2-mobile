@@ -1,8 +1,8 @@
-package cl.uchile.dcc.mobile.ecotienda.data.database
+package cl.uchile.dcc.mobile.ecotienda.data.database_open_helper
 
 import android.content.ContentValues
 import android.content.Context
-import cl.uchile.dcc.mobile.ecotienda.data.CartItem
+import cl.uchile.dcc.mobile.ecotienda.data.database.CartItem
 
 class CartRepository(
     private val context: Context
