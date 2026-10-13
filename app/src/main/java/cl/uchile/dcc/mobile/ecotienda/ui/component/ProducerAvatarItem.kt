@@ -20,7 +20,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import cl.uchile.dcc.mobile.ecotienda.data.Producer
+import cl.uchile.dcc.mobile.ecotienda.data.database.Producer
 import coil3.compose.AsyncImage
 
 @Composable

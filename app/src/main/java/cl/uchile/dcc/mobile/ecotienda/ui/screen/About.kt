@@ -20,7 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import cl.uchile.dcc.mobile.ecotienda.data.Producer
+import cl.uchile.dcc.mobile.ecotienda.data.database.Producer
 import cl.uchile.dcc.mobile.ecotienda.ui.component.CompromisosSection
 import cl.uchile.dcc.mobile.ecotienda.ui.component.GeneralCard
 import cl.uchile.dcc.mobile.ecotienda.ui.component.ProducerAvatarItem

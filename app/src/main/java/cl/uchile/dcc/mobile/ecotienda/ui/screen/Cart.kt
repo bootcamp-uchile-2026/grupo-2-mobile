@@ -15,7 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import cl.uchile.dcc.mobile.ecotienda.data.Cart
+import cl.uchile.dcc.mobile.ecotienda.data.database.Cart
 import cl.uchile.dcc.mobile.ecotienda.ui.component.*
 import cl.uchile.dcc.mobile.ecotienda.ui.screenstates.CheckoutStep
 import cl.uchile.dcc.mobile.ecotienda.viewmodel.AuthViewModel

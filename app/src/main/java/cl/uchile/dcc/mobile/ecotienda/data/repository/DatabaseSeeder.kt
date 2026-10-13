@@ -1,37 +1,31 @@
-package cl.uchile.dcc.mobile.ecotienda.data.database_open_helper
+package cl.uchile.dcc.mobile.ecotienda.data.repository
 
 import android.content.Context
 import cl.uchile.dcc.mobile.ecotienda.data.DefaultData
+import cl.uchile.dcc.mobile.ecotienda.data.database.BuenOrigenDatabase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
-/* Carga datos iniciales en SQLite a partir de [DefaultData].
- * Solo inserta si las tablas de productos y productores están vacías.
- */
 object DatabaseSeeder {
 
     fun seedIfEmpty(context: Context) {
         val appContext = context.applicationContext
-        val productRepository = ProductRepository(appContext)
-        val producerRepository = ProducerRepository(appContext)
+        val db = BuenOrigenDatabase.getInstance(appContext)
 
-        // Obtenemos id de productores que ya estan en SQlite
-        val existingProducers = producerRepository.getAllProducers().map { it.id }.toSet()
+        CoroutineScope(Dispatchers.IO).launch {
+            val producerDao = db.producerDAO
+            val productDao = db.productDAO
 
-        // Elegimos los productores de DefaultData cuyo ID no esté en la base de datos
-        DefaultData.Producer.filter { it.id !in existingProducers }.forEach {
-            producerRepository.addProducer(it)
+            val existingProducers = producerDao.getAllProducer().map { it.id }.toSet()
+            DefaultData.Producer.filter { it.id !in existingProducers }.forEach {
+                producerDao.addProducer(it)
+            }
+
+            val existingProducts = productDao.getAllProducts().map { it.id }.toSet()
+            DefaultData.Product.filter { it.id !in existingProducts }.forEach {
+                productDao.addProduct(it)
+            }
         }
-
-        // Mismo proceso para product
-        val existingProducts = productRepository.getAllProduct().map { it.id }.toSet()
-        DefaultData.Product.filter { it.id !in existingProducts }.forEach {
-            productRepository.addProduct(it)
-        }
-
-//        if (producerRepository.getAllProducers().isEmpty()) {
-//            DefaultData.Producer.forEach { producerRepository.addProducer(it) }
-//        }
-//        if (productRepository.getAllProduct().isEmpty()) {
-//            DefaultData.Product.forEach { productRepository.addProduct(it) }
-//        }
     }
 }

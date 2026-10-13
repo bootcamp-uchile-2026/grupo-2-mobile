@@ -29,7 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import cl.uchile.dcc.mobile.ecotienda.data.Product
+import cl.uchile.dcc.mobile.ecotienda.data.database.Product
 import cl.uchile.dcc.mobile.ecotienda.ui.component.ProductCard
 import cl.uchile.dcc.mobile.ecotienda.ui.component.ProductCardSearch
 import cl.uchile.dcc.mobile.ecotienda.viewmodel.SearchViewModel

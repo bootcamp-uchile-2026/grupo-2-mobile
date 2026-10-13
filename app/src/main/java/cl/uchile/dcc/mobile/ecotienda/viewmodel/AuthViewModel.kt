@@ -5,9 +5,10 @@ import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import cl.uchile.dcc.mobile.ecotienda.data.User
-import cl.uchile.dcc.mobile.ecotienda.data.database.UserRepository
+import cl.uchile.dcc.mobile.ecotienda.data.database.BuenOrigenDatabase
+import cl.uchile.dcc.mobile.ecotienda.data.database.User
 import cl.uchile.dcc.mobile.ecotienda.data.repository.BuenOrigenDataRepository
+import cl.uchile.dcc.mobile.ecotienda.data.repository.UserRepository
 import cl.uchile.dcc.mobile.ecotienda.data.repository.userPreferencesDataStore
 import cl.uchile.dcc.mobile.ecotienda.ui.screenstates.AuthUIState
 import cl.uchile.dcc.mobile.ecotienda.ui.screenstates.LoginFormState
@@ -35,7 +36,9 @@ class AuthViewModel(
         application
     )
 
-    private val userRepository = UserRepository(application)
+    private val userRepository = app?.container?.userRepository ?: UserRepository(
+        BuenOrigenDatabase.getInstance(application).userDAO
+    )
 
     private val savedEmail: String = savedStateHandle["user_email"] ?: ""
     private val savedIsLoggedIn: Boolean = savedStateHandle["is_logged_in"] ?: false

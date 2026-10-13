@@ -1,4 +1,4 @@
-package cl.uchile.dcc.mobile.ecotienda.data
+package cl.uchile.dcc.mobile.ecotienda.data.database
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

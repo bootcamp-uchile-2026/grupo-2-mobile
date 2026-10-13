@@ -1,7 +1,7 @@
 package cl.uchile.dcc.mobile.ecotienda.ui.screenstates
 
-import cl.uchile.dcc.mobile.ecotienda.data.Producer
-import cl.uchile.dcc.mobile.ecotienda.data.Product
+import cl.uchile.dcc.mobile.ecotienda.data.database.Producer
+import cl.uchile.dcc.mobile.ecotienda.data.database.Product
 
 // Detalles de productos
 data class ProductDetailUiState(

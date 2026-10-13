@@ -3,24 +3,30 @@ package cl.uchile.dcc.mobile.ecotienda.viewmodel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
-import cl.uchile.dcc.mobile.ecotienda.data.Cart
-import cl.uchile.dcc.mobile.ecotienda.data.Product
-import cl.uchile.dcc.mobile.ecotienda.data.database.CartRepository
-import cl.uchile.dcc.mobile.ecotienda.data.toCartItem
+import androidx.lifecycle.viewModelScope
+import cl.uchile.dcc.mobile.ecotienda.data.database.BuenOrigenDatabase
+import cl.uchile.dcc.mobile.ecotienda.data.database.Cart
+import cl.uchile.dcc.mobile.ecotienda.data.database.Product
+import cl.uchile.dcc.mobile.ecotienda.data.database.toCartItem
+import cl.uchile.dcc.mobile.ecotienda.data.repository.CartRepository
 import cl.uchile.dcc.mobile.ecotienda.ui.screenstates.CartCheckoutState
 import cl.uchile.dcc.mobile.ecotienda.ui.screenstates.CheckoutStep
 import cl.uchile.dcc.mobile.ecotienda.ui.screenstates.ShippingFormState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 class CartViewModel(
     application: Application,
     private val savedStateHandle: SavedStateHandle
 ) : AndroidViewModel(application) {
-    private val cartRepository = CartRepository(application)
+    private val app = application as? cl.uchile.dcc.mobile.ecotienda.data.repository.EcoTiendaApp
+    private val cartRepository = app?.container?.cartRepository ?: CartRepository(
+        BuenOrigenDatabase.getInstance(application).cartItemDAO
+    )
 
-    private val _cart = MutableStateFlow(Cart(items = cartRepository.getCartItems()))
+    private val _cart = MutableStateFlow(Cart())
     val cart = _cart.asStateFlow()
 
     private val savedStepName: String? = savedStateHandle["checkout_step"]
@@ -31,35 +37,52 @@ class CartViewModel(
     private val _checkoutState = MutableStateFlow(CartCheckoutState(currentStep = restoredStep))
     val checkoutState = _checkoutState.asStateFlow()
 
+    init {
+        loadCart()
+    }
+
+    private fun loadCart() {
+        viewModelScope.launch {
+            val items = cartRepository.getCartItems()
+            _cart.update { Cart(items = items) }
+        }
+    }
+
     fun addToCart(product: Product, quantity: Int) {
-        val cartItem = product.toCartItem(quantity)
-        cartRepository.addCartItem(cartItem)
-        _cart.update {
-            Cart(items = cartRepository.getCartItems())
+        viewModelScope.launch {
+            val cartItem = product.toCartItem(quantity)
+            cartRepository.addCartItem(cartItem)
+            _cart.update { Cart(items = cartRepository.getCartItems()) }
         }
     }
 
     fun incrementQuantity(productId: String) {
-        val currentItem = _cart.value.items.find { it.productId == productId }
-        if (currentItem != null) {
-            val newQty = currentItem.quantity + 1
-            cartRepository.updateQuantity(productId, newQty)
-            _cart.update { Cart(items = cartRepository.getCartItems()) }
+        viewModelScope.launch {
+            val currentItem = _cart.value.items.find { it.productId == productId }
+            if (currentItem != null) {
+                val newQty = currentItem.quantity + 1
+                cartRepository.updateQuantity(productId, newQty)
+                _cart.update { Cart(items = cartRepository.getCartItems()) }
+            }
         }
     }
 
     fun decrementQuantity(productId: String) {
-        val currentItem = _cart.value.items.find { it.productId == productId }
-        if (currentItem != null) {
-            val newQty = currentItem.quantity - 1
-            cartRepository.updateQuantity(productId, newQty)
-            _cart.update { Cart(items = cartRepository.getCartItems()) }
+        viewModelScope.launch {
+            val currentItem = _cart.value.items.find { it.productId == productId }
+            if (currentItem != null) {
+                val newQty = currentItem.quantity - 1
+                cartRepository.updateQuantity(productId, newQty)
+                _cart.update { Cart(items = cartRepository.getCartItems()) }
+            }
         }
     }
 
     fun removeFromCart(productId: String) {
-        cartRepository.removeCartItem(productId)
-        _cart.update { Cart(items = cartRepository.getCartItems()) }
+        viewModelScope.launch {
+            cartRepository.removeCartItem(productId)
+            _cart.update { Cart(items = cartRepository.getCartItems()) }
+        }
     }
 
     fun nextStep() {
@@ -98,8 +121,10 @@ class CartViewModel(
 
     fun clearCart() {
         savedStateHandle["checkout_step"] = CheckoutStep.CART.name
-        cartRepository.clearCart()
-        _cart.value = Cart()
-        _checkoutState.value = CartCheckoutState()
+        viewModelScope.launch {
+            cartRepository.clearCart()
+            _cart.value = Cart()
+            _checkoutState.value = CartCheckoutState()
+        }
     }
 }

@@ -69,7 +69,7 @@ fun Login(
                 duration = SnackbarDuration.Short
             )
 
-            // Esperar 2 segundos (2000 ms) antes de volver atrás
+            // Esperar 0,5 segundos (500 ms) antes de volver atrás
             delay(500.milliseconds)
 
             // Backstack

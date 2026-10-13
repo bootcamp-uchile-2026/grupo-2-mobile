@@ -38,7 +38,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import cl.uchile.dcc.mobile.ecotienda.ui.screenstates.CatalogScreenState
 import cl.uchile.dcc.mobile.ecotienda.viewmodel.CatalogViewModel
 import coil3.compose.AsyncImage
-import cl.uchile.dcc.mobile.ecotienda.data.Product
+import cl.uchile.dcc.mobile.ecotienda.data.database.Product
 import cl.uchile.dcc.mobile.ecotienda.utils.formatAsCurrency
 
 // Catalog es el catalogo de productos

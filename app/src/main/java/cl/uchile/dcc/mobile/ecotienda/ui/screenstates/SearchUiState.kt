@@ -1,6 +1,6 @@
 package cl.uchile.dcc.mobile.ecotienda.ui.screenstates
 
-import cl.uchile.dcc.mobile.ecotienda.data.Product
+import cl.uchile.dcc.mobile.ecotienda.data.database.Product
 
 data class SearchUiState(
     val query: String = "",

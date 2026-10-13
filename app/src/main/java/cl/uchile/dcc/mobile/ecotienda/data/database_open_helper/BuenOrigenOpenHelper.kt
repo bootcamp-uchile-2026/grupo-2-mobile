@@ -1,9 +1,8 @@
-package cl.uchile.dcc.mobile.ecotienda.data.database
+package cl.uchile.dcc.mobile.ecotienda.data.database_open_helper
 
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import android.util.Log
 
 class BuenOrigenOpenHelper(context: Context): SQLiteOpenHelper(
     context,

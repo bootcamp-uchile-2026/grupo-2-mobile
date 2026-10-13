@@ -36,7 +36,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import cl.uchile.dcc.mobile.ecotienda.R
-import cl.uchile.dcc.mobile.ecotienda.data.Product
+import cl.uchile.dcc.mobile.ecotienda.data.database.Product
 import cl.uchile.dcc.mobile.ecotienda.ui.component.HuellaVerdeSection
 import cl.uchile.dcc.mobile.ecotienda.ui.component.ProductCard
 import cl.uchile.dcc.mobile.ecotienda.viewmodel.AuthViewModel
