@@ -34,4 +34,6 @@ enum class ScreenRoutes(
     CART(showTopBar = false, showBottomBar = false, title = "Carrito", route = "CART", icon = Icons.Filled.ShoppingCart),
     SEARCH(showTopBar = false, showBottomBar = false, title = "Búsqueda", route = "SEARCH", icon = Icons.Filled.Search),
     SEARCH_RESULTS(showTopBar = false, showBottomBar = false, title = "Resultados de búsqueda", route = "SEARCH_RESULTS", icon = Icons.Filled.Search),
+
+    LOADING(showTopBar = false, showBottomBar = false, title = "Cargando", route = "LOADING", icon = Icons.Filled.Search),
 }

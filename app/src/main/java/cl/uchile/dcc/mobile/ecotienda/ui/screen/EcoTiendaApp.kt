@@ -36,8 +36,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import cl.uchile.dcc.mobile.ecotienda.data.DefaultData
-import cl.uchile.dcc.mobile.ecotienda.data.repository.EcoTiendaApp
-import cl.uchile.dcc.mobile.ecotienda.ui.component.AccountSidePanel
 import cl.uchile.dcc.mobile.ecotienda.ui.component.BottomNavigationBar
 import cl.uchile.dcc.mobile.ecotienda.ui.component.SearchStaticBar
 import cl.uchile.dcc.mobile.ecotienda.viewmodel.MainScreenViewModel
@@ -47,7 +45,9 @@ import cl.uchile.dcc.mobile.ecotienda.viewmodel.ProductDetailViewModel
 import cl.uchile.dcc.mobile.ecotienda.viewmodel.CartViewModel
 import cl.uchile.dcc.mobile.ecotienda.viewmodel.AuthViewModel
 import cl.uchile.dcc.mobile.ecotienda.viewmodel.SearchViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 
 // EcoTiendaApp es el backbone de la aplicación
 // Contiene Scafold, TopBar, BottomBar, Navcontroller e invoca a ViewModel
@@ -145,7 +145,7 @@ fun EcoTiendaApp(
     { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = ScreenRoutes.LOGIN.route, // Cambio a Login First
+            startDestination = ScreenRoutes.LOADING.route, // Cambio a Login First
         ) {
             composable(ScreenRoutes.HOME.route) {
                 HomeEcoTienda(
@@ -322,23 +322,38 @@ fun EcoTiendaApp(
                     modifier = Modifier.padding(innerPadding).padding(16.dp)
                 )
             }
+            composable(ScreenRoutes.LOADING.route) {
+                LoadingScreen(
+                    modifier = Modifier.padding(innerPadding),
+                    viewModel = viewModel()
+                )
+
+                LaunchedEffect(Unit) {
+                    delay(2000.milliseconds)
+                    navController.navigate(ScreenRoutes.LOGIN.route) {
+                        popUpTo(ScreenRoutes.LOADING.route) {
+                            inclusive = true
+                        }
+                    }
+                }
+            }
 
         }
     }
-    // Sidepanel para login/account
-    AccountSidePanel(
-        visible = authState.showLoginSheet,
-        onDismiss = { authViewModel.dismissLoginSheet() }
-    ) {
-        AccountPanelContent(
-            authViewModel = authViewModel,
-            snackbarHostState = snackbarHostState,
-            onGoHome = { authViewModel.dismissLoginSheet() },
-            onOpenOrders = {
-                authViewModel.dismissLoginSheet()
-                navController.navigate(ScreenRoutes.ORDERS.route)
-            }
-        )
-    }
+//    // Sidepanel para login/account
+//    AccountSidePanel(
+//        visible = authState.showLoginSheet,
+//        onDismiss = { authViewModel.dismissLoginSheet() }
+//    ) {
+//        AccountPanelContent(
+//            authViewModel = authViewModel,
+//            snackbarHostState = snackbarHostState,
+//            onGoHome = { authViewModel.dismissLoginSheet() },
+//            onOpenOrders = {
+//                authViewModel.dismissLoginSheet()
+//                navController.navigate(ScreenRoutes.ORDERS.route)
+//            }
+//        )
+//    }
 
 }
