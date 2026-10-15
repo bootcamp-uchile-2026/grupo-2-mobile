@@ -1,10 +1,10 @@
 package cl.uchile.dcc.mobile.ecotienda.ui.theme
 import androidx.compose.ui.graphics.Color
 
-val primaryLight = Color(0xFF166B54)
+val primaryLight = Color(0xFF23412f)
 val onPrimaryLight = Color(0xFFFFFFFF)
-val primaryContainerLight = Color(0xFFA4F2D5)
-val onPrimaryContainerLight = Color(0xFF00513E)
+val primaryContainerLight = Color(0xFF9BA7A0)
+val onPrimaryContainerLight = Color(0xFF9BA7A0)
 val secondaryLight = Color(0xFF8E4C32)
 val onSecondaryLight = Color(0xFFFFFFFF)
 val secondaryContainerLight = Color(0xFFE1B04C)

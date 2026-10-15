@@ -18,6 +18,7 @@ fun AccountGate(
     onEnterApp: () -> Unit,
     onOpenOrders: () -> Unit,
     onLogout: () -> Unit,
+    onSignUp: () -> Unit
 ) {
     val authState by authViewModel.state.collectAsState()
     val hasSession = authState.isLoggedIn || authState.isGuest
@@ -40,7 +41,8 @@ fun AccountGate(
             snackbarHostState = snackbarHostState,
             authViewModel = authViewModel,
             onBack = {},
-            onSuccess = onEnterApp
+            onSuccess = onEnterApp,
+            onSignUp = onSignUp
         )
     }
 }

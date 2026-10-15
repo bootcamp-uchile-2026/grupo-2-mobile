@@ -67,6 +67,62 @@ class AuthViewModel(
         }
     }
 
+    // Signup o crear usuario
+    fun signUp(
+        name: String,
+        email: String,
+        password: String,
+        onResult: (String?) -> Unit
+    ) {
+        val cleanName = name.trim()
+        val cleanEmail = email.trim().lowercase()
+
+        val error = when {
+            cleanName.isBlank() -> "Ingresa tu nombre"
+            !cleanEmail.contains("@") -> "Email inválido"
+            password.length < 4 -> "La contraseña debe tener al menos 4 caracteres"
+            else -> null
+        }
+
+        if (error != null) {
+            onResult(error)
+            return
+        }
+
+        viewModelScope.launch {
+            val user = User(
+                email = cleanEmail,
+                password = password,
+                name = cleanName
+            )
+
+            if (!userRepository.registerUser(user)) {
+                onResult("Ese email ya está registrado")
+                return@launch
+            }
+
+            configRepo.saveSession(
+                isLoggedIn = true,
+                isGuest = false,
+                email = user.email,
+                name = user.name
+            )
+            savedStateHandle["user_email"] = user.email
+            savedStateHandle["is_logged_in"] = true
+            savedStateHandle["is_guest"] = false
+
+            _state.update {
+                it.copy(
+                    isLoggedIn = true,
+                    isGuest = false,
+                    userEmail = user.email,
+                    form = it.form.copy(email = user.email)
+                )
+            }
+            onResult(null)
+        }
+    }
+
     // Uso de AuthUiState para login
     private val _state = MutableStateFlow(
         AuthUIState(
@@ -169,7 +225,9 @@ class AuthViewModel(
             _state.update { it.copy(login = LoginScreenState.Loading) }
             delay(1000.milliseconds) // simulación de tiempo de logeo
 
-            var user = userRepository.loginUser(form.email, form.password)
+//            var user = userRepository.loginUser(form.email, form.password)
+            var user = userRepository.loginUser(form.email.trim(), form.password)
+
             if (user == null) {
                 // Auto-registrar si no existe (para facilitar login sin pantalla de registro)
                 val newUser = User(

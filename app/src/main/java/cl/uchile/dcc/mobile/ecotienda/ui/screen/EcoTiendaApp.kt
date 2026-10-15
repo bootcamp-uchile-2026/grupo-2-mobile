@@ -1,5 +1,6 @@
 package cl.uchile.dcc.mobile.ecotienda.ui.screen
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -91,39 +93,45 @@ fun EcoTiendaApp(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             if (currentScreen.showTopBar) {
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
-                        .windowInsetsPadding(WindowInsets.statusBars),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                Surface(
+                    color = MaterialTheme.colorScheme.primary, // 🎨 Color de fondo
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    // Este componente es solo visual y dispara la navegación
-                    SearchStaticBar(
-                        onClick = { navController.navigate(route = "SEARCH" ) },
-                        modifier = Modifier.weight(1f)
-                    )
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                            .windowInsetsPadding(WindowInsets.statusBars),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
 
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        FigureIconButton(
-                            label = "Usuario",
-                            callBack = { navController.navigate(ScreenRoutes.ACCOUNT.route) },
-                            icon = Icons.Filled.Person,
+                        ) {
+                        // Busqueda que lleva a una web distintas (SearchScreen)
+                        SearchStaticBar(
+                            onClick = { navController.navigate(route = "SEARCH") },
+                            modifier = Modifier.weight(1f)
                         )
-                        Text(
-                            text = if (authState.isLoggedIn) authState.userEmail?.split("@")?.get(0) ?: "Usuario"
-                                   else if (authState.isGuest) "Invitado"
-                                   else "Ingresar",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.primary,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
+
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            FigureIconButton(
+                                label = "Usuario",
+                                callBack = { navController.navigate(ScreenRoutes.ACCOUNT.route) },
+                                icon = Icons.Filled.Person,
+                            )
+                            Text(
+                                text = if (authState.isLoggedIn) authState.userEmail?.split("@")
+                                    ?.get(0) ?: "Usuario"
+                                else if (authState.isGuest) "Invitado"
+                                else "Ingresar",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.secondary,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
                     }
                 }
             }
@@ -232,12 +240,12 @@ fun EcoTiendaApp(
                     onProducerClick = { producer ->
                         producerViewModel.selectProducer(producer) // Aquí se guarda
                         navController.navigate(ScreenRoutes.PRODUCERPAGE.route) // Aqui navega
-                   },
+                    },
                 )
             }
             composable(ScreenRoutes.PRODUCERPAGE.route) {
                 // Si hay un productor seleccionado, mostramos su página
-               selectedProducer?.let { producer ->
+                selectedProducer?.let { producer ->
                     ProducerPage(
                         producer = producer,
                         onBack = { navController.popBackStack() },
@@ -251,10 +259,12 @@ fun EcoTiendaApp(
                     ProductPage(
                         modifier = Modifier.padding(innerPadding),
                         product = product,
-                        onAddToCart = { p, q -> cartViewModel.addToCart(p, q)
+                        onAddToCart = { p, q ->
+                            cartViewModel.addToCart(p, q)
                             scope.launch {
                                 snackbarHostState.showSnackbar("Añadido: ${product.productName}")
-                            }},
+                            }
+                        },
                         onBack = { navController.popBackStack() },
                     )
                 }
@@ -262,7 +272,7 @@ fun EcoTiendaApp(
             composable(ScreenRoutes.CART.route) {
                 Cart(
                     modifier = Modifier
-                    .padding(innerPadding),
+                        .padding(innerPadding),
                     cart = cartState,
                     authViewModel = authViewModel,
                     cartViewModel = cartViewModel,
@@ -287,7 +297,8 @@ fun EcoTiendaApp(
                         navController.navigate(ScreenRoutes.HOME.route) {
                             popUpTo(0) { inclusive = true }
                         }
-                    }
+                    },
+                    onSignUp = { navController.navigate(ScreenRoutes.SIGNUP.route) }
                 )
             }
 
@@ -311,7 +322,8 @@ fun EcoTiendaApp(
                         }
                     },
                     onOpenOrders = { navController.navigate(ScreenRoutes.ORDERS.route) },
-                    onLogout = {}
+                    onLogout = {},
+                    onSignUp = { navController.navigate(ScreenRoutes.SIGNUP.route) }
                 )
             }
 
@@ -319,7 +331,9 @@ fun EcoTiendaApp(
                 // placeholder hasta que tener datos de compras
                 Text(
                     "Mis compras",
-                    modifier = Modifier.padding(innerPadding).padding(16.dp)
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .padding(16.dp)
                 )
             }
             composable(ScreenRoutes.LOADING.route) {
@@ -336,6 +350,18 @@ fun EcoTiendaApp(
                         }
                     }
                 }
+            }
+
+            composable(ScreenRoutes.SIGNUP.route) {
+                Signup(
+                    authViewModel = authViewModel,
+                    onBack = { navController.popBackStack() },
+                    onSuccess = {
+                        navController.navigate(ScreenRoutes.HOME.route) {
+                            popUpTo(0) { inclusive = true }
+                        }
+                    }
+                )
             }
 
         }

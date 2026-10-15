@@ -48,6 +48,7 @@ fun Login(
     onBack: () -> Unit,
     authViewModel: AuthViewModel = viewModel(), // Viewmodel de Login
     onSuccess: () -> Unit = {},
+    onSignUp: () -> Unit = {}
 ) {
     // Observamos el estado global de autenticación
     val user by authViewModel.state.collectAsState()
@@ -147,7 +148,7 @@ fun Login(
         Spacer(modifier = Modifier.height(20.dp))
         Box(modifier = Modifier.padding(16.dp, 0.dp, 16.dp, 0.dp)) {
             Button(
-                onClick = {  },
+                onClick = { onSignUp() },
                 shape = RoundedCornerShape(50.dp),
                 modifier = Modifier
                     .fillMaxWidth()

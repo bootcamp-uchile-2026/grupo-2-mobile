@@ -27,7 +27,7 @@ import compose.icons.feathericons.Search
 fun SearchStaticBar(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    bgColor: Color = MaterialTheme.colorScheme.tertiaryContainer,
+    bgColor: Color = MaterialTheme.colorScheme.primaryContainer,
 ) {
     Surface(
         onClick = onClick,
@@ -40,16 +40,19 @@ fun SearchStaticBar(
             modifier = Modifier.padding(horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                imageVector = FeatherIcons.Search,
-                contentDescription = null,
-                tint = Color.Companion.Black
-            )
-            Spacer(Modifier.width(8.dp))
+
             Text(
-                text = "Busca algo especial",
+                text = "Buscar producto",
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.7f)
+            )
+            Spacer(Modifier.weight(1f))
+
+            Icon(
+                modifier = Modifier,
+                imageVector = FeatherIcons.Search,
+                contentDescription = null,
+                tint = Color.Black.copy(alpha = 0.8f),
             )
         }
     }

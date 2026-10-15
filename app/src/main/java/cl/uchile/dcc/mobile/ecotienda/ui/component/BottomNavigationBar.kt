@@ -19,10 +19,10 @@ fun BottomNavigationBar(
     onNavigateTo: (String) -> Unit,
     modifier: Modifier = Modifier,
     windowInsets: WindowInsets = WindowInsets.navigationBars,
-    containerColor: Color = MaterialTheme.colorScheme.tertiaryContainer,
-    selectedColor: Color = MaterialTheme.colorScheme.primary,
+    containerColor: Color = MaterialTheme.colorScheme.primary,
+    selectedColor: Color = Color.White,
     selectedTextColor: Color = MaterialTheme.colorScheme.secondary,
-    unselectedColor: Color = MaterialTheme.colorScheme.tertiary,
+    unselectedColor: Color = Color.White,
     unselectedTextColor: Color = unselectedColor,
 ) {
     NavigationBar(

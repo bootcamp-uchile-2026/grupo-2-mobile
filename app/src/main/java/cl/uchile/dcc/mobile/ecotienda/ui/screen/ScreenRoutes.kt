@@ -36,4 +36,7 @@ enum class ScreenRoutes(
     SEARCH_RESULTS(showTopBar = false, showBottomBar = false, title = "Resultados de búsqueda", route = "SEARCH_RESULTS", icon = Icons.Filled.Search),
 
     LOADING(showTopBar = false, showBottomBar = false, title = "Cargando", route = "LOADING", icon = Icons.Filled.Search),
+
+    SIGNUP(showTopBar = false, showBottomBar = false, title = "Registro", route = "SIGNUP", icon = Icons.Filled.Person
+    ),
 }
