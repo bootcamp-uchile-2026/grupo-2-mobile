@@ -4,15 +4,22 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.StarOutline
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,7 +36,7 @@ import coil3.compose.AsyncImage
 
 @Composable
 fun ProductCard(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     product: Product,
     onProductClick: () -> Unit,
     onAgregarClick: () -> Unit
@@ -42,50 +49,74 @@ fun ProductCard(
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
     ) {
-        Box(
-        ) {
-            // Imagen de fondo (el empaque del cepillo)
+        Box {
             AsyncImage(
                 model = product.imageUrl,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxWidth()
+                modifier = Modifier.fillMaxWidth()
             )
 
-            // Gradiente oscuro abajo para que se lea el texto
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .align(Alignment.BottomCenter)
                     .background(
                         Brush.verticalGradient(
-                            colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.7f))
+                            colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.75f))
                         )
                     )
                     .padding(16.dp)
             ) {
                 Column {
                     Text(
-                        text = product.productName,          // "Ciclo Vivo"
+                        text = product.productName,
                         style = MaterialTheme.typography.titleMedium,
                         color = Color.White,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = product.description,       // "Cepillo de bambú"
+                        text = product.description,
                         style = MaterialTheme.typography.bodyMedium,
                         color = Color.White.copy(alpha = 0.9f)
                     )
                     Text(
-                        text = product.productProducer,       // "Cepillo de bambú"
+                        text = product.productProducer,
                         style = MaterialTheme.typography.bodySmall,
                         color = Color.White.copy(alpha = 0.9f)
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
+
+                    // Estrellas de Calificación Dummy
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(vertical = 4.dp)
+                    ) {
+                        repeat(4) {
+                            Icon(
+                                imageVector = Icons.Filled.Star,
+                                contentDescription = null,
+                                tint = Color(0xFFFFC107),
+                                modifier = Modifier.size(14.dp)
+                            )
+                        }
+                        Icon(
+                            imageVector = Icons.Outlined.StarOutline,
+                            contentDescription = null,
+                            tint = Color(0xFFFFC107),
+                            modifier = Modifier.size(14.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = "4.5",
+                            color = Color.White,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(4.dp))
 
                     Text(
-                        text = product.price.formatAsCurrency(),          // "$4.990"
+                        text = product.price.formatAsCurrency(),
                         style = MaterialTheme.typography.titleLarge,
                         color = Color.White,
                         fontWeight = FontWeight.Bold
@@ -93,7 +124,6 @@ fun ProductCard(
                 }
             }
 
-            // Botón "+Agregar"
             Button(
                 onClick = onAgregarClick,
                 modifier = Modifier
@@ -104,11 +134,12 @@ fun ProductCard(
                 ),
                 shape = RoundedCornerShape(50)
             ) {
-                Text(text = "+Agregar",
+                Text(
+                    text = "+Agregar",
                     style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.secondary)
+                    color = MaterialTheme.colorScheme.secondary
+                )
             }
-
         }
     }
 }

@@ -1,12 +1,14 @@
 package cl.uchile.dcc.mobile.ecotienda.ui.screen
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.EnergySavingsLeaf
 import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Nature
 import androidx.compose.material.icons.filled.NaturePeople
 import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Person2
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -30,13 +32,14 @@ enum class ScreenRoutes(
 
     // Sin ninguna barra (ni bottom ni top)
     LOGIN(showTopBar = false, showBottomBar = false, title = "Ingreso de Usuarios", route = "Login", icon = Icons.Filled.Person),
-    ACCOUNT(showTopBar = false, showBottomBar = false, title = "Cuenta de Usuarios", route = "Account", icon = Icons.Filled.Person),
+    ACCOUNT(showTopBar = false, showBottomBar = false, title = "Cuenta de Usuarios", route = "Account", icon = Icons.Filled.Person2),
     CART(showTopBar = false, showBottomBar = false, title = "Carrito", route = "CART", icon = Icons.Filled.ShoppingCart),
     SEARCH(showTopBar = false, showBottomBar = false, title = "Búsqueda", route = "SEARCH", icon = Icons.Filled.Search),
     SEARCH_RESULTS(showTopBar = false, showBottomBar = false, title = "Resultados de búsqueda", route = "SEARCH_RESULTS", icon = Icons.Filled.Search),
 
     LOADING(showTopBar = false, showBottomBar = false, title = "Cargando", route = "LOADING", icon = Icons.Filled.Search),
 
-    SIGNUP(showTopBar = false, showBottomBar = false, title = "Registro", route = "SIGNUP", icon = Icons.Filled.Person
-    ),
+    SIGNUP(showTopBar = false, showBottomBar = false, title = "Registro", route = "SIGNUP", icon = Icons.Filled.Person),
+
+    HUELLAVERDE(showTopBar = false, showBottomBar = false, title = "Huella Verde", route = "HUELLAVERDE", icon = Icons.Filled.EnergySavingsLeaf)
 }

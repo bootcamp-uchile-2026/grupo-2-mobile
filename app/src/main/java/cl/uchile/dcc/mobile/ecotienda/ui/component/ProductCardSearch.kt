@@ -10,14 +10,19 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.StarOutline
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -27,13 +32,13 @@ import coil3.compose.AsyncImage
 
 @Composable
 fun ProductCardSearch(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     product: Product,
     onProductClick: () -> Unit,
     onAgregarClick: () -> Unit
 ) {
     Card(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp)
             .clickable { onProductClick() },
@@ -62,31 +67,38 @@ fun ProductCardSearch(
             Column(modifier = Modifier.weight(1f)) {
                 Text(text = product.productName, fontWeight = FontWeight.Bold)
                 Text(text = product.productProducer, style = MaterialTheme.typography.bodySmall)
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(vertical = 2.dp)
+                ) {
+                    repeat(4) {
+                        Icon(
+                            imageVector = Icons.Filled.Star,
+                            contentDescription = null,
+                            tint = Color(0xFFFFC107),
+                            modifier = Modifier.size(12.dp)
+                        )
+                    }
+                    Icon(
+                        imageVector = Icons.Outlined.StarOutline,
+                        contentDescription = null,
+                        tint = Color(0xFFFFC107),
+                        modifier = Modifier.size(12.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = "4.5",
+                        style = MaterialTheme.typography.labelSmall
+                    )
+                }
+
                 Text(
                     text = product.price.formatAsCurrency(),
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Bold
                 )
             }
         }
     }
-
-//        // Botón "+Agregar"
-//        Button(
-//            onClick = onAgregarClick,
-//            modifier = Modifier
-//                .align(Alignment.BottomEnd)
-//                .padding(12.dp),
-//            colors = ButtonDefaults.buttonColors(
-//                containerColor = MaterialTheme.colorScheme.tertiaryContainer
-//            ),
-//            shape = RoundedCornerShape(50)
-//        ) {
-//            Text(
-//                text = "+Agregar",
-//                style = MaterialTheme.typography.titleMedium,
-//                color = MaterialTheme.colorScheme.secondary
-//            )
-//        }
-
 }
-

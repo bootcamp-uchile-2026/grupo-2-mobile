@@ -2,6 +2,7 @@ package cl.uchile.dcc.mobile.ecotienda.ui.component
 
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -32,17 +33,19 @@ fun BottomNavigationBar(
     ) {
         val sections = listOf(
             ScreenRoutes.HOME,
-            ScreenRoutes.CATALOG,
-            ScreenRoutes.ABOUT,
-            ScreenRoutes.CART
+            ScreenRoutes.SEARCH,
+            ScreenRoutes.HUELLAVERDE,
+            ScreenRoutes.CART,
+            ScreenRoutes.ACCOUNT,
         )
 
         sections.forEach { section ->
             NavigationBarItem(
                 selected = currentRoute == section.route,
                 onClick = { onNavigateTo(section.route) },
-                icon = { Icon(section.icon, contentDescription = section.title) },
-                label = { Text(section.title) },
+                icon = { Icon(section.icon, contentDescription = section.title, modifier = Modifier.size(24.dp)
+                ) },
+                label = { "Text(section.title)" },
                 colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = selectedColor,
                     indicatorColor = Color.Transparent,

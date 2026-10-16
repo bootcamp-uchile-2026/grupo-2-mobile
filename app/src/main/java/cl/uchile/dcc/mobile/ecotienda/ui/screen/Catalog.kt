@@ -5,11 +5,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -17,6 +20,8 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.StarOutline
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledIconButton
@@ -35,20 +40,17 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import cl.uchile.dcc.mobile.ecotienda.data.database.Product
 import cl.uchile.dcc.mobile.ecotienda.ui.screenstates.CatalogScreenState
+import cl.uchile.dcc.mobile.ecotienda.utils.formatAsCurrency
 import cl.uchile.dcc.mobile.ecotienda.viewmodel.CatalogViewModel
 import coil3.compose.AsyncImage
-import cl.uchile.dcc.mobile.ecotienda.data.database.Product
-import cl.uchile.dcc.mobile.ecotienda.utils.formatAsCurrency
 
-// Catalog es el catalogo de productos
-// Usa prodcutos ficticios de DefaultDatta
-// Navefación Home -> Catalog
 @Composable
 fun Catalog(
     modifier: Modifier,
     catalogViewModel: CatalogViewModel = viewModel(),
-    onProductClick: (Product) -> Unit, // Cambiado: ahora recibe Product
+    onProductClick: (Product) -> Unit,
     onAgregarClick: (Product) -> Unit
 ) {
     val ui by catalogViewModel.state.collectAsState()
@@ -81,14 +83,11 @@ fun Catalog(
             }
 
             is CatalogScreenState.Success -> {
-                // Prueba para ver cuantos productos por categoria
-//                Text("${catalog.products.size} productos")
-
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(2),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .weight(1f), // ESTO es lo que suele faltar
+                        .weight(1f),
                     contentPadding = PaddingValues(16.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -97,14 +96,12 @@ fun Catalog(
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(180.dp)
+                                .height(190.dp)
                                 .clickable { onProductClick(product) },
                         ) {
-                            // Usamos Box para superponer elementos
                             Box(
-                                modifier = Modifier
-                                    .fillMaxSize()) {
-                                //  Imagen de fondo
+                                modifier = Modifier.fillMaxSize()
+                            ) {
                                 AsyncImage(
                                     model = product.imageUrl,
                                     contentDescription = null,
@@ -112,44 +109,72 @@ fun Catalog(
                                     modifier = Modifier.fillMaxSize()
                                 )
 
-                                // Texto en Card() sobre imagen
                                 Column(
                                     modifier = Modifier
                                         .fillMaxSize()
                                         .padding(12.dp),
-                                    verticalArrangement = Arrangement.Bottom // Empuja todo hacia abajo
+                                    verticalArrangement = Arrangement.Bottom
                                 ) {
                                     Text(
                                         text = product.productName,
-                                        color = Color.White , // Color blanco para que resalte
+                                        color = Color.White,
                                         style = MaterialTheme.typography.titleMedium,
                                         fontWeight = FontWeight.Bold
                                     )
+
+                                    // Rating Stars
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        modifier = Modifier.padding(vertical = 2.dp)
+                                    ) {
+                                        repeat(4) {
+                                            Icon(
+                                                imageVector = Icons.Filled.Star,
+                                                contentDescription = null,
+                                                tint = Color(0xFFFFC107),
+                                                modifier = Modifier.size(12.dp)
+                                            )
+                                        }
+                                        Icon(
+                                            imageVector = Icons.Outlined.StarOutline,
+                                            contentDescription = null,
+                                            tint = Color(0xFFFFC107),
+                                            modifier = Modifier.size(12.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(4.dp))
+                                        Text(
+                                            text = "4.5",
+                                            color = Color.White,
+                                            style = MaterialTheme.typography.labelSmall
+                                        )
+                                    }
+
                                     Text(
                                         text = product.price.formatAsCurrency(),
                                         color = Color.White,
-                                        style = MaterialTheme.typography.bodyLarge
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        fontWeight = FontWeight.Bold
                                     )
 
                                     FilledIconButton(
                                         onClick = { onAgregarClick(product) },
                                         modifier = Modifier
-                                            .padding(top = 8.dp)
+                                            .padding(top = 4.dp)
                                             .size(30.dp)
                                             .align(Alignment.End),
                                         colors = IconButtonDefaults.filledIconButtonColors(
                                             containerColor = MaterialTheme.colorScheme.tertiaryContainer
                                         )
-                                    )
-                                        {
-                                            Icon(Icons.Filled.ShoppingCart, contentDescription = "+Agregar")
+                                    ) {
+                                        Icon(
+                                            Icons.Filled.ShoppingCart,
+                                            contentDescription = "+Agregar",
+                                            modifier = Modifier.size(16.dp)
+                                        )
                                     }
                                 }
                             }
-
                         }
-
-
                     }
                 }
             }
