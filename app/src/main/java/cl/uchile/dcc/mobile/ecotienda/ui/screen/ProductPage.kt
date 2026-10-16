@@ -221,26 +221,26 @@ fun ProductPage(
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        Text(
-            text = "HUELLA VERDE",
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(24.dp)
-                .clip(RoundedCornerShape(4.dp))
-                .background(MaterialTheme.colorScheme.secondary)
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth(0.8f)
-                    .fillMaxHeight()
-                    .background(MaterialTheme.colorScheme.primary)
-            )
-        }
+//        Text(
+//            text = "HUELLA VERDE",
+//            style = MaterialTheme.typography.titleMedium,
+//            fontWeight = FontWeight.Bold
+//        )
+//        Spacer(modifier = Modifier.height(8.dp))
+//        Box(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .height(24.dp)
+//                .clip(RoundedCornerShape(4.dp))
+//                .background(MaterialTheme.colorScheme.secondary)
+//        ) {
+//            Box(
+//                modifier = Modifier
+//                    .fillMaxWidth(0.8f)
+//                    .fillMaxHeight()
+//                    .background(MaterialTheme.colorScheme.primary)
+//            )
+//        }
 
         Spacer(modifier = Modifier.height(40.dp))
 
