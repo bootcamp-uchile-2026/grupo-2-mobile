@@ -1,0 +1,171 @@
+package cl.uchile.dcc.mobile.ecotienda.ui.screen
+
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import cl.uchile.dcc.mobile.ecotienda.R
+import cl.uchile.dcc.mobile.ecotienda.data.Product
+import cl.uchile.dcc.mobile.ecotienda.ui.component.HuellaVerdeSection
+import cl.uchile.dcc.mobile.ecotienda.ui.component.ProductCard
+import cl.uchile.dcc.mobile.ecotienda.viewmodel.AuthViewModel
+import kotlinx.coroutines.launch
+import androidx.compose.foundation.rememberScrollState
+
+// Home pagina inical de app, muestra logo, productos y detalle huella verde
+@Composable
+fun HomeEcoTienda(
+    modifier: Modifier,
+    snackbarHostState: SnackbarHostState,
+    productos: List<Product>,
+    onAgregarClick: (Product) -> Unit,
+    onProductClick: (Product) -> Unit,
+    authViewModel: AuthViewModel = viewModel()
+) {
+    if (productos.isEmpty()) return
+
+    // Determina los productos del Carrousel
+    val pagerState = rememberPagerState(pageCount = { productos.size })
+    val scope = rememberCoroutineScope()
+
+    val ui by authViewModel.state.collectAsState()
+
+    // Para realizar scroll por la pantalla
+    val scrollState = rememberScrollState()
+
+    // Lanza la pagina de logeo (Eliminado para evitar pop-up intrusivo)
+    LaunchedEffect(ui.isLoggedIn, ui.isGuest) {
+        /* if (!ui.isLoggedIn && !ui.isGuest) {
+            authViewModel.requestLoginSheet()
+        } */
+
+        // Solo mostramos si no se ha mostrado antes en esta sesión
+        if ((ui.isLoggedIn || ui.isGuest) && !ui.welcomeMessageShown) {
+            authViewModel.markWelcomeShown() // Lo marcamos como visto PRIMERO
+
+            val message = if (ui.isLoggedIn) "Bienvenido ${ui.userEmail ?: ui.form.email}"
+            else "Navegando como invitado"
+
+            snackbarHostState.showSnackbar(message = message)
+        }
+    }
+
+    // Usamos un Column como base para que el carrusel no ocupe
+    // necesariamente toda la pantalla vertical
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .verticalScroll(scrollState)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.CenterHorizontally)
+
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(150.dp)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.logo),
+                    contentDescription = "Imagen local",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp),
+                    contentScale = ContentScale.Crop
+                )
+            }
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+
+        ) {
+            Text(
+                text = "Salvando el planeta una compra a la vez",
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.titleMedium,
+            )
+        }
+
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.CenterEnd // Alinea el contenido al centro-derecha
+
+        ) {
+            HorizontalPager(
+                state = pagerState,
+                modifier = Modifier.fillMaxWidth(),
+                contentPadding = PaddingValues(vertical = 16.dp, horizontal = 16.dp)
+            ) { page ->
+                ProductCard(
+                    product = productos[page],
+                    onProductClick = { onProductClick(productos[page]) },
+                    onAgregarClick = { onAgregarClick(productos[page]) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp) // un poquito de margen si quieres
+                )
+            }
+
+            // Flecha derecha
+            if (pagerState.currentPage < productos.lastIndex) {
+                IconButton(
+                    onClick = {
+                        scope.launch {
+                            pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                        }
+                    },
+                    modifier = Modifier
+                        .align(Alignment.CenterEnd)
+                        .padding(end = 12.dp)
+                        .size(44.dp)
+                        .background(Color.Black.copy(alpha = 0.4f), CircleShape)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.ChevronRight,
+                        contentDescription = "Siguiente Producto",
+                        tint = Color.White,
+                        modifier = Modifier.size(28.dp)
+                    )
+                }
+            }
+        }
+        HuellaVerdeSection()
+
+    }
+}
