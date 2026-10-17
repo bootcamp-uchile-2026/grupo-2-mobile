@@ -159,7 +159,7 @@ class AuthViewModel(
                     password = password,
                     passwordError = when {
                         password.isBlank() -> "La contraseña no puede estar vacía"
-                        password.length < 4 -> "Mínimo 4 caracteres"
+                        password.length < 8 -> "Mínimo 8 caracteres"
                         else -> null
                     }
                 )
