@@ -1,9 +1,5 @@
 # Buen Origen — Mobile
 
-README actualizado (copia y pega)
-Puedes reemplazar el contenido completo de README.md con esto:
-Markdown# Buen Origen — Mobile
-
 Aplicación Android desarrollada por el equipo Mobile del Grupo 2 para el Caso 2: EcoTienda (Buen Origen), en el Bootcamp de la Universidad de Chile (DCC).
 
 Buen Origen es un prototipo de comercio electrónico orientado al consumo consciente. Esta versión mobile permite explorar productos sustentables, revisar su detalle, conocer emprendedores, administrar un carrito y recorrer flujos de acceso.
