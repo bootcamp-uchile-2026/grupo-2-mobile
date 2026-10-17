@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import cl.uchile.dcc.mobile.ecotienda.data.database.Producer
 import cl.uchile.dcc.mobile.ecotienda.data.repository.BuenOrigenDataRepository
 import cl.uchile.dcc.mobile.ecotienda.data.repository.userPreferencesDataStore
 import cl.uchile.dcc.mobile.ecotienda.ui.screenstates.ProductScreenState
@@ -12,7 +13,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-
 
 class MainScreenViewModel(application: Application) : AndroidViewModel(application) {
     private val app = application as? cl.uchile.dcc.mobile.ecotienda.data.repository.EcoTiendaApp
@@ -25,9 +25,13 @@ class MainScreenViewModel(application: Application) : AndroidViewModel(applicati
     private val _uiState = MutableStateFlow(ProductScreenState())
     val uiState: StateFlow<ProductScreenState> = _uiState
 
-    // SharedPreferences de cambio de tema
+    private val _selectedProducer = MutableStateFlow<Producer?>(null)
+    val selectedProducer: StateFlow<Producer?> = _selectedProducer
 
-    private val _appTheme = MutableStateFlow(configRepo.theme)
+    fun selectProducer(producer: Producer) {
+        _selectedProducer.value = producer
+    }
+
     val appTheme: StateFlow<String> = configRepo.theme
         .stateIn(
             scope = viewModelScope,
@@ -35,15 +39,16 @@ class MainScreenViewModel(application: Application) : AndroidViewModel(applicati
             initialValue = "Auto"
         )
 
-    suspend fun changeTheme() {
-        var theme =appTheme.value
-        when(theme) {
-            "Auto" -> theme = "Claro"
-            "Light" -> theme = "Oscuro"
-            "Dark" -> theme = "Claro"
+    fun changeTheme() {
+        var theme = appTheme.value
+        theme = when (theme) {
+            "Auto" -> "Claro"
+            "Light", "Claro" -> "Oscuro"
+            "Dark", "Oscuro" -> "Claro"
+            else -> "Claro"
         }
         viewModelScope.launch {
-            configRepo.setTheme(theme) }
+            configRepo.setTheme(theme)
+        }
     }
-
 }

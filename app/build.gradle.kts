@@ -56,6 +56,7 @@ dependencies {
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.compose.runtime)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.navigation.compose)
     implementation("androidx.compose.material3.adaptive:adaptive")
     implementation("androidx.compose.material3.adaptive:adaptive-layout")

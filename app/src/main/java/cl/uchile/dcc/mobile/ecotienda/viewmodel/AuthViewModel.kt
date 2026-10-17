@@ -44,6 +44,15 @@ class AuthViewModel(
     private val savedIsLoggedIn: Boolean = savedStateHandle["is_logged_in"] ?: false
     private val savedIsGuest: Boolean = savedStateHandle["is_guest"] ?: false
 
+    private val _state = MutableStateFlow(
+        AuthUIState(
+            isLoggedIn = savedIsLoggedIn,
+            isGuest = savedIsGuest,
+            userEmail = if (savedIsLoggedIn) savedEmail else null,
+            form = LoginFormState(email = savedEmail)
+        )
+    )
+    val state: StateFlow<AuthUIState> = _state.asStateFlow()
 
     init {
         // Al iniciar el ViewModel, leemos la sesión guardada en DataStore
@@ -67,18 +76,6 @@ class AuthViewModel(
         }
     }
 
-    // Uso de AuthUiState para login
-    private val _state = MutableStateFlow(
-        AuthUIState(
-            isLoggedIn = savedIsLoggedIn,
-            isGuest = savedIsGuest,
-            userEmail = if (savedIsLoggedIn) savedEmail else null,
-            form = LoginFormState(email = savedEmail)
-        )
-    )
-    val state: StateFlow<AuthUIState> = _state.asStateFlow()
-
-    // formato de texto para email
     fun updateEmail(email: String) {
         savedStateHandle["user_email"] = email
         _state.update {
@@ -95,7 +92,6 @@ class AuthViewModel(
         }
     }
 
-    // formato de texto para contraseña
     fun updatePassword(password: String) {
         _state.update {
             it.copy(
@@ -167,11 +163,10 @@ class AuthViewModel(
 
         viewModelScope.launch {
             _state.update { it.copy(login = LoginScreenState.Loading) }
-            delay(1000.milliseconds) // simulación de tiempo de logeo
+            delay(1000.milliseconds)
 
             var user = userRepository.loginUser(form.email, form.password)
             if (user == null) {
-                // Auto-registrar si no existe (para facilitar login sin pantalla de registro)
                 val newUser = User(
                     email = form.email,
                     password = form.password,
@@ -225,7 +220,6 @@ class AuthViewModel(
         }
     }
 
-    // Eliminar snackbarhostate de nombre una vez logeado o invitado
     fun markWelcomeShown() {
         _state.update { it.copy(welcomeMessageShown = true) }
     }

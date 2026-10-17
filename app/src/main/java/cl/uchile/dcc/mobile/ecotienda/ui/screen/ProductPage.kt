@@ -42,7 +42,7 @@ fun ProductPage(
     val tabs = listOf("Materiales", "Elaboración", "Valoraciones")
 
     Column(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
             .verticalScroll(scrollState)
             .padding(16.dp)

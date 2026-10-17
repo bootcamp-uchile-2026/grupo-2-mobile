@@ -1,6 +1,5 @@
 package cl.uchile.dcc.mobile.ecotienda.ui.component
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,17 +13,17 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import cl.uchile.dcc.mobile.ecotienda.ui.theme.SoftBeige
 import coil3.compose.AsyncImage
 
 @Composable
 fun GeneralCard(
     modifier: Modifier = Modifier,
-    containerColor: Color = MaterialTheme.colorScheme.tertiaryContainer,
+    containerColor: Color = SoftBeige,
     imageUrl: String,
     text1: String,
     text2: String
@@ -37,18 +36,15 @@ fun GeneralCard(
             containerColor = containerColor
         )
     ) {
-        Box(
-        ) {
-            // Imagen de fondo (el empaque del cepillo)
+        Box {
+            // Imagen de fondo
             AsyncImage(
                 model = imageUrl,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxWidth()
+                modifier = Modifier.fillMaxWidth()
             )
 
-            // Gradiente oscuro abajo para que se lea el texto
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -60,21 +56,21 @@ fun GeneralCard(
                     verticalArrangement = Arrangement.SpaceAround,
                     modifier = modifier
                         .padding(top = 24.dp)
-                        .fillMaxWidth(1f)) {
+                        .fillMaxWidth(1f)
+                ) {
                     Text(
-                        text = text1,          // "Ciclo Vivo"
+                        text = text1,
                         style = MaterialTheme.typography.titleLarge,
                         color = Color.White,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = text2,          // "Ciclo Vivo"
+                        text = text2,
                         style = MaterialTheme.typography.titleLarge,
                         color = Color.White,
                         fontWeight = FontWeight.Bold
                     )
                 }
-
             }
         }
     }

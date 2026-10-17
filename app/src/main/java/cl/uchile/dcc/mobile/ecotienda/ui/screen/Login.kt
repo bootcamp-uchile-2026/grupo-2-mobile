@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -27,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -40,57 +42,43 @@ import compose.icons.feathericons.ArrowLeft
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
 
-// Login pagina de ingreso a aplicación, autenticacion fake
+// Login pagina de ingreso a aplicación
 @Composable
 fun Login(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState,
     onBack: () -> Unit,
-    authViewModel: AuthViewModel = viewModel(), // Viewmodel de Login
-    onSuccess: () -> Unit = {},
+    authViewModel: AuthViewModel = viewModel()
 ) {
-    // Observamos el estado global de autenticación
-    val user by authViewModel.state.collectAsState()
-    val authState by authViewModel.state.collectAsState()
-    val form = authState.form
-
-    // Cuando el fake login o el invitado terminan, avisamos al NavHost
-    LaunchedEffect(authState.isLoggedIn, authState.isGuest) {
-        if (authState.isLoggedIn || authState.isGuest) {
-            onSuccess()
-        }
-    }
+    val ui by authViewModel.state.collectAsState()
 
     // Vuelve atrás automáticamente cuando el login sea correcto
-    LaunchedEffect(user.isLoggedIn) {
-        if (user.isLoggedIn) {
+    LaunchedEffect(ui.isLoggedIn) {
+        if (ui.isLoggedIn) {
             snackbarHostState.showSnackbar(
-                message = "Bienvenido ${user.form.email}",
+                message = "Bienvenido ${ui.form.email}",
                 duration = SnackbarDuration.Short
             )
 
-            // Esperar 0,5 segundos (500 ms) antes de volver atrás
             delay(500.milliseconds)
-
-            // Backstack
             onBack()
         }
     }
+
     Column(
-        modifier = Modifier.padding(horizontal = 20.dp).padding(top = 36.dp),
+        modifier = modifier.padding(horizontal = 20.dp).padding(top = 36.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
-            modifier = Modifier
-                .align(alignment = Alignment.Start)
+            modifier = Modifier.align(alignment = Alignment.Start)
         ) {
-        FigureIconButton(
-            label = "Volver",
-            callBack = onBack,
-            icon = FeatherIcons.ArrowLeft,
-            enabled = true,
-        )
+            FigureIconButton(
+                label = "Volver",
+                callBack = onBack,
+                icon = FeatherIcons.ArrowLeft,
+                enabled = true,
+            )
         }
 
         Text(text = "Ingresa aquí", style = CustomBrandTitleStyle)
@@ -98,11 +86,15 @@ fun Login(
         Spacer(modifier = Modifier.height(20.dp))
 
         OutlinedTextField(
-            value = form.email,
-            onValueChange = { authViewModel.updateEmail(it) },
+            value = ui.form.email,
+            onValueChange = authViewModel::updateEmail,
             label = { Text("Email", style = MaterialTheme.typography.bodyMedium) },
-            isError = form.emailError != null,
-            supportingText = { form.emailError?.let { Text(it) } },
+            isError = ui.form.emailError != null,
+            supportingText = {
+                if (ui.form.emailError != null) {
+                    Text(text = ui.form.emailError!!)
+                }
+            },
             singleLine = true,
             modifier = Modifier.fillMaxWidth()
         )
@@ -110,26 +102,36 @@ fun Login(
         Spacer(modifier = Modifier.height(8.dp))
 
         OutlinedTextField(
-            value = form.password,
-            onValueChange = { authViewModel.updatePassword(it) },
-            label = { Text("Contraseña",  style = MaterialTheme.typography.bodyMedium) },
-            isError = form.passwordError != null,
-            supportingText = { form.passwordError?.let { Text(it) } },
+            value = ui.form.password,
+            onValueChange = authViewModel::updatePassword,
+            label = { Text("Contraseña", style = MaterialTheme.typography.bodyMedium) },
             visualTransformation = PasswordVisualTransformation(),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            isError = ui.form.passwordError != null,
+            supportingText = {
+                if (ui.form.passwordError != null) {
+                    Text(text = ui.form.passwordError!!)
+                }
+            },
             singleLine = true,
             modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(20.dp))
-        Box(modifier = Modifier.padding(16.dp, 0.dp, 16.dp, 0.dp)) {
+        Box(modifier = Modifier.padding(horizontal = 16.dp)) {
             Button(
-                onClick = { authViewModel.login() },
-                enabled = authState.login !is LoginScreenState.Loading,
-                modifier = Modifier.fillMaxWidth(),
+                onClick = authViewModel::login,
+                enabled = ui.login !is LoginScreenState.Loading,
                 shape = RoundedCornerShape(50.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp)
             ) {
-                if (authState.login is LoginScreenState.Loading) {
-                    CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
+                if (ui.login is LoginScreenState.Loading) {
+                    CircularProgressIndicator(
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        modifier = Modifier.size(24.dp)
+                    )
                 } else {
                     Text("Ingresar", style = MaterialTheme.typography.bodyMedium)
                 }
@@ -145,9 +147,9 @@ fun Login(
         Spacer(modifier = Modifier.height(20.dp))
         HorizontalDivider(thickness = 2.dp)
         Spacer(modifier = Modifier.height(20.dp))
-        Box(modifier = Modifier.padding(16.dp, 0.dp, 16.dp, 0.dp)) {
+        Box(modifier = Modifier.padding(horizontal = 16.dp)) {
             Button(
-                onClick = {  },
+                onClick = { },
                 shape = RoundedCornerShape(50.dp),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -158,16 +160,15 @@ fun Login(
             ) {
                 Text(text = "Registrate", style = MaterialTheme.typography.bodyMedium)
             }
-
         }
         Spacer(modifier = Modifier.height(20.dp))
-        Box(
-            modifier = Modifier
-                .padding(16.dp, 0.dp, 16.dp, 0.dp)) {
+        Box(modifier = Modifier.padding(horizontal = 16.dp)) {
             Button(
+                onClick = authViewModel::continueAsGuest,
                 shape = RoundedCornerShape(50.dp),
-                onClick = { authViewModel.continueAsGuest() },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp),
             ) {
                 Text(text = "Invitado", style = MaterialTheme.typography.bodyMedium)
             }

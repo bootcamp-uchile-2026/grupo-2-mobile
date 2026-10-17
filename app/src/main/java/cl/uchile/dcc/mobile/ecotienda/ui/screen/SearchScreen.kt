@@ -51,12 +51,11 @@ fun SearchScreen(
     SearchBar(
         modifier = Modifier.fillMaxWidth(),
         query = uiState.query,
-        onQueryChange = searchViewModel::onQueryChange, // Se encarga de actualizar la consulta y obtiene productos para la previsualización
+        onQueryChange = searchViewModel::onQueryChange,
         onSearch = { query ->
             active = false
             onSubmitSearch(query)
         },
-        // Estado active de la SeacrhBar que muestra la barra extendida
         active = active,
         onActiveChange = { active = it },
         placeholder = { Text("Busca en Buen Origen...") },
@@ -159,7 +158,6 @@ fun SearchResultsContent(
                 items(results, key = { it.id }) { product ->
                     ProductCard(
                         product = product,
-                        onProductClick = { onProductClick(product) },
                         onAgregarClick = { onAddToCart(product) },
                         modifier = Modifier
                     )

@@ -134,11 +134,10 @@ fun HomeEcoTienda(
             ) { page ->
                 ProductCard(
                     product = productos[page],
-                    onProductClick = { onProductClick(productos[page]) },
                     onAgregarClick = { onAgregarClick(productos[page]) },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 8.dp) // un poquito de margen si quieres
+                        .padding(horizontal = 8.dp)
                 )
             }
 

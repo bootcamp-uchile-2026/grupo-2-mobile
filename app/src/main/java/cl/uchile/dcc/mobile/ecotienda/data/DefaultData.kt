@@ -11,7 +11,7 @@ object DefaultData {
             productName = "Cepillo",
             price = 5990,
             description = "Cepillo",
-            productProducer = "Danitza Jara",
+            productProducer = "CampoLindo",
             imageUrl = "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.etnic.es%2Fcdn%2Fshop%2Farticles%2Fcepillo_bambu_2.png%3Fv%3D1731865982&f=1&nofb=1&ipt=485207f662000c33f34a0fe43b5bbd2e3fe828d17de1d024c890fa6f36a71cef",
             stock = 5,
             category = "Cuidado Personal",
@@ -22,7 +22,7 @@ object DefaultData {
             productName = "Mochila",
             price = 10999,
             description = "Mochila",
-            productProducer = "Ignacio Salinas",
+            productProducer = "Agua Hermosa",
             imageUrl = "https://images.pexels.com/photos/17870929/pexels-photo-17870929.jpeg",
             stock = 15,
             category = "Moda Natural",
@@ -33,7 +33,7 @@ object DefaultData {
             productName = "Esponja Natural",
             price = 4990,
             description = "Esponja muy Natural",
-            productProducer = "Cristina Ortiz",
+            productProducer = "Maritima",
             imageUrl = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgTaxs3fGSKrwbE38m090MyGIkpNrKOhf0m1U2O59R5CkIW-pa00dSbBrUIeUUxllp3tvw8c9fDzMaOjgf1hPJYfyxUoDZsvtMCHYMCvdO_4hPnJ2jT3LtKtUaB2Im3busZYIXjrz6rCo7R/s900/natural-sea-sponge-skin-benefits.jpg",
             stock = 3,
             category = "Cuidado del Hogar",
@@ -62,74 +62,73 @@ object DefaultData {
             producerID = "MT1"
         ),
 
-
-
-        )
+        
+    )
 
     val Producer = listOf(
         Producer(
             id = "CL1",
-            name = "Mónica Cisternas",
-            description = "Fundadora de Raíz Textil",
-            imageUrl = "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%2Fid%2FOIP.exPxGSNU454QZLM7QpeWzgHaHa%3Fr%3D0%26pid%3DApi&f=1&ipt=725341a5c8a022ba61342d37bfb3495eb9560f3e2535476cc77095865b029428&ipo=images",
-            history = "Transforma excedentes de algodón en prendas cómodas y atemporales, confeccionadas junto a talleres de Santiago.",
+            name = "Campo Lindo",
+            description = "",
+            imageUrl = "https://www.explorationjunkie.com/chile-national-animal/",
+            history = "Campo Lindo",
             location = "Rancagua"
         ),
         Producer(
             id = "AH1",
-            name = "Javiera Montenegro",
-            description = "Creador de Oficio Sur",
-            imageUrl = "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%2Fid%2FOIP.exPxGSNU454QZLM7QpeWzgHaHa%3Fr%3D0%26pid%3DApi&f=1&ipt=725341a5c8a022ba61342d37bfb3495eb9560f3e2535476cc77095865b029428&ipo=images",
-            history = "Diseña objetos durables para el hogar usando maderas recuperadas y técnicas tradicionales del sur de Chile.",
-            location = "Concepcion"
+            name = "Agua Hermosa",
+            description = "",
+            imageUrl = "https://www.explorationjunkie.com/chile-national-animal/",
+            history = "Agua Hermosa",
+            location = "Santiago"
         ),
         Producer(
             id = "MT1",
-            name = "Isidora Regno",
-            description = "Diseñadora de Bruma",
-            imageUrl = "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%2Fid%2FOIP.exPxGSNU454QZLM7QpeWzgHaHa%3Fr%3D0%26pid%3DApi&f=1&ipt=725341a5c8a022ba61342d37bfb3495eb9560f3e2535476cc77095865b029428&ipo=images",
-            history = "Crea colecciones de moda consciente en series pequeñas, privilegiando fibras naturales y trazabilidad local.",
+            name = "Maritima",
+            description = "",
+            imageUrl = "https://www.explorationjunkie.com/chile-national-animal/",
+            history = "Maritima",
             location = "Concepcion"
         ),
         Producer(
             id = "TL1",
-            name = "Ignacio Salinas",
-            description = "Fundador de Circular Lab",
-            imageUrl = "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%2Fid%2FOIP.exPxGSNU454QZLM7QpeWzgHaHa%3Fr%3D0%26pid%3DApi&f=1&ipt=725341a5c8a022ba61342d37bfb3495eb9560f3e2535476cc77095865b029428&ipo=images",
-            history = "Desarrolla accesorios a partir de materiales descartados, combinando innovación circular y comercio justo.",
+            name = "Taller Luna",
+            description = "",
+            imageUrl = "https://www.explorationjunkie.com/chile-national-animal/",
+            history = "Taller Luna",
             location = "La Florida"
         ),
         Producer(
             id = "RC1",
-            name = "Danitza Jara",
-            description = "Fundadora de Botánica",
-            imageUrl = "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%2Fid%2FOIP.exPxGSNU454QZLM7QpeWzgHaHa%3Fr%3D0%26pid%3DApi&f=1&ipt=725341a5c8a022ba61342d37bfb3495eb9560f3e2535476cc77095865b029428&ipo=images",
-            history = "Formula cuidado personal de origen vegetal, sin tóxicos y con envases retornables producidos localmente.",
+            name = "Raices Co.",
+            description = "",
+            imageUrl = "https://www.explorationjunkie.com/chile-national-animal/",
+            history = "Raices Co.",
             location = "Talca"
         ),
         Producer(
             id = "HV1",
-            name = "Carlos Ortiz",
-            description = "Creador de Taller Nativo",
-            imageUrl = "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%2Fid%2FOIP.exPxGSNU454QZLM7QpeWzgHaHa%3Fr%3D0%26pid%3DApi&f=1&ipt=725341a5c8a022ba61342d37bfb3495eb9560f3e2535476cc77095865b029428&ipo=images",
-            history = "Convierte fibras y maderas recuperadas en objetos cotidianos de larga duración y bajo impacto ambiental.",
+            name = "Hilos vivo",
+            description = "",
+            imageUrl = "https://www.explorationjunkie.com/chile-national-animal/",
+            history = "Hilos vivo",
             location = "La Serena"
         ),
         Producer(
             id = "EN1",
-            name = "Cristina Ortiz",
-            description = "Fundadora de Verde Hogar",
-            imageUrl = "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%2Fid%2FOIP.exPxGSNU454QZLM7QpeWzgHaHa%3Fr%3D0%26pid%3DApi&f=1&ipt=725341a5c8a022ba61342d37bfb3495eb9560f3e2535476cc77095865b029428&ipo=images",
-            history = "Crea soluciones de limpieza biodegradables con ingredientes locales y sistemas de recarga reutilizables.",
-            location = "Valdivia"
+            name = "Extracto Natural",
+            description = "",
+            imageUrl = "https://www.explorationjunkie.com/chile-national-animal/",
+            history = "Extracto Natural",
+            location = "Coquimbo"
         ),
         Producer(
             id = "AC1",
-            name = "Luis Pereira",
-            description = "Creador de Norte Vivo",
-            imageUrl = "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%2Fid%2FOIP.exPxGSNU454QZLM7QpeWzgHaHa%3Fr%3D0%26pid%3DApi&f=1&ipt=725341a5c8a022ba61342d37bfb3495eb9560f3e2535476cc77095865b029428&ipo=images",
-            history = "Elabora accesorios funcionales con descartes textiles, generando oportunidades de trabajo en su comunidad.",
-            location = "Coquimbo"
+            name = "Ancestros",
+            description = "",
+            imageUrl = "https://www.explorationjunkie.com/chile-national-animal/",
+            history = "Ancestros",
+            location = "Valdivia"
         ),
     )
 }
