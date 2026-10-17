@@ -91,7 +91,7 @@ fun Login(
         }
     }
     Column(
-        modifier = Modifier.padding(20.dp, top = 36.dp),
+        modifier = Modifier.padding(horizontal = 20.dp).padding(top = 36.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -135,7 +135,7 @@ fun Login(
         )
 
         Spacer(modifier = Modifier.height(20.dp))
-        Box(modifier = Modifier.padding(40.dp, 0.dp, 40.dp, 0.dp)) {
+        Box(modifier = Modifier.padding(16.dp, 0.dp, 16.dp, 0.dp)) {
             Button(
                 onClick = { authViewModel.login() },
                 enabled = authState.login !is LoginScreenState.Loading,
@@ -162,7 +162,7 @@ fun Login(
         Spacer(modifier = Modifier.height(20.dp))
         HorizontalDivider(thickness = 2.dp)
         Spacer(modifier = Modifier.height(20.dp))
-        Box(modifier = Modifier.padding(40.dp, 0.dp, 40.dp, 0.dp)) {
+        Box(modifier = Modifier.padding(16.dp, 0.dp, 16.dp, 0.dp)) {
             Button(
                 onClick = {  },
                 shape = RoundedCornerShape(50.dp),
@@ -180,7 +180,7 @@ fun Login(
         Spacer(modifier = Modifier.height(20.dp))
         Box(
             modifier = Modifier
-                .padding(40.dp, 0.dp, 40.dp, 0.dp)) {
+                .padding(16.dp, 0.dp, 16.dp, 0.dp)) {
             Button(
                 shape = RoundedCornerShape(50.dp),
                 onClick = { authViewModel.continueAsGuest() },
