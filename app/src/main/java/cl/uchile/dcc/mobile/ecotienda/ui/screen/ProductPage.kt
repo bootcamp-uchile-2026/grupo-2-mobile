@@ -220,7 +220,7 @@ fun ProductPage(
         }
 
         Spacer(modifier = Modifier.height(32.dp))
-
+// Falta implementar de manera correcta la huella verde
 //        Text(
 //            text = "HUELLA VERDE",
 //            style = MaterialTheme.typography.titleMedium,

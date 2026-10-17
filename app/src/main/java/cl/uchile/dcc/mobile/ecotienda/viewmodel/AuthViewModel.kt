@@ -80,7 +80,7 @@ class AuthViewModel(
         val error = when {
             cleanName.isBlank() -> "Ingresa tu nombre"
             !cleanEmail.contains("@") -> "Email inválido"
-            password.length < 4 -> "La contraseña debe tener al menos 4 caracteres"
+            password.length < 8 -> "La contraseña debe tener al menos 8 caracteres"
             else -> null
         }
 
@@ -205,7 +205,7 @@ class AuthViewModel(
         }
         val passwordError = when {
             form.password.isBlank() -> "La contraseña no puede estar vacía"
-            form.password.length < 4 -> "Mínimo 4 caracteres"
+            form.password.length < 8 -> "Mínimo 8 caracteres"
             else -> null
         }
 

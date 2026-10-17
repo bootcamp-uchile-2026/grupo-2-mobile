@@ -1,17 +1,21 @@
 package cl.uchile.dcc.mobile.ecotienda.ui.screen
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,7 +31,8 @@ import cl.uchile.dcc.mobile.ecotienda.ui.theme.CustomBrandTitleStyle
 @Composable
 fun HuellaVerde(
     modifier: Modifier = Modifier,
-    onButtonClick: () -> Unit = {}
+    onButtonClick: () -> Unit = {},
+    onBack: () -> Unit = {}
 ) {
     Column(
         modifier = modifier
@@ -36,6 +41,19 @@ fun HuellaVerde(
             .padding(horizontal = 24.dp, vertical = 28.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(onClick = onBack) {
+                Icon(
+                    Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "Volver",
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+        }
+
         Text(
             text = "¿Qué es tu Huella Verde?",
             style = CustomBrandTitleStyle.copy(

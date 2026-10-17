@@ -338,7 +338,8 @@ fun EcoTiendaApp(
 
             composable(ScreenRoutes.HUELLAVERDE.route) {
                 HuellaVerde(
-                    modifier = Modifier.padding(innerPadding)
+                    modifier = Modifier.padding(innerPadding),
+                    onBack = { navController.popBackStack() }
                 )
             }
         }
