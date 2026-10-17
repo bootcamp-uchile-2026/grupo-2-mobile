@@ -7,6 +7,7 @@ class UserRepository(
     private val userDao: UserDAO
 ) {
     suspend fun registerUser(user: User): Boolean {
+        if (userDao.emailExists(user.email)) return false
         return userDao.addUser(user) != -1L
     }
 

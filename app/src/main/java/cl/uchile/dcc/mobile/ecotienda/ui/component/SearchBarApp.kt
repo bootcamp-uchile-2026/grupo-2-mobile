@@ -16,39 +16,43 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import cl.uchile.dcc.mobile.ecotienda.ui.theme.MidleBrown
 import compose.icons.FeatherIcons
 import compose.icons.feathericons.Search
 
-// SearchStaticBar :: onClick modifier -> SearchBar falsa
+// SearchStaticBar :: onClick modifier -> SeachrBar falsa
+// Genera una searchbar falsa para poder carga la pantalla SearchScreen y buscar
+//
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchStaticBar(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    bgColor: Color = MidleBrown,
+    bgColor: Color = MaterialTheme.colorScheme.primaryContainer,
 ) {
     Surface(
         onClick = onClick,
-        modifier = modifier.height(56.dp),
-        shape = CircleShape,
-        color = bgColor,
+        modifier = modifier.height(56.dp), // Altura estándar de la SearchBar
+        shape = CircleShape, // Forma redondeada
+        color = bgColor, // Color de fondo grisáceo
         tonalElevation = 2.dp
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                imageVector = FeatherIcons.Search,
-                contentDescription = null,
-                tint = Color.Black
-            )
-            Spacer(Modifier.width(8.dp))
+
             Text(
-                text = "Busca algo especial",
+                text = "Buscar producto",
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.7f)
+            )
+            Spacer(Modifier.weight(1f))
+
+            Icon(
+                modifier = Modifier,
+                imageVector = FeatherIcons.Search,
+                contentDescription = null,
+                tint = Color.Black.copy(alpha = 0.8f),
             )
         }
     }

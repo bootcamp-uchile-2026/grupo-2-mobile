@@ -3,17 +3,44 @@ package cl.uchile.dcc.mobile.ecotienda.ui.screen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Remove
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.StarOutline
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -23,11 +50,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cl.uchile.dcc.mobile.ecotienda.data.database.Product
+import cl.uchile.dcc.mobile.ecotienda.utils.formatAsCurrency
 import coil3.compose.AsyncImage
 
-// Página de detalle de productos
-// Navegación: Home -> Catalogo -> Producto
-// Backsatck agregado
 @Composable
 fun ProductPage(
     product: Product,
@@ -42,12 +67,11 @@ fun ProductPage(
     val tabs = listOf("Materiales", "Elaboración", "Valoraciones")
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .verticalScroll(scrollState)
             .padding(16.dp)
     ) {
-        // Navegación
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
@@ -64,9 +88,7 @@ fun ProductPage(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Galería de imagenes
         Row(modifier = Modifier.fillMaxWidth().height(300.dp)) {
-            // Thumbnail falso
             Column(
                 modifier = Modifier
                     .width(60.dp)
@@ -94,7 +116,6 @@ fun ProductPage(
 
             Spacer(modifier = Modifier.width(12.dp))
 
-            // Imagen principal
             AsyncImage(
                 model = product.imageUrl,
                 contentDescription = product.productName,
@@ -109,50 +130,58 @@ fun ProductPage(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        // Info del producto
         Text(
             text = product.productName.uppercase(),
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onBackground
         )
+
         Text(
-            text = "$${product.price}",
+            text = product.price.formatAsCurrency(),
             style = MaterialTheme.typography.headlineSmall,
             color = MaterialTheme.colorScheme.primary,
             fontWeight = FontWeight.SemiBold
         )
 
+        // Estrellas de Calificación Dummy en Detalle
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(vertical = 4.dp)
+        ) {
+            repeat(4) {
+                Icon(
+                    imageVector = Icons.Filled.Star,
+                    contentDescription = null,
+                    tint = Color(0xFFFFC107),
+                    modifier = Modifier.size(16.dp)
+                )
+            }
+            Icon(
+                imageVector = Icons.Outlined.StarOutline,
+                contentDescription = null,
+                tint = Color(0xFFFFC107),
+                modifier = Modifier.size(16.dp)
+            )
+            Spacer(modifier = Modifier.width(6.dp))
+            Text(
+                text = "4.5 (24 valoraciones)",
+                style = MaterialTheme.typography.bodySmall,
+                color = Color.Gray
+            )
+        }
+
         Spacer(modifier = Modifier.height(12.dp))
 
-        // Descripcion del producto
         Text(
             text = product.description,
             style = MaterialTheme.typography.bodyMedium,
             color = Color.Gray,
-            lineHeight = 20.dp.value.sp // Use proper line height if needed
+            lineHeight = 20.sp
         )
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        // Opciones de producto falsa
-//        Row(
-//            modifier = Modifier.fillMaxWidth(),
-//            horizontalArrangement = Arrangement.spacedBy(16.dp)
-//        ) {
-//            Column(modifier = Modifier.weight(1f)) {
-//                Text(text = "COLOR", style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold)
-//                FakeDropdown(text = "Selecciona una opción")
-//            }
-//            Column(modifier = Modifier.weight(1f)) {
-//                Text(text = "TALLA", style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold)
-//                FakeDropdown(text = "Selecciona una opción")
-//            }
-//        }
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        // Selección de cantidad y añadir al carrito
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
@@ -171,7 +200,7 @@ fun ProductPage(
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier.padding(horizontal = 12.dp)
                 )
-                IconButton(onClick = { quantity++ } , modifier = Modifier.size(36.dp)) {
+                IconButton(onClick = { quantity++ }, modifier = Modifier.size(36.dp)) {
                     Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(20.dp))
                 }
             }
@@ -191,32 +220,30 @@ fun ProductPage(
         }
 
         Spacer(modifier = Modifier.height(32.dp))
-
-        // Idea de medidor de Huella Verde
-        Text(
-            text = "HUELLA VERDE",
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(24.dp)
-                .clip(RoundedCornerShape(4.dp))
-                .background(MaterialTheme.colorScheme.secondary)
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth(0.8f) // Fraccion de huella verde
-                    .fillMaxHeight()
-                    .background(MaterialTheme.colorScheme.primary)
-            )
-        }
+// Falta implementar de manera correcta la huella verde
+//        Text(
+//            text = "HUELLA VERDE",
+//            style = MaterialTheme.typography.titleMedium,
+//            fontWeight = FontWeight.Bold
+//        )
+//        Spacer(modifier = Modifier.height(8.dp))
+//        Box(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .height(24.dp)
+//                .clip(RoundedCornerShape(4.dp))
+//                .background(MaterialTheme.colorScheme.secondary)
+//        ) {
+//            Box(
+//                modifier = Modifier
+//                    .fillMaxWidth(0.8f)
+//                    .fillMaxHeight()
+//                    .background(MaterialTheme.colorScheme.primary)
+//            )
+//        }
 
         Spacer(modifier = Modifier.height(40.dp))
 
-        // Navegación
         TabRow(
             selectedTabIndex = selectedTab,
             containerColor = Color.Transparent,
@@ -243,7 +270,6 @@ fun ProductPage(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Contenido
         when (selectedTab) {
             2 -> RatingSection()
             else -> {
@@ -265,7 +291,7 @@ fun FakeDropdown(text: String) {
             .fillMaxWidth()
             .height(44.dp)
             .border(1.dp, Color.LightGray, RoundedCornerShape(4.dp))
-            .clickable { /* No-op */ }
+            .clickable { }
             .padding(horizontal = 12.dp),
         contentAlignment = Alignment.CenterStart
     ) {
@@ -292,8 +318,8 @@ fun RatingSection() {
         ) {
             Text(text = "4.5", style = MaterialTheme.typography.displaySmall, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
             Row {
-                repeat(4) { Icon(Icons.Default.Star, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp)) }
-                Icon(Icons.Outlined.StarOutline, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
+                repeat(4) { Icon(Icons.Default.Star, contentDescription = null, tint = Color(0xFFFFC107), modifier = Modifier.size(18.dp)) }
+                Icon(Icons.Outlined.StarOutline, contentDescription = null, tint = Color(0xFFFFC107), modifier = Modifier.size(18.dp))
             }
             Text(text = "Calificación sustentable", style = MaterialTheme.typography.labelSmall, color = Color.Gray)
         }
@@ -320,7 +346,6 @@ fun ReviewItem() {
         }
         Spacer(modifier = Modifier.width(12.dp))
         Column(modifier = Modifier.weight(1f)) {
-            // "Redacted" Review Text Bars
             Box(modifier = Modifier.fillMaxWidth().height(8.dp).background(Color(0xFFE0E0E0)))
             Spacer(modifier = Modifier.height(4.dp))
             Box(modifier = Modifier.fillMaxWidth(0.8f).height(8.dp).background(Color(0xFFE0E0E0)))
@@ -329,7 +354,7 @@ fun ReviewItem() {
         }
         Spacer(modifier = Modifier.width(8.dp))
         Row {
-            repeat(4) { Icon(Icons.Default.Star, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(12.dp)) }
+            repeat(4) { Icon(Icons.Default.Star, contentDescription = null, tint = Color(0xFFFFC107), modifier = Modifier.size(12.dp)) }
         }
     }
 }

@@ -1,16 +1,7 @@
 package cl.uchile.dcc.mobile.ecotienda.ui.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -19,19 +10,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -43,11 +23,22 @@ import androidx.compose.ui.unit.sp
 import cl.uchile.dcc.mobile.ecotienda.data.database.Producer
 import coil3.compose.AsyncImage
 
+// Página de detalle de emprendedor (cambio de nombre)
+// Navegación: Home -> Nosotros -> Emprendedor
+// Backsatck agregado
 @Composable
-fun ProducerPage(modifier: Modifier = Modifier, producer: Producer, onBack: () -> Unit) {
-    var selectedTab by remember { mutableIntStateOf(0) }
-    val tabs = listOf("Historia", "Certificados", "Valoraciones")
+fun ProducerPage(
+    producer: Producer,
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    // Scroll vertical
     val scrollState = rememberScrollState()
+
+    // Cambio de vista para el empendedor
+    var selectedTab by remember { mutableIntStateOf(0) } // Historia by default
+
+    val tabs = listOf("Historia", "Metodología", "Valoraciones")
 
     Column(
         modifier = modifier
@@ -61,11 +52,7 @@ fun ProducerPage(modifier: Modifier = Modifier, producer: Producer, onBack: () -
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(onClick = onBack) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Volver",
-                    tint = MaterialTheme.colorScheme.secondary
-                )
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver", tint = MaterialTheme.colorScheme.secondary)
             }
             Text(
                 text = "Perfil del Emprendedor",
@@ -76,7 +63,7 @@ fun ProducerPage(modifier: Modifier = Modifier, producer: Producer, onBack: () -
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Imagen de emprendedor
+        // Imagen tentativa de emprendedor
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -90,7 +77,7 @@ fun ProducerPage(modifier: Modifier = Modifier, producer: Producer, onBack: () -
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop
             )
-
+            
             // Lugar de donde proviene el emprendedor
             Surface(
                 modifier = Modifier
@@ -110,7 +97,7 @@ fun ProducerPage(modifier: Modifier = Modifier, producer: Producer, onBack: () -
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        // Información del emprendedor
+        // Información de nuestro emprendedor
         Text(
             text = producer.name.uppercase(),
             style = MaterialTheme.typography.headlineMedium,
@@ -123,6 +110,30 @@ fun ProducerPage(modifier: Modifier = Modifier, producer: Producer, onBack: () -
             color = MaterialTheme.colorScheme.primary,
             fontWeight = FontWeight.SemiBold
         )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // Sección tentatilla de Huella Verde de emprendedor
+//        Text(
+//            text = "HUELLA VERDE DEL PRODUCTOR",
+//            style = MaterialTheme.typography.titleMedium,
+//            fontWeight = FontWeight.Bold
+//        )
+//        Spacer(modifier = Modifier.height(8.dp))
+//        Box(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .height(24.dp)
+//                .clip(RoundedCornerShape(4.dp))
+//                .background(Mint)
+//        ) {
+//            Box(
+//                modifier = Modifier
+//                    .fillMaxWidth(0.85f) // Static sustainability score for producers
+//                    .fillMaxHeight()
+//                    .background(Sage)
+//            )
+//        }
 
         Spacer(modifier = Modifier.height(40.dp))
 
@@ -153,7 +164,7 @@ fun ProducerPage(modifier: Modifier = Modifier, producer: Producer, onBack: () -
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Contenido de las tabs
+        // Contenido de loas tab
         when (selectedTab) {
             0 -> { // Historia
                 Text(
@@ -163,7 +174,7 @@ fun ProducerPage(modifier: Modifier = Modifier, producer: Producer, onBack: () -
                     lineHeight = 24.sp
                 )
             }
-            2 -> { // Valoraciones
+            2 -> { // Valoraciones?
                 ProducerRatingSection()
             }
             else -> {
@@ -175,7 +186,7 @@ fun ProducerPage(modifier: Modifier = Modifier, producer: Producer, onBack: () -
                 )
             }
         }
-
+        
         Spacer(modifier = Modifier.height(32.dp))
     }
 }
@@ -190,27 +201,11 @@ fun ProducerRatingSection() {
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(end = 24.dp)
         ) {
-            Text(
-                text = "4.8",
-                style = MaterialTheme.typography.displaySmall,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary
-            )
+            Text(text = "4.8", style = MaterialTheme.typography.displaySmall, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
             Row {
-                repeat(5) {
-                    Icon(
-                        Icons.Default.Star,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(18.dp)
-                    )
-                }
+                repeat(5) { Icon(Icons.Default.Star, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp)) }
             }
-            Text(
-                text = "Confianza del productor",
-                style = MaterialTheme.typography.labelSmall,
-                color = Color.Gray
-            )
+            Text(text = "Confianza del productor", style = MaterialTheme.typography.labelSmall, color = Color.Gray)
         }
 
         Column(modifier = Modifier.weight(1f)) {
@@ -231,39 +226,17 @@ fun ProducerReviewItem() {
                 .background(Color.LightGray.copy(alpha = 0.5f)),
             contentAlignment = Alignment.Center
         ) {
-            Icon(
-                Icons.Default.Person,
-                contentDescription = null,
-                modifier = Modifier.size(24.dp),
-                tint = Color.Gray
-            )
+            Icon(Icons.Default.Person, contentDescription = null, modifier = Modifier.size(24.dp), tint = Color.Gray)
         }
         Spacer(modifier = Modifier.width(12.dp))
         Column(modifier = Modifier.weight(1f)) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(8.dp)
-                    .background(Color(0xFFE0E0E0))
-            )
+            Box(modifier = Modifier.fillMaxWidth().height(8.dp).background(Color(0xFFE0E0E0)))
             Spacer(modifier = Modifier.height(4.dp))
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth(0.85f)
-                    .height(8.dp)
-                    .background(Color(0xFFE0E0E0))
-            )
+            Box(modifier = Modifier.fillMaxWidth(0.85f).height(8.dp).background(Color(0xFFE0E0E0)))
         }
         Spacer(modifier = Modifier.width(8.dp))
         Row {
-            repeat(5) {
-                Icon(
-                    Icons.Default.Star,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(12.dp)
-                )
-            }
+            repeat(5) { Icon(Icons.Default.Star, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(12.dp)) }
         }
     }
 }

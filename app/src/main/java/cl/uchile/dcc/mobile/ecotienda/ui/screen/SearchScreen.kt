@@ -30,7 +30,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import cl.uchile.dcc.mobile.ecotienda.data.database.Product
-import cl.uchile.dcc.mobile.ecotienda.ui.component.ProductCard
 import cl.uchile.dcc.mobile.ecotienda.ui.component.ProductCardSearch
 import cl.uchile.dcc.mobile.ecotienda.viewmodel.SearchViewModel
 import compose.icons.FeatherIcons
@@ -84,7 +83,6 @@ fun SearchScreen(
     }
 }
 
-// Nueva pantalla que se muestra al presionar enter o buscar
 @Composable
 fun SearchResultsScreen(
     searchViewModel: SearchViewModel = viewModel(),
@@ -156,10 +154,10 @@ fun SearchResultsContent(
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 items(results, key = { it.id }) { product ->
-                    ProductCard(
+                    ProductCardSearch(
                         product = product,
-                        onAgregarClick = { onAddToCart(product) },
-                        modifier = Modifier
+                        onProductClick = { onProductClick(product) },
+                        onAgregarClick = { onAddToCart(product) }
                     )
                 }
             }

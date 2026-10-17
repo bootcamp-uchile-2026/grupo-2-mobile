@@ -2,7 +2,9 @@ package cl.uchile.dcc.mobile.ecotienda.ui.component
 
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
@@ -12,23 +14,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import cl.uchile.dcc.mobile.ecotienda.ui.screen.ScreenRoutes
-import cl.uchile.dcc.mobile.ecotienda.ui.theme.DarkBrown
-import cl.uchile.dcc.mobile.ecotienda.ui.theme.EcoGreen
-import cl.uchile.dcc.mobile.ecotienda.ui.theme.SoftBeige
-
-// BottomNavigationBar :: String callBack Colors -> BottomBar() { }
-// Genera una barra de navegacion abajo con atajos a las pantallas: HOME, CATALOG, ABOUT, CART
-// ejemplo: BottomNavigationBar ("HOME", callBack = { }, Colors) Crea una barra con atajos
 @Composable
 fun BottomNavigationBar(
     currentRoute: String?,
     onNavigateTo: (String) -> Unit,
     modifier: Modifier = Modifier,
     windowInsets: WindowInsets = WindowInsets.navigationBars,
-    containerColor: Color = SoftBeige,
-    selectedColor: Color = EcoGreen,
-    selectedTextColor: Color = selectedColor,
-    unselectedColor: Color = DarkBrown.copy(alpha = 0.7f),
+    containerColor: Color = MaterialTheme.colorScheme.primary,
+    selectedColor: Color = Color.White,
+    selectedTextColor: Color = MaterialTheme.colorScheme.secondary,
+    unselectedColor: Color = Color.White,
     unselectedTextColor: Color = unselectedColor,
 ) {
     NavigationBar(
@@ -38,17 +33,19 @@ fun BottomNavigationBar(
     ) {
         val sections = listOf(
             ScreenRoutes.HOME,
-            ScreenRoutes.CATALOG,
-            ScreenRoutes.ABOUT,
-            ScreenRoutes.CART
+            ScreenRoutes.SEARCH,
+            ScreenRoutes.HUELLAVERDE,
+            ScreenRoutes.CART,
+            ScreenRoutes.ACCOUNT,
         )
 
         sections.forEach { section ->
             NavigationBarItem(
                 selected = currentRoute == section.route,
                 onClick = { onNavigateTo(section.route) },
-                icon = { Icon(section.icon, contentDescription = section.title) },
-                label = { Text(section.title) },
+                icon = { Icon(section.icon, contentDescription = section.title, modifier = Modifier.size(24.dp)
+                ) },
+                label = { "Text(section.title)" },
                 colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = selectedColor,
                     indicatorColor = Color.Transparent,
