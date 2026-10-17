@@ -21,6 +21,6 @@ data class AuthUIState(
     val isLoggedIn: Boolean = false,
     val isGuest: Boolean = false,
     val userEmail: String? = null,
-    val showLoginSheet: Boolean = false,
-    val welcomeMessageShown: Boolean = false
+    val welcomeMessageShown: Boolean = false,
+    val showLoginSheet: Boolean = false
 )
