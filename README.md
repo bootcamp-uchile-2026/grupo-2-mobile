@@ -53,8 +53,9 @@ Ejecuta la configuración app en un emulador o dispositivo.
 
 Desde la terminal (con dispositivo o emulador conectado):
 Bash./gradlew installDebug
+
 Estructura del proyecto
-textgrupo-2-mobile/
+tgrupo-2-mobile/
 ├── app/
 │   ├── build.gradle.kts
 │   └── src/main/
@@ -80,9 +81,11 @@ textgrupo-2-mobile/
 ├── settings.gradle.kts
 ├── LICENSE
 └── README.md
+
 Navegación implementada
 Un único NavHost en EcoTiendaApp, con destino inicial HOME.
 textEcoTiendaApp (NavHost)
+EcoTiendaApp (NavHost)
 ├── HOME          → HomeEcoTienda
 ├── CATALOG       → Catalog
 ├── ABOUT         → About (emprendedores)
@@ -91,6 +94,7 @@ textEcoTiendaApp (NavHost)
 ├── CART          → Cart
 ├── SEARCH        → SearchScreen
 └── LOGIN         → Login
+
 Datos y persistencia
 
 Los datos de demostración se cargan inicialmente mediante un DatabaseSeeder.
