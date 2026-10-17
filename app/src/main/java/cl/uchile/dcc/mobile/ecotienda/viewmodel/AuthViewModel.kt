@@ -215,9 +215,6 @@ class AuthViewModel(
         _state.update {
             AuthUIState(showLoginSheet = false)
         }
-        viewModelScope.launch {
-            configRepo.clearSession()
-        }
     }
 
     fun markWelcomeShown() {

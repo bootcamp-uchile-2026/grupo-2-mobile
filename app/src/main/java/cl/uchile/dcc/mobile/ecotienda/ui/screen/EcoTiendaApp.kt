@@ -273,7 +273,19 @@ fun EcoTiendaApp(
                 Login(
                     modifier = Modifier.padding(innerPadding),
                     snackbarHostState = snackbarHostState,
-                    onBack = { navController.popBackStack() },
+                    onEnterApp = {
+                        navController.navigate(ScreenRoutes.HOME.route) {
+                            popUpTo(ScreenRoutes.ACCOUNT.route) { inclusive = true }
+                        }
+                    },
+                    onOpenOrders = { navController.navigate(ScreenRoutes.ORDERS.route) },
+                    onLogout = {
+                        // AuthViewModel ya deja isLoggedIn/isGuest en false
+                        // Redirigir al Home tras el logout
+                        navController.navigate(ScreenRoutes.HOME.route) {
+                            popUpTo(0) { inclusive = true }
+                        }
+                    }
                 )
             }
 
