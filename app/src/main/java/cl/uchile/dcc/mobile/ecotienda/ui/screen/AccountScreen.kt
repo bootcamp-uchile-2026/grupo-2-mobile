@@ -1,25 +1,39 @@
 package cl.uchile.dcc.mobile.ecotienda.ui.screen
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.ShoppingBag
-import androidx.compose.material3.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import cl.uchile.dcc.mobile.ecotienda.viewmodel.AuthViewModel
 
-// AccounScreen es la mezcla de las pantalla Login y account
-// Pertenece a Login/Accoun
+// AccountScreen es la mezcla de las pantalla Login y account
 @Composable
 fun AccountScreen(
     modifier: Modifier = Modifier,
@@ -40,12 +54,12 @@ fun AccountScreen(
         modifier = modifier
             .fillMaxSize()
             .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Surface(
             modifier = Modifier.size(88.dp),
             shape = CircleShape,
-            color = MaterialTheme.colorScheme.primaryContainer
+            color = MaterialTheme.colorScheme.primary
         ) {
             Box(contentAlignment = Alignment.Center) {
                 Text(
@@ -64,6 +78,14 @@ fun AccountScreen(
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
+        Spacer(Modifier.height(16.dp))
+
+        Button(
+            onClick = onGoHome,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Ir al inicio", style = MaterialTheme.typography.titleMedium)
+        }
 
         Spacer(Modifier.height(24.dp))
 
@@ -71,15 +93,26 @@ fun AccountScreen(
             headlineContent = { Text("Perfil") },
             leadingContent = { Icon(Icons.Filled.Person, null) },
             trailingContent = { Icon(Icons.Filled.ChevronRight, null) },
-            modifier = Modifier
-                .clickable { /* más adelante editar perfil */ }
+            modifier = Modifier.clickable { /* más adelante editar perfil */ },
+            colors = ListItemDefaults.colors(
+                containerColor = MaterialTheme.colorScheme.onPrimary,
+                headlineColor = MaterialTheme.colorScheme.onSurface,
+                leadingIconColor = MaterialTheme.colorScheme.primary,
+                trailingIconColor = MaterialTheme.colorScheme.primary
+            )
         )
         HorizontalDivider()
         ListItem(
             headlineContent = { Text("Mis compras") },
             leadingContent = { Icon(Icons.Filled.ShoppingBag, null) },
             trailingContent = { Icon(Icons.Filled.ChevronRight, null) },
-            modifier = Modifier.clickable(onClick = onOpenOrders)
+            modifier = Modifier.clickable(onClick = onOpenOrders),
+            colors = ListItemDefaults.colors(
+                containerColor = MaterialTheme.colorScheme.onPrimary,
+                headlineColor = MaterialTheme.colorScheme.onSurface,
+                leadingIconColor = MaterialTheme.colorScheme.primary,
+                trailingIconColor = MaterialTheme.colorScheme.primary
+            )
         )
         HorizontalDivider()
 
@@ -90,15 +123,7 @@ fun AccountScreen(
         ) {
             Icon(Icons.Filled.Logout, null)
             Spacer(Modifier.width(8.dp))
-            Text("Cerrar sesión")
-        }
-
-        Spacer(Modifier.height(16.dp))
-        Button(
-            onClick = onGoHome,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Ir al inicio")
+            Text(text = "Cerrar sesión", style = MaterialTheme.typography.titleMedium)
         }
     }
 }

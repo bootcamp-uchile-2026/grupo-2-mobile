@@ -16,25 +16,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import cl.uchile.dcc.mobile.ecotienda.ui.theme.ecoTiendaColors
+import cl.uchile.dcc.mobile.ecotienda.ui.theme.MidleBrown
 import compose.icons.FeatherIcons
 import compose.icons.feathericons.Search
 
-// SearchStaticBar :: onClick modifier -> SeachrBar falsa
-// Genera una searchbar falsa para poder carga la pantalla SearchScreen y buscar
-//
+// SearchStaticBar :: onClick modifier -> SearchBar falsa
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchStaticBar(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    bgColor: Color = MaterialTheme.ecoTiendaColors.cl4,
+    bgColor: Color = MidleBrown,
 ) {
     Surface(
         onClick = onClick,
-        modifier = modifier.height(56.dp), // Altura estándar de la SearchBar
-        shape = CircleShape, // Forma redondeada
-        color = bgColor, // Color de fondo grisáceo
+        modifier = modifier.height(56.dp),
+        shape = CircleShape,
+        color = bgColor,
         tonalElevation = 2.dp
     ) {
         Row(
@@ -44,13 +42,13 @@ fun SearchStaticBar(
             Icon(
                 imageVector = FeatherIcons.Search,
                 contentDescription = null,
-                tint = Color.Companion.Black
+                tint = Color.Black
             )
             Spacer(Modifier.width(8.dp))
             Text(
                 text = "Busca algo especial",
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.7f)
             )
         }
     }

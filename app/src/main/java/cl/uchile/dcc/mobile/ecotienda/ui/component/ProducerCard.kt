@@ -21,8 +21,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import cl.uchile.dcc.mobile.ecotienda.model.Producer
-import cl.uchile.dcc.mobile.ecotienda.ui.theme.ecoTiendaColors
+import cl.uchile.dcc.mobile.ecotienda.data.database.Producer
+import cl.uchile.dcc.mobile.ecotienda.ui.theme.DarkBrown
+import cl.uchile.dcc.mobile.ecotienda.ui.theme.MidleBrown
 import compose.icons.FeatherIcons
 import compose.icons.feathericons.Map
 
@@ -30,8 +31,8 @@ import compose.icons.feathericons.Map
 fun ProducerCard(
     modifier: Modifier,
     producer: Producer,
-    containerColor: Color = MaterialTheme.ecoTiendaColors.cl4,
-    textColor: Color = MaterialTheme.ecoTiendaColors.cl3,
+    containerColor: Color = MidleBrown,
+    textColor: Color = DarkBrown,
     onBack: () -> Unit
 ) {
     Card(
@@ -63,23 +64,23 @@ fun ProducerCard(
                     .padding(16.dp),
             )
             Column() {
-            Text(
-                text = producer.name,          // Nombre, cambiar description a nombre
-                style = MaterialTheme.typography.titleMedium,
-                color = textColor,
-                fontWeight = FontWeight.Bold
-            )
-            Text(
-                text = producer.location,       // Donde esta
-                style = MaterialTheme.typography.bodyMedium,
-                color = textColor.copy(alpha = 0.9f)
-            )
-            Text(
-                text = "Productos: 9",       // Cantidad de productos
-                style = MaterialTheme.typography.bodySmall,
-                color = textColor.copy(alpha = 0.9f)
-            )
-        }
+                Text(
+                    text = producer.name,          // Nombre, cambiar description a nombre
+                    style = MaterialTheme.typography.titleMedium,
+                    color = textColor,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = producer.location,       // Donde esta
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = textColor.copy(alpha = 0.9f)
+                )
+                Text(
+                    text = "Productos: 9",       // Cantidad de productos
+                    style = MaterialTheme.typography.bodySmall,
+                    color = textColor.copy(alpha = 0.9f)
+                )
+            }
             Box(
                 modifier = Modifier.fillMaxWidth(),
                 contentAlignment = Alignment.CenterEnd // Alinea el contenido al centro-derecha
@@ -98,9 +99,7 @@ fun ProducerCard(
                         modifier = Modifier.size(28.dp)
                     )
                 }
-        }
+            }
         }
     }
-
-
 }

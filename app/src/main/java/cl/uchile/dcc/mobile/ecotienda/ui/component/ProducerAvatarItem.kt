@@ -20,15 +20,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import cl.uchile.dcc.mobile.ecotienda.model.Producer
-import cl.uchile.dcc.mobile.ecotienda.ui.theme.Sage
+import cl.uchile.dcc.mobile.ecotienda.data.database.Producer
 import coil3.compose.AsyncImage
 
 @Composable
 fun ProducerAvatarItem(
     producer: Producer,
     modifier: Modifier = Modifier,
-    textColor: Color = Sage,
+    textColor: Color = MaterialTheme.colorScheme.primary,
     onClick: () -> Unit
 ) {
     Column(

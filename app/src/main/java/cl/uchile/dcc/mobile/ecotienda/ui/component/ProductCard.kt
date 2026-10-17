@@ -1,7 +1,6 @@
 package cl.uchile.dcc.mobile.ecotienda.ui.component
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -23,36 +22,30 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import cl.uchile.dcc.mobile.ecotienda.model.Product
-import cl.uchile.dcc.mobile.ecotienda.ui.theme.ecoTiendaColors
-import cl.uchile.dcc.mobile.ecotienda.ui.theme.md_theme_light_primary
+import cl.uchile.dcc.mobile.ecotienda.data.database.Product
 import cl.uchile.dcc.mobile.ecotienda.utils.formatAsCurrency
 import coil3.compose.AsyncImage
 
 @Composable
 fun ProductCard(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     product: Product,
-    onProductClick: () -> Unit,
     onAgregarClick: () -> Unit
 ) {
     Card(
         modifier = modifier
             .height(300.dp)
-            .padding(8.dp)        // alto aproximado
-            .clickable { onProductClick() },
+            .padding(8.dp),
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
     ) {
-        Box(
-        ) {
+        Box {
             // Imagen de fondo (el empaque del cepillo)
             AsyncImage(
                 model = product.imageUrl,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxWidth()
+                modifier = Modifier.fillMaxWidth()
             )
 
             // Gradiente oscuro abajo para que se lea el texto
@@ -69,25 +62,25 @@ fun ProductCard(
             ) {
                 Column {
                     Text(
-                        text = product.productName,          // "Ciclo Vivo"
+                        text = product.productName,
                         style = MaterialTheme.typography.titleMedium,
                         color = Color.White,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = product.description,       // "Cepillo de bambú"
+                        text = product.description,
                         style = MaterialTheme.typography.bodyMedium,
                         color = Color.White.copy(alpha = 0.9f)
                     )
                     Text(
-                        text = product.productProducer,       // "Cepillo de bambú"
+                        text = product.productProducer,
                         style = MaterialTheme.typography.bodySmall,
                         color = Color.White.copy(alpha = 0.9f)
                     )
                     Spacer(modifier = Modifier.height(8.dp))
 
                     Text(
-                        text = product.price.formatAsCurrency(),          // "$4.990"
+                        text = product.price.formatAsCurrency(),
                         style = MaterialTheme.typography.titleLarge,
                         color = Color.White,
                         fontWeight = FontWeight.Bold
@@ -102,13 +95,16 @@ fun ProductCard(
                     .align(Alignment.BottomEnd)
                     .padding(12.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.ecoTiendaColors.cl1
+                    containerColor = MaterialTheme.colorScheme.tertiaryContainer
                 ),
                 shape = RoundedCornerShape(50)
             ) {
-                Text("+Agregar")
+                Text(
+                    text = "+Agregar",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.secondary
+                )
             }
-
         }
     }
 }

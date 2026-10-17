@@ -13,8 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import cl.uchile.dcc.mobile.ecotienda.viewmodel.AuthViewModel
 
-// AccountPanelContent pantalla que genera el contenido que discrimina AccountGate
-// Navegación: Se usa en login
+// AccountPanelContent pantalla que genera el contenido en el panel lateral de login/cuenta
 @Composable
 fun AccountPanelContent(
     authViewModel: AuthViewModel,
@@ -43,7 +42,6 @@ fun AccountPanelContent(
                 snackbarHostState = snackbarHostState,
                 authViewModel = authViewModel,
                 onBack = onGoHome,
-                onSuccess = onGoHome,
                 modifier = Modifier
             )
         }
