@@ -43,9 +43,8 @@ Target SDK: 36
 
 **Requisitos:** Android Studio (versión reciente, con AGP 9.x) y un emulador o dispositivo con Android 7.0 o superior.
 
-1. Clona el repositorio:
-   ```bash
-   git clone https://github.com/bootcamp-uchile-2026/grupo-2-mobile.git
+Clona el repositorio:
+`git clone https://github.com/bootcamp-uchile-2026/grupo-2-mobile.git`
 
 Abre la carpeta grupo-2-mobile en Android Studio.
 Espera a que Gradle sincronice las dependencias.
@@ -55,45 +54,14 @@ Desde la terminal (con dispositivo o emulador conectado):
 Bash./gradlew installDebug
 
 Estructura del proyecto
-tgrupo-2-mobile/
-├── app/
-│   ├── build.gradle.kts
-│   └── src/main/
-│       ├── AndroidManifest.xml
-│       ├── java/cl/uchile/dcc/mobile/ecotienda/
-│       │   ├── data/
-│       │   │   ├── database/           # Room Database, Entities, DAOs
-│       │   │   ├── database_open_helper/
-│       │   │   ├── repository/
-│       │   │   └── DefaultData.kt
-│       │   ├── model/
-│       │   ├── ui/
-│       │   │   ├── MainActivity.kt
-│       │   │   ├── component/
-│       │   │   ├── screen/
-│       │   │   ├── screenstates/
-│       │   │   └── theme/
-│       │   └── viewmodel/
-│       └── res/
-├── gradle/
-│   └── libs.versions.toml
-├── build.gradle.kts
-├── settings.gradle.kts
-├── LICENSE
-└── README.md
+
+<img width="692" height="540" alt="Captura de pantalla 2026-10-20 a la(s) 8 19 35 p m" src="https://github.com/user-attachments/assets/4d2d8168-bc0b-4195-ae50-16206315b954" />
 
 Navegación implementada
 Un único NavHost en EcoTiendaApp, con destino inicial HOME.
 textEcoTiendaApp (NavHost)
-EcoTiendaApp (NavHost)
-├── HOME          → HomeEcoTienda
-├── CATALOG       → Catalog
-├── ABOUT         → About (emprendedores)
-├── PRODUCERPAGE  → ProducerPage
-├── PRODUCTPAGE   → ProductPage
-├── CART          → Cart
-├── SEARCH        → SearchScreen
-└── LOGIN         → Login
+
+<img width="423" height="198" alt="Captura de pantalla 2026-10-20 a la(s) 8 21 37 p m" src="https://github.com/user-attachments/assets/04c1fcd4-d798-4af1-a3a3-75f245a54244" />
 
 Datos y persistencia
 
