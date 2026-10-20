@@ -44,24 +44,60 @@ Target SDK: 36
 **Requisitos:** Android Studio (versión reciente, con AGP 9.x) y un emulador o dispositivo con Android 7.0 o superior.
 
 Clona el repositorio:
-`git clone https://github.com/bootcamp-uchile-2026/grupo-2-mobile.git`
+```git clone https://github.com/bootcamp-uchile-2026/grupo-2-mobile.git```
 
 Abre la carpeta grupo-2-mobile en Android Studio.
 Espera a que Gradle sincronice las dependencias.
 Ejecuta la configuración app en un emulador o dispositivo.
 
 Desde la terminal (con dispositivo o emulador conectado):
-Bash./gradlew installDebug
+`gradlew installDebug`
 
 Estructura del proyecto
 
-<img width="692" height="540" alt="Captura de pantalla 2026-10-20 a la(s) 8 19 35 p m" src="https://github.com/user-attachments/assets/4d2d8168-bc0b-4195-ae50-16206315b954" />
-
+```
+grupo-2-mobile/
+├── app/
+│   ├── build.gradle.kts
+│   └── src/main/
+│       ├── AndroidManifest.xml
+│       ├── java/cl/uchile/dcc/mobile/ecotienda/
+│       │   ├── data/
+│       │   │   ├── database/           # Room Database, Entities, DAOs
+│       │   │   ├── database_open_helper/
+│       │   │   ├── repository/
+│       │   │   └── DefaultData.kt
+│       │   ├── model/
+│       │   ├── ui/
+│       │   │   ├── MainActivity.kt
+│       │   │   ├── component/
+│       │   │   ├── screen/
+│       │   │   ├── screenstates/
+│       │   │   └── theme/
+│       │   └── viewmodel/
+│       └── res/
+├── gradle/
+│   └── libs.versions.toml
+├── build.gradle.kts
+├── settings.gradle.kts
+├── LICENSE
+└── README.md
+```
 Navegación implementada
 Un único NavHost en EcoTiendaApp, con destino inicial HOME.
 textEcoTiendaApp (NavHost)
 
-<img width="423" height="198" alt="Captura de pantalla 2026-10-20 a la(s) 8 21 37 p m" src="https://github.com/user-attachments/assets/04c1fcd4-d798-4af1-a3a3-75f245a54244" />
+```
+EcoTiendaApp (NavHost)
+├── HOME           → HomeEcoTienda
+├── CATALOG        → Catalog
+├── ABOUT          → About (emprendedores)
+├── PRODUCERPAGE   → ProducerPage
+├── PRODUCTPAGE    → ProductPage
+├── CART           → Cart
+├── SEARCH         → SearchScreen
+└── LOGIN          → Login
+```
 
 Datos y persistencia
 
@@ -85,7 +121,7 @@ No hay checkout ni pago.
 La búsqueda aún no filtra el catálogo de forma completa.
 El registro (SignUp) aún no está conectado al flujo de navegación.
 
-Equipo Mobile
+## Equipo Mobile
 
 Luis Pereira — Desarrollo Mobile
 
@@ -101,4 +137,4 @@ Diseño
 La implementación se basa en los wireframes del flujo comprador entregados por el equipo UX/UI.
 
 Licencia
-Consulta el archivo LICENSE incluido en este repositorio.
+Consulta el archivo [LICENSE](https://github.com/bootcamp-uchile-2026/grupo-2-mobile/blob/develop/LICENSE) incluido en este repositorio.
