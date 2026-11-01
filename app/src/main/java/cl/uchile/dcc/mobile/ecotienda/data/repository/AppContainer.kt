@@ -9,6 +9,7 @@ import cl.uchile.dcc.mobile.ecotienda.data.database.BuenOrigenDatabase
 
 private const val USER_PREFERENCES_NAME = "ecotienda_preferences"
 
+// Reune y entrega las despendencias compartidas a la app
 val Context.userPreferencesDataStore: DataStore<Preferences> by preferencesDataStore(
     name = USER_PREFERENCES_NAME,
 )
