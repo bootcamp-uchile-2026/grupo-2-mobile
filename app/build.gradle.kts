@@ -67,6 +67,15 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
 
+    // Retrofit
+    implementation(libs.squareup.retrofit2.retrofit)
+
+    // Convertidor JSON (Gson o Moshi)
+    implementation(libs.squareup.retrofit2.converter.gson)
+
+    // Interceptor para logging
+    implementation(libs.squareup.okhttp3.logging.interceptor)
+
     ksp(libs.androidx.room.compiler)
 
     testImplementation(libs.junit)

@@ -6,6 +6,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import cl.uchile.dcc.mobile.ecotienda.data.database.BuenOrigenDatabase
+import cl.uchile.dcc.mobile.ecotienda.data.network.ApiRepository
 
 private const val USER_PREFERENCES_NAME = "ecotienda_preferences"
 
@@ -14,7 +15,7 @@ val Context.userPreferencesDataStore: DataStore<Preferences> by preferencesDataS
     name = USER_PREFERENCES_NAME,
 )
 
-// Contenedor de repositorios (AppContainer) centralizado con Room
+// Contenedor de repositorios (AppContainer) centralizado con Room y Retrofit API
 class AppContainer(context: Context) {
     private val appContext = context.applicationContext
 
@@ -23,19 +24,31 @@ class AppContainer(context: Context) {
     }
 
     val productRepository: ProductRepository by lazy {
-        ProductRepository(database.productDAO)
+        ProductRepository(
+            productDao = database.productDAO,
+            apiService = ApiRepository.productApiService
+        )
     }
 
     val producerRepository: ProducerRepository by lazy {
-        ProducerRepository(database.producerDAO)
+        ProducerRepository(
+            producerDao = database.producerDAO,
+            apiService = ApiRepository.producerApiService
+        )
     }
 
     val userRepository: UserRepository by lazy {
-        UserRepository(database.userDAO)
+        UserRepository(
+            userDao = database.userDAO,
+            apiService = ApiRepository.userApiService
+        )
     }
 
     val cartRepository: CartRepository by lazy {
-        CartRepository(database.cartItemDAO)
+        CartRepository(
+            cartItemDao = database.cartItemDAO,
+            apiService = ApiRepository.cartApiService
+        )
     }
 
     val buenOrigenRepository: BuenOrigenDataRepository by lazy {
