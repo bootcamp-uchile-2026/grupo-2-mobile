@@ -38,17 +38,11 @@ class AppContainer(context: Context) {
     }
 
     val userRepository: UserRepository by lazy {
-        UserRepository(
-            userDao = database.userDAO,
-            apiService = ApiRepository.userApiService
-        )
+        UserRepository(userDao = database.userDAO)
     }
 
     val cartRepository: CartRepository by lazy {
-        CartRepository(
-            cartItemDao = database.cartItemDAO,
-            apiService = ApiRepository.cartApiService
-        )
+        CartRepository(cartItemDao = database.cartItemDAO)
     }
 
     val buenOrigenRepository: BuenOrigenDataRepository by lazy {

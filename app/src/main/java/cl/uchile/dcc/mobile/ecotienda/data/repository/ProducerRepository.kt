@@ -16,8 +16,7 @@ class ProducerRepository(
 
     suspend fun getAllProducers(): List<Producer> {
         return try {
-            val dtos = apiService.getProducers()
-            val entities = dtos.map { it.toEntity() }
+            val entities = apiService.getProducers().map { it.toEntity() }
             for (p in entities) {
                 producerDao.addProducer(p)
             }
@@ -29,8 +28,12 @@ class ProducerRepository(
 
     suspend fun getProducerById(producerId: String): Producer? {
         return try {
-            val dto = apiService.getProducerById(producerId)
-            val entity = dto.toEntity()
+            val existing = producerDao.getProducerById(producerId)
+            val fresh = apiService.getProducerById(producerId).toEntity()
+            val entity = fresh.copy(
+                location = fresh.location.ifBlank { existing?.location.orEmpty() },
+                history = fresh.history.ifBlank { existing?.history.orEmpty() },
+            )
             producerDao.addProducer(entity)
             entity
         } catch (_: Exception) {
@@ -39,18 +42,12 @@ class ProducerRepository(
     }
 
     suspend fun searchProducers(query: String): List<Producer> {
-        return try {
-            val dtos = apiService.searchProducers(query)
-            val entities = dtos.map { it.toEntity() }
-            for (p in entities) {
-                producerDao.addProducer(p)
-            }
-            entities
-        } catch (_: Exception) {
-            producerDao.getAllProducer().filter {
-                it.name.contains(query, ignoreCase = true) ||
-                        it.location.contains(query, ignoreCase = true)
-            }
+        val all = getAllProducers()
+        if (query.isBlank()) return all
+        return all.filter {
+            it.name.contains(query, ignoreCase = true) ||
+                it.description.contains(query, ignoreCase = true) ||
+                it.location.contains(query, ignoreCase = true)
         }
     }
 }

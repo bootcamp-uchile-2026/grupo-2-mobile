@@ -4,8 +4,8 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object ApiRepository {
-    // ⚠️ IMPORTANTE: La URL base DEBE terminar en barra '/' al final
-    private const val BASE_URL = "http://159.112.150.143:3003/api/"
+    // La base termina en '/'. /api/ solo sirve Swagger; los datos están en la raíz.
+    private const val BASE_URL = "http://159.112.150.143:3003/"
 
     // Instancia compartida de Retrofit
     private val retrofit: Retrofit by lazy {

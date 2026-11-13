@@ -9,6 +9,7 @@ import androidx.compose.material.icons.filled.NaturePeople
 import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Person2
+import androidx.compose.material.icons.filled.Photo
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -23,12 +24,14 @@ enum class ScreenRoutes(
 ) {
     HOME(title = "Inicio", route = "HOME", icon = Icons.Filled.Home),
     CATALOG(title = "Catálogo", route = "CATALOG", icon = Icons.Filled.GridView),
-    PRODUCTPAGE(title = "Página Producto", route = "PRODUCTPAGE", icon = Icons.Filled.Nature),
+    PRODUCTPAGE(showTopBar = false, title = "Página Producto", route = "PRODUCTPAGE", icon = Icons.Filled.Nature),
     ORDERS(title = "Página Ordenes", route = "ORDERS", icon = Icons.Filled.Nature ),
 
     // Sin topbar
     PRODUCERPAGE(showTopBar = false, title = "Página de Productores", route = "PRODUCERPAGE", icon = Icons.Filled.NaturePeople),
     ABOUT(showTopBar = false, title = "Nosotros", route = "ABOUT", icon = Icons.Filled.People),
+    PHOTOCOMP(showTopBar = false, title = "Página Toma de foto", route = "PHOTOCOMP", icon = Icons.Filled.Photo),
+
 
     // Sin ninguna barra (ni bottom ni top)
     LOGIN(showTopBar = false, showBottomBar = false, title = "Ingreso de Usuarios", route = "Login", icon = Icons.Filled.Person),

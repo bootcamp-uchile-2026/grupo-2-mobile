@@ -41,6 +41,10 @@ class ProductDetailViewModel(
     fun selectProduct(product: Product) {
         savedStateHandle["product_id"] = product.id
         _uiState.update { it.copy(product = product) }
+        viewModelScope.launch {
+            val fresh = productRepository.getProductById(product.id) ?: return@launch
+            _uiState.update { it.copy(product = fresh) }
+        }
     }
 
     fun addToCart(onAdd: (Product, Int) -> Unit) {

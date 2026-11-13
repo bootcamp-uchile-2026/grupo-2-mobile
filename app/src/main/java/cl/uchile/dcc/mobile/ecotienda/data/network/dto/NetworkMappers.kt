@@ -5,25 +5,37 @@ import cl.uchile.dcc.mobile.ecotienda.data.database.Producer
 import cl.uchile.dcc.mobile.ecotienda.data.database.Product
 import cl.uchile.dcc.mobile.ecotienda.data.database.User
 
-fun ProductDto.toEntity(): Product = Product(
-    id = id,
-    productName = productName,
+fun ProductListDto.toEntity(): Product = Product(
+    id = id.toString(),
+    productName = name,
+    price = salePrice ?: price,
+    description = name,
+    productProducer = brand.orEmpty(),
+    imageUrl = imageUrl.orEmpty(),
+    stock = 0,
+    category = "",
+    producerID = "",
+)
+
+fun ProductDetailDto.toEntity(): Product = Product(
+    id = id.toString(),
+    productName = name,
     price = price,
-    description = description,
-    productProducer = productProducer,
-    imageUrl = imageUrl,
-    stock = stock,
-    category = category,
-    producerID = producerId
+    description = description.orEmpty(),
+    productProducer = "",
+    imageUrl = images?.firstOrNull().orEmpty(),
+    stock = 0,
+    category = if (!sizes.isNullOrEmpty()) "Moda Natural" else "",
+    producerID = "",
 )
 
 fun ProducerDto.toEntity(): Producer = Producer(
-    id = id,
-    name = producerName,
-    description = producerDescription,
-    imageUrl = producerImageUrl,
-    location = producerLocation,
-    history = producerHistory
+    id = id.toString(),
+    name = name,
+    description = description.orEmpty(),
+    imageUrl = imageUrl.orEmpty(),
+    location = "",
+    history = story.orEmpty(),
 )
 
 fun UserDto.toEntity(): User = User(

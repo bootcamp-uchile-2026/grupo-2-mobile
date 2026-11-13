@@ -1,28 +1,20 @@
 package cl.uchile.dcc.mobile.ecotienda.data.network
 
-import cl.uchile.dcc.mobile.ecotienda.data.network.dto.ProductDto
-import retrofit2.http.DELETE
+import cl.uchile.dcc.mobile.ecotienda.data.network.dto.ProductDetailDto
+import cl.uchile.dcc.mobile.ecotienda.data.network.dto.ProductListDto
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ProductApiService {
 
-    // Obtener productos
-    @GET("products")
-    suspend fun getProducts(): List<ProductDto>
+    // La API no tiene un listado general. /productos/nuevos es el conjunto más amplio sin filtro.
+    @GET("productos/nuevos")
+    suspend fun getProducts(): List<ProductListDto>
 
-    // Obtener producto por su ID
-    @GET("products/{id}")
-    suspend fun getProductById(@Path("id") id: String): ProductDto
+    @GET("productos/{id}")
+    suspend fun getProductById(@Path("id") id: String): ProductDetailDto
 
-    // Buscar productos
-    @GET("products/search")
-    suspend fun searchProducts(@Query("q") query: String): List<ProductDto>
-
-    // Eliminar producto
-    @DELETE("products/{id}")
-    suspend fun deleteProduct(@Path("id") id: String)
+    @GET("productos")
+    suspend fun searchProducts(@Query("buscar") query: String): List<ProductListDto>
 }
-
-

@@ -16,13 +16,12 @@ class ProductRepository(
 
     suspend fun getAllProduct(): List<Product> {
         return try {
-            val remoteDtos = apiService.getProducts()
-            val entities = remoteDtos.map { it.toEntity() }
+            val entities = apiService.getProducts().map { it.toEntity() }
             for (p in entities) {
                 productDao.addProduct(p)
             }
             entities.ifEmpty { productDao.getAllProducts() }
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             productDao.getAllProducts()
         }
     }
@@ -32,19 +31,22 @@ class ProductRepository(
     }
 
     suspend fun deleteProduct(product: Product) {
-        try {
-            apiService.deleteProduct(product.id)
-        } catch (_: Exception) { }
         productDao.deleteProduct(product)
     }
 
     suspend fun getProductById(productId: String): Product? {
         return try {
-            val dto = apiService.getProductById(productId)
-            val entity = dto.toEntity()
+            val existing = productDao.getProductById(productId)
+            val fresh = apiService.getProductById(productId).toEntity()
+            val entity = fresh.copy(
+                productProducer = fresh.productProducer.ifBlank { existing?.productProducer.orEmpty() },
+                category = fresh.category.ifBlank { existing?.category.orEmpty() },
+                producerID = fresh.producerID.ifBlank { existing?.producerID.orEmpty() },
+                imageUrl = fresh.imageUrl.ifBlank { existing?.imageUrl.orEmpty() },
+            )
             productDao.addProduct(entity)
             entity
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             productDao.getProductById(productId)
         }
     }
@@ -52,13 +54,12 @@ class ProductRepository(
     suspend fun searchProducts(query: String): List<Product> {
         if (query.isBlank()) return getAllProduct()
         return try {
-            val remoteDtos = apiService.searchProducts(query)
-            val entities = remoteDtos.map { it.toEntity() }
+            val entities = apiService.searchProducts(query).map { it.toEntity() }
             for (p in entities) {
                 productDao.addProduct(p)
             }
             entities.ifEmpty { productDao.searchProducts(query) }
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             productDao.searchProducts(query)
         }
     }
