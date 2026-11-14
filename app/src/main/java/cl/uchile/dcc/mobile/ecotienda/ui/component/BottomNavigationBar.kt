@@ -40,11 +40,17 @@ fun BottomNavigationBar(
         )
 
         sections.forEach { section ->
+            // Filled y Outlined iconos en la bottom bar
+            val selected = currentRoute == section.route
             NavigationBarItem(
-                selected = currentRoute == section.route,
+                selected = selected,
                 onClick = { onNavigateTo(section.route) },
-                icon = { Icon(section.icon, contentDescription = section.title, modifier = Modifier.size(24.dp)
-                ) },
+                icon = {
+                    Icon(
+                        imageVector = if (selected) section.icon else section.unselectedIcon,
+                        contentDescription = section.title,
+                        modifier = Modifier.size(24.dp),
+                    ) },
                 label = { "Text(section.title)" },
                 colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = selectedColor,

@@ -99,6 +99,7 @@ fun EcoTiendaApp(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             if (currentScreen.showTopBar) {
+                val searchUiState by searchViewModel.uiState.collectAsState()
                 Surface(
                     color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.fillMaxWidth()
@@ -112,7 +113,9 @@ fun EcoTiendaApp(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
                         SearchStaticBar(
-                            onClick = { navController.navigate(route = "SEARCH") },
+                            query= searchUiState.query,
+                            onQueryChange = searchViewModel::onQueryChange,
+                            onSearch = { navController.navigate(route = "SEARCH") },
                             modifier = Modifier.weight(1f)
                         )
 
@@ -134,7 +137,7 @@ fun EcoTiendaApp(
         bottomBar = {
             if (!isKeyboardOpen && currentScreen.showBottomBar) {
                 BottomNavigationBar(
-                    currentRoute = navController.currentBackStackEntry?.destination?.route,
+                    currentRoute = currentRoute,
                     onNavigateTo = {
                         navController.navigate(it)
                     }
@@ -192,7 +195,8 @@ fun EcoTiendaApp(
             }
             composable(ScreenRoutes.SEARCH.route) {
                 SearchScreen(
-                    onBack = { navController.popBackStack() },
+                    onBack = { navController.popBackStack()
+                        searchViewModel.clearSearch()},
                     onSubmitSearch = { query ->
                         searchViewModel.onSearchSubmitted(query)
                         navController.navigate(ScreenRoutes.SEARCH_RESULTS.route)
@@ -213,7 +217,8 @@ fun EcoTiendaApp(
             composable(ScreenRoutes.SEARCH_RESULTS.route) {
                 SearchResultsScreen(
                     searchViewModel = searchViewModel,
-                    onBack = { navController.popBackStack() },
+                    onBack = { navController.popBackStack()
+                        searchViewModel.clearSearch()},
                     onProductClick = { product ->
                         productViewModel.selectProduct(product)
                         navController.navigate(ScreenRoutes.PRODUCTPAGE.route)
