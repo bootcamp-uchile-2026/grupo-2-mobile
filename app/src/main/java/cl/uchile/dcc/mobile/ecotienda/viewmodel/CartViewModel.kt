@@ -4,11 +4,15 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import cl.uchile.dcc.mobile.ecotienda.data.address.AddressLookupResult
+import cl.uchile.dcc.mobile.ecotienda.data.address.ChileCommunes
+import cl.uchile.dcc.mobile.ecotienda.data.address.NominatimAddressLookup
 import cl.uchile.dcc.mobile.ecotienda.data.database.BuenOrigenDatabase
 import cl.uchile.dcc.mobile.ecotienda.data.database.Cart
 import cl.uchile.dcc.mobile.ecotienda.data.database.Product
 import cl.uchile.dcc.mobile.ecotienda.data.database.toCartItem
 import cl.uchile.dcc.mobile.ecotienda.data.repository.CartRepository
+import cl.uchile.dcc.mobile.ecotienda.ui.screenstates.AddressCheckStatus
 import cl.uchile.dcc.mobile.ecotienda.ui.screenstates.CartCheckoutState
 import cl.uchile.dcc.mobile.ecotienda.ui.screenstates.CheckoutStep
 import cl.uchile.dcc.mobile.ecotienda.ui.screenstates.ShippingFormState
@@ -25,6 +29,9 @@ class CartViewModel(
     private val cartRepository = app?.container?.cartRepository ?: CartRepository(
         BuenOrigenDatabase.getInstance(application).cartItemDAO
     )
+
+
+    private val addressLookup = NominatimAddressLookup()
 
     private val _cart = MutableStateFlow(Cart())
     val cart = _cart.asStateFlow()
@@ -109,14 +116,146 @@ class CartViewModel(
         }
     }
 
+    // Guerda el formulario de envio
     fun updateShippingForm(update: (ShippingFormState) -> ShippingFormState) {
-        _checkoutState.update { 
-            it.copy(shippingForm = update(it.shippingForm))
+        _checkoutState.update {
+            val nextForm = update(it.shippingForm)
+            if (nextForm == it.shippingForm) {
+                it
+            } else {
+                it.copy(
+                    shippingForm = nextForm,
+                    addressCheck = AddressCheckStatus.IDLE,
+                    addressCheckMessage = "",
+                )
+            }
+        }
+    }
+
+    // Se ultiliza cuando se pasa del chequeo de la direccion a la pantalla de pago
+    // Revisa la dirección vs las comunas y el servicio OpenStreetMap
+    // Retiro en tienda pasa sin chequeo
+    fun submitShipping() {
+        val state = _checkoutState.value
+        val form = state.shippingForm
+        if (!form.isComplete()) return
+        if (form.deliveryType == ShippingFormState.PICKUP) {
+            nextStep()
+            return
+        }
+        when (state.addressCheck) {
+            AddressCheckStatus.CHECKING -> return
+            AddressCheckStatus.FOUND,
+            AddressCheckStatus.NOT_FOUND,
+            AddressCheckStatus.UNAVAILABLE -> nextStep()
+            AddressCheckStatus.IDLE -> {
+                val commune = ChileCommunes.canonical(form.commune) ?: return
+                startAddressLookup(form.copy(commune = commune))
+            }
+        }
+    }
+
+    // Marca el chequeo de la calle
+    private fun startAddressLookup(form: ShippingFormState) {
+        _checkoutState.update {
+            it.copy(
+                shippingForm = form,
+                addressCheck = AddressCheckStatus.CHECKING,
+                addressCheckMessage = "",
+            )
+        }
+        viewModelScope.launch {
+            val result = addressLookup.lookup(
+                street = form.street,
+                number = form.number,
+                noNumber = form.isNoNumber,
+                commune = form.commune,
+            )
+            _checkoutState.update { current ->
+                if (current.shippingForm != form || current.addressCheck != AddressCheckStatus.CHECKING) {
+                    current
+                } else {
+                    when (result) {
+                        is AddressLookupResult.Found -> {
+                            savedStateHandle["checkout_step"] = CheckoutStep.PAYMENT.name
+                            current.copy(
+                                addressCheck = AddressCheckStatus.FOUND,
+                                addressCheckMessage = result.label,
+                                currentStep = CheckoutStep.PAYMENT,
+                            )
+                        }
+                        AddressLookupResult.NotFound -> current.copy(
+                            addressCheck = AddressCheckStatus.NOT_FOUND,
+                            addressCheckMessage = "No encontramos esa calle en ${form.commune}. Puedes continuar de todos modos.",
+                        )
+                        AddressLookupResult.Unavailable -> current.copy(
+                            addressCheck = AddressCheckStatus.UNAVAILABLE,
+                            addressCheckMessage = "No pudimos revisar la dirección. Puedes continuar de todos modos.",
+                        )
+                    }
+                }
+            }
         }
     }
 
     fun selectPaymentMethod(method: String) {
         _checkoutState.update { it.copy(paymentMethod = method) }
+    }
+
+    fun setQuantity(productId: String, quantity: Int) {
+        viewModelScope.launch {
+            cartRepository.updateQuantity(productId, quantity)
+            _cart.update { Cart(items = cartRepository.getCartItems()) }
+        }
+    }
+
+    fun updateCouponCode(code: String) {
+        _checkoutState.update {
+            it.copy(couponCode = code, discountAmount = 0, couponFeedback = "")
+        }
+    }
+
+    fun applyCoupon(subtotal: Int) {
+        val code = _checkoutState.value.couponCode.trim()
+        when (code.uppercase()) {
+            "VERDE10" -> {
+                val discount = (subtotal * 10) / 100
+                _checkoutState.update {
+                    it.copy(
+                        discountAmount = discount,
+                        couponFeedback = "Cupón aplicado: 10% de descuento",
+                    )
+                }
+            }
+            "ECO5000" -> {
+                val discount = minOf(5_000, subtotal)
+                _checkoutState.update {
+                    it.copy(
+                        discountAmount = discount,
+                        couponFeedback = "Cupón aplicado",
+                    )
+                }
+            }
+            "" -> _checkoutState.update {
+                it.copy(discountAmount = 0, couponFeedback = "Ingresa un número de cupón")
+            }
+            else -> _checkoutState.update {
+                it.copy(discountAmount = 0, couponFeedback = "Cupón no válido")
+            }
+        }
+    }
+
+    fun confirmPurchase() {
+        _checkoutState.update { it.copy(orderPlaced = true) }
+        viewModelScope.launch {
+            cartRepository.clearCart()
+            _cart.value = Cart()
+        }
+    }
+
+    fun dismissConfirmedOrder() {
+        savedStateHandle["checkout_step"] = CheckoutStep.CART.name
+        _checkoutState.value = CartCheckoutState()
     }
 
     fun clearCart() {

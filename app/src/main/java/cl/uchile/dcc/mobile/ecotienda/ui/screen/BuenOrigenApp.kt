@@ -276,7 +276,13 @@ fun EcoTiendaApp(
                     cart = cartState,
                     authViewModel = authViewModel,
                     cartViewModel = cartViewModel,
-                    onBack = { navController.popBackStack() }
+                    productCategories = catalogProducts.associateBy({ it.id }, { it.category }),
+                    onBack = { navController.popBackStack() },
+                    onContinueShopping = {
+                        navController.navigate(ScreenRoutes.HOME.route) {
+                            launchSingleTop = true
+                        }
+                    },
                 )
             }
 
