@@ -4,7 +4,7 @@ import cl.uchile.dcc.mobile.ecotienda.data.database.CartItem
 import cl.uchile.dcc.mobile.ecotienda.data.database.CartItemDAO
 
 class CartRepository(
-    private val cartItemDao: CartItemDAO
+    private val cartItemDao: CartItemDAO,
 ) {
     suspend fun getCartItems(): List<CartItem> {
         return cartItemDao.getAllCartItems()

@@ -4,7 +4,7 @@ import cl.uchile.dcc.mobile.ecotienda.data.database.User
 import cl.uchile.dcc.mobile.ecotienda.data.database.UserDAO
 
 class UserRepository(
-    private val userDao: UserDAO
+    private val userDao: UserDAO,
 ) {
     suspend fun registerUser(user: User): Boolean {
         if (userDao.emailExists(user.email)) return false

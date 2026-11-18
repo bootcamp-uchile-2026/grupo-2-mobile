@@ -27,11 +27,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -39,7 +42,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import cl.uchile.dcc.mobile.ecotienda.data.DefaultData
+import cl.uchile.dcc.mobile.ecotienda.data.database.Producer
+import cl.uchile.dcc.mobile.ecotienda.data.database.Product
 import cl.uchile.dcc.mobile.ecotienda.ui.component.BottomNavigationBar
 import cl.uchile.dcc.mobile.ecotienda.ui.component.SearchStaticBar
 import cl.uchile.dcc.mobile.ecotienda.viewmodel.AuthViewModel
@@ -80,11 +84,22 @@ fun EcoTiendaApp(
     val cartState by cartViewModel.cart.collectAsState()
     val authState by authViewModel.state.collectAsState()
 
+    val appContext = LocalContext.current.applicationContext
+    var catalogProducts by remember { mutableStateOf<List<Product>>(emptyList()) }
+    var catalogProducers by remember { mutableStateOf<List<Producer>>(emptyList()) }
+    LaunchedEffect(Unit) {
+        val container = (appContext as? cl.uchile.dcc.mobile.ecotienda.data.repository.EcoTiendaApp)
+            ?.container ?: return@LaunchedEffect
+        catalogProducts = container.productRepository.getAllProduct()
+        catalogProducers = container.producerRepository.getAllProducers()
+    }
+
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             if (currentScreen.showTopBar) {
+                val searchUiState by searchViewModel.uiState.collectAsState()
                 Surface(
                     color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.fillMaxWidth()
@@ -98,7 +113,9 @@ fun EcoTiendaApp(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
                         SearchStaticBar(
-                            onClick = { navController.navigate(route = "SEARCH") },
+                            query= searchUiState.query,
+                            onQueryChange = searchViewModel::onQueryChange,
+                            onSearch = { navController.navigate(route = "SEARCH") },
                             modifier = Modifier.weight(1f)
                         )
 
@@ -120,7 +137,7 @@ fun EcoTiendaApp(
         bottomBar = {
             if (!isKeyboardOpen && currentScreen.showBottomBar) {
                 BottomNavigationBar(
-                    currentRoute = navController.currentBackStackEntry?.destination?.route,
+                    currentRoute = currentRoute,
                     onNavigateTo = {
                         navController.navigate(it)
                     }
@@ -139,8 +156,8 @@ fun EcoTiendaApp(
                 HomeEcoTienda(
                     modifier = Modifier.padding(innerPadding),
                     snackbarHostState = snackbarHostState,
-                    productos = DefaultData.Product,
-                    producers = DefaultData.Producer,
+                    productos = catalogProducts,
+                    producers = catalogProducers,
                     authViewModel = authViewModel,
                     onProductClick = { product ->
                         productViewModel.selectProduct(product)
@@ -178,7 +195,8 @@ fun EcoTiendaApp(
             }
             composable(ScreenRoutes.SEARCH.route) {
                 SearchScreen(
-                    onBack = { navController.popBackStack() },
+                    onBack = { navController.popBackStack()
+                        searchViewModel.clearSearch()},
                     onSubmitSearch = { query ->
                         searchViewModel.onSearchSubmitted(query)
                         navController.navigate(ScreenRoutes.SEARCH_RESULTS.route)
@@ -199,7 +217,8 @@ fun EcoTiendaApp(
             composable(ScreenRoutes.SEARCH_RESULTS.route) {
                 SearchResultsScreen(
                     searchViewModel = searchViewModel,
-                    onBack = { navController.popBackStack() },
+                    onBack = { navController.popBackStack()
+                        searchViewModel.clearSearch()},
                     onProductClick = { product ->
                         productViewModel.selectProduct(product)
                         navController.navigate(ScreenRoutes.PRODUCTPAGE.route)
@@ -215,7 +234,7 @@ fun EcoTiendaApp(
             composable(ScreenRoutes.ABOUT.route) {
                 About(
                     modifier = Modifier.padding(innerPadding),
-                    producers = DefaultData.Producer,
+                    producers = catalogProducers,
                     onProducerClick = { producer ->
                         producerViewModel.selectProducer(producer)
                         navController.navigate(ScreenRoutes.PRODUCERPAGE.route)
@@ -242,7 +261,12 @@ fun EcoTiendaApp(
                                 snackbarHostState.showSnackbar("Añadido: ${product.productName}")
                             }
                         },
+                        onBuyNow = { p, q ->
+                            cartViewModel.addToCart(p, q)
+                            navController.navigate(ScreenRoutes.CART.route)
+                        },
                         onBack = { navController.popBackStack() },
+                        onTakePhoto = { navController.navigate(ScreenRoutes.PHOTOCOMP.route) },
                     )
                 }
             }
@@ -252,7 +276,13 @@ fun EcoTiendaApp(
                     cart = cartState,
                     authViewModel = authViewModel,
                     cartViewModel = cartViewModel,
-                    onBack = { navController.popBackStack() }
+                    productCategories = catalogProducts.associateBy({ it.id }, { it.category }),
+                    onBack = { navController.popBackStack() },
+                    onContinueShopping = {
+                        navController.navigate(ScreenRoutes.HOME.route) {
+                            launchSingleTop = true
+                        }
+                    },
                 )
             }
 
@@ -339,6 +369,14 @@ fun EcoTiendaApp(
             composable(ScreenRoutes.HUELLAVERDE.route) {
                 HuellaVerde(
                     modifier = Modifier.padding(innerPadding),
+                    onBack = { navController.popBackStack() }
+                )
+            }
+
+            composable(ScreenRoutes.PHOTOCOMP.route) {
+                PhotoComp(
+                    modifier = Modifier.padding(innerPadding),
+                    product = productDetailState.product,
                     onBack = { navController.popBackStack() }
                 )
             }

@@ -7,6 +7,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+// Carga los datos iniciales en la base de datos a traves de BuenOrigenDatabase.getInstance
+// Saca los datos dummy desde DefaultData
 object DatabaseSeeder {
 
     fun seedIfEmpty(context: Context) {

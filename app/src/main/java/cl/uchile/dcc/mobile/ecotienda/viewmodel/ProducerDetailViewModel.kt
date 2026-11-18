@@ -39,5 +39,9 @@ class ProducerDetailViewModel(
     fun selectProducer(producer: Producer) {
         savedStateHandle["producer_id"] = producer.id
         _selectedProducer.value = producer
+        viewModelScope.launch {
+            val fresh = producerRepository.getProducerById(producer.id) ?: return@launch
+            _selectedProducer.value = fresh
+        }
     }
 }
