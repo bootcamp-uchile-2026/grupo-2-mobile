@@ -34,4 +34,8 @@ object ApiRepository {
     val cartApiService: CartApiService by lazy {
         retrofit.create(CartApiService::class.java)
     }
+
+    val articleApiService: ArticleApiService by lazy {
+        retrofit.create(ArticleApiService::class.java)
+    }
 }

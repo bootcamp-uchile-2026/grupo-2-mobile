@@ -47,6 +47,7 @@ import cl.uchile.dcc.mobile.ecotienda.data.database.Product
 import cl.uchile.dcc.mobile.ecotienda.ui.component.BottomNavigationBar
 import cl.uchile.dcc.mobile.ecotienda.ui.component.SearchStaticBar
 import cl.uchile.dcc.mobile.ecotienda.viewmodel.AuthViewModel
+import cl.uchile.dcc.mobile.ecotienda.viewmodel.BlogViewModel
 import cl.uchile.dcc.mobile.ecotienda.viewmodel.CartViewModel
 import cl.uchile.dcc.mobile.ecotienda.viewmodel.MainScreenViewModel
 import cl.uchile.dcc.mobile.ecotienda.viewmodel.ProducerDetailViewModel
@@ -67,6 +68,7 @@ fun EcoTiendaApp(
     cartViewModel: CartViewModel = viewModel(),
     authViewModel: AuthViewModel = viewModel(),
     searchViewModel: SearchViewModel = viewModel(),
+    blogViewModel: BlogViewModel = viewModel(),
 ) {
     val navController = rememberNavController()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -83,6 +85,7 @@ fun EcoTiendaApp(
     val productDetailState by productViewModel.uiState.collectAsState()
     val cartState by cartViewModel.cart.collectAsState()
     val authState by authViewModel.state.collectAsState()
+    val blogState by blogViewModel.uiState.collectAsState()
 
     val appContext = LocalContext.current.applicationContext
     var catalogProducts by remember { mutableStateOf<List<Product>>(emptyList()) }
@@ -175,7 +178,15 @@ fun EcoTiendaApp(
                     },
                     onSeeMoreProductsClick = {
                         navController.navigate(ScreenRoutes.CATALOG.route)
-                    }
+                    },
+                    articles = blogState.articles,
+                    articlesLoading = blogState.isLoading,
+                    articlesError = blogState.error,
+                    onOpenBlog = { navController.navigate(ScreenRoutes.BLOG.route) },
+                    onOpenArticle = { articleId ->
+                        blogViewModel.openArticle(articleId)
+                        navController.navigate(ScreenRoutes.ARTICLE.route)
+                    },
                 )
             }
             composable(ScreenRoutes.CATALOG.route) {
@@ -366,6 +377,28 @@ fun EcoTiendaApp(
                 )
             }
 
+            composable(ScreenRoutes.BLOG.route) {
+                BlogScreen(
+                    modifier = Modifier.padding(innerPadding),
+                    articles = blogState.articles,
+                    isLoading = blogState.isLoading,
+                    error = blogState.error,
+                    onBack = { navController.popBackStack() },
+                    onOpenArticle = { articleId ->
+                        blogViewModel.openArticle(articleId)
+                        navController.navigate(ScreenRoutes.ARTICLE.route)
+                    },
+                )
+            }
+            composable(ScreenRoutes.ARTICLE.route) {
+                ArticleScreen(
+                    modifier = Modifier.padding(innerPadding),
+                    detail = blogState.detail,
+                    isLoading = blogState.detailLoading,
+                    error = blogState.detailError,
+                    onBack = { navController.popBackStack() },
+                )
+            }
             composable(ScreenRoutes.HUELLAVERDE.route) {
                 HuellaVerde(
                     modifier = Modifier.padding(innerPadding),

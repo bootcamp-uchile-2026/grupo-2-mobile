@@ -62,6 +62,8 @@ import cl.uchile.dcc.mobile.ecotienda.R
 import cl.uchile.dcc.mobile.ecotienda.data.DefaultData
 import cl.uchile.dcc.mobile.ecotienda.data.database.Producer
 import cl.uchile.dcc.mobile.ecotienda.data.database.Product
+import cl.uchile.dcc.mobile.ecotienda.data.model.ArticleSummary
+import cl.uchile.dcc.mobile.ecotienda.ui.component.BlogPreviewSection
 import cl.uchile.dcc.mobile.ecotienda.ui.component.CompromisosSection
 import cl.uchile.dcc.mobile.ecotienda.ui.component.ProducerEmprendedorCard
 import cl.uchile.dcc.mobile.ecotienda.ui.theme.CustomBrandTitleStyle
@@ -79,11 +81,16 @@ fun HomeEcoTienda(
     onProductClick: (Product) -> Unit,
     onProducerClick: (Producer) -> Unit = {},
     onSeeMoreProductsClick: () -> Unit = {},
+    articles: List<ArticleSummary> = emptyList(),
+    articlesLoading: Boolean = false,
+    articlesError: String? = null,
+    onOpenBlog: () -> Unit = {},
+    onOpenArticle: (Int) -> Unit = {},
     authViewModel: AuthViewModel = viewModel()
 ) {
     val ui by authViewModel.state.collectAsState()
     var selectedTabIndex by remember { mutableIntStateOf(0) }
-    val tabs = listOf("Ofertas", "Compromiso", "Huella Verde", "Emprendedores")
+    val tabs = listOf("Ofertas", "Compromiso", "Huella Verde", "Emprendedores", "Blog")
 
     LaunchedEffect(ui.isLoggedIn, ui.isGuest) {
         if ((ui.isLoggedIn || ui.isGuest) && !ui.welcomeMessageShown) {
@@ -149,6 +156,13 @@ fun HomeEcoTienda(
                 3 -> EmprendedoresTabContent(
                     producers = producers,
                     onProducerClick = onProducerClick
+                )
+                4 -> BlogPreviewSection(
+                    articles = articles,
+                    isLoading = articlesLoading,
+                    error = articlesError,
+                    onOpenBlog = onOpenBlog,
+                    onOpenArticle = onOpenArticle,
                 )
             }
         }

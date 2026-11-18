@@ -2,6 +2,7 @@ package cl.uchile.dcc.mobile.ecotienda.ui.screen
 
 import android.graphics.drawable.Icon
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Article
 import androidx.compose.material.icons.filled.EnergySavingsLeaf
 import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.filled.Home
@@ -13,6 +14,7 @@ import androidx.compose.material.icons.filled.Person2
 import androidx.compose.material.icons.filled.Photo
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material.icons.automirrored.outlined.Article
 import androidx.compose.material.icons.outlined.EnergySavingsLeaf
 import androidx.compose.material.icons.outlined.GridView
 import androidx.compose.material.icons.outlined.Home
@@ -42,6 +44,8 @@ enum class ScreenRoutes(
     PRODUCTPAGE(showTopBar = false, title = "Página Producto", route = "PRODUCTPAGE", icon = Icons.Filled.Nature, unselectedIcon = Icons.Outlined.Nature),
     ORDERS(title = "Página Ordenes", route = "ORDERS", icon = Icons.Filled.Nature, unselectedIcon = Icons.Outlined.Nature ),
     SEARCH(title = "Búsqueda", route = "SEARCH", icon = Icons.Filled.Search, unselectedIcon = Icons.Outlined.Search),
+    BLOG(title = "Blog", route = "BLOG", icon = Icons.AutoMirrored.Filled.Article, unselectedIcon = Icons.AutoMirrored.Outlined.Article),
+    ARTICLE(title = "Artículo", route = "ARTICLE", icon = Icons.AutoMirrored.Filled.Article, unselectedIcon = Icons.AutoMirrored.Outlined.Article),
 
     // Sin topbar
     PRODUCERPAGE(showTopBar = false, title = "Página de Productores", route = "PRODUCERPAGE", icon = Icons.Filled.NaturePeople, unselectedIcon = Icons.Outlined.NaturePeople),
