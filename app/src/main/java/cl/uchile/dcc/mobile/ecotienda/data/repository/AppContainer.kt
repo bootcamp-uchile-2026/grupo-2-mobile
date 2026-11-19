@@ -45,10 +45,6 @@ class AppContainer(context: Context) {
         CartRepository(cartItemDao = database.cartItemDAO)
     }
 
-    val articleRepository: ArticleRepository by lazy {
-        ArticleRepository(apiService = ApiRepository.articleApiService)
-    }
-
     val buenOrigenRepository: BuenOrigenDataRepository by lazy {
         BuenOrigenDataRepository(
             config = appContext.userPreferencesDataStore,

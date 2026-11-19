@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.LocalOffer
@@ -136,10 +135,9 @@ fun CartProductRow(
     onQuantityChange: (Int) -> Unit,
     onDecrement: () -> Unit,
     onRemove: () -> Unit,
-    maxQuantity: Int = 3,
 ) {
+    var menuExpanded by remember { mutableStateOf(false) }
     val accent = MaterialTheme.colorScheme.primary
-    val cap = maxQuantity.coerceIn(1, 3)
 
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         Row(
@@ -153,7 +151,7 @@ fun CartProductRow(
                 modifier = Modifier
                     .size(84.dp)
                     .clip(RoundedCornerShape(12.dp))
-                    .background(MaterialTheme.colorScheme.primaryContainer),
+                    .background(MaterialTheme.colorScheme.surfaceVariant),
             )
             Spacer(modifier = Modifier.width(12.dp))
             Column(modifier = Modifier.weight(1f)) {
@@ -182,41 +180,44 @@ fun CartProductRow(
                 }
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Row(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(20.dp))
-                            .border(1.dp, accent, RoundedCornerShape(20.dp))
-                            .padding(horizontal = 4.dp, vertical = 2.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Icon(
-                            imageVector = Icons.Outlined.Remove,
-                            contentDescription = "Disminuir cantidad",
-                            tint = accent,
+                    Box {
+                        Row(
                             modifier = Modifier
-                                .size(28.dp)
-                                .clickable(onClick = onDecrement)
-                                .padding(4.dp),
-                        )
-                        Text(
-                            text = item.quantity.toString(),
-                            color = accent,
-                            modifier = Modifier.padding(horizontal = 8.dp),
-                            fontWeight = FontWeight.SemiBold,
-                        )
-                        Icon(
-                            imageVector = Icons.Filled.Add,
-                            contentDescription = "Aumentar cantidad",
-                            tint = accent,
-                            modifier = Modifier
-                                .size(28.dp)
-                                .clickable {
-                                    if (item.quantity < cap) onQuantityChange(item.quantity + 1)
-                                }
-                                .padding(4.dp),
-                        )
+                                .clip(RoundedCornerShape(20.dp))
+                                .border(1.dp, accent, RoundedCornerShape(20.dp))
+                                .clickable { menuExpanded = true }
+                                .padding(horizontal = 14.dp, vertical = 6.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        ) {
+                            Text(
+                                text = item.quantity.toString(),
+                                color = accent,
+                                style = MaterialTheme.typography.bodyMedium,
+                            )
+                            Icon(
+                                imageVector = Icons.Filled.KeyboardArrowDown,
+                                contentDescription = "Cambiar cantidad",
+                                tint = accent,
+                                modifier = Modifier.size(18.dp),
+                            )
+                        }
+                        DropdownMenu(
+                            expanded = menuExpanded,
+                            onDismissRequest = { menuExpanded = false },
+                        ) {
+                            (1..10).forEach { qty ->
+                                DropdownMenuItem(
+                                    text = { Text(qty.toString()) },
+                                    onClick = {
+                                        menuExpanded = false
+                                        onQuantityChange(qty)
+                                    },
+                                )
+                            }
+                        }
                     }
-                    Spacer(modifier = Modifier.width(8.dp))
+                    Spacer(modifier = Modifier.width(4.dp))
                     Box(
                         modifier = Modifier
                             .size(36.dp)
@@ -229,6 +230,22 @@ fun CartProductRow(
                             contentDescription = "Eliminar",
                             tint = accent,
                             modifier = Modifier.size(20.dp),
+                        )
+                    }
+                    Spacer(modifier = Modifier.weight(1f))
+                    Box(
+                        modifier = Modifier
+                            .size(36.dp)
+                            .border(1.25.dp, accent, CircleShape)
+                            .clip(CircleShape)
+                            .clickable(onClick = onDecrement),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Remove,
+                            contentDescription = "Disminuir cantidad",
+                            tint = accent,
+                            modifier = Modifier.size(18.dp),
                         )
                     }
                 }
@@ -368,11 +385,18 @@ fun ShippingForm(
             SelectableOption(
                 title = "Envío a domicilio",
                 subtitle = HOME_DELIVERY_COST.formatAsCurrency(),
-                selected = true,
+                selected = state.deliveryType == ShippingFormState.DELIVERY,
                 onClick = { onUpdate(state.copy(deliveryType = ShippingFormState.DELIVERY)) },
             )
+            SelectableOption(
+                title = "Retiro en tienda",
+                subtitle = "Sin costo",
+                selected = state.deliveryType == ShippingFormState.PICKUP,
+                onClick = { onUpdate(state.copy(deliveryType = ShippingFormState.PICKUP)) },
+            )
         }
-        CheckoutCard(title = "Dirección de entrega") {
+        if (state.deliveryType != ShippingFormState.PICKUP) {
+            CheckoutCard(title = "Dirección de entrega") {
                 CommuneField(
                     value = state.commune,
                     onValueChange = { onUpdate(state.copy(commune = it)) },
@@ -424,6 +448,7 @@ fun ShippingForm(
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
+        }
     }
 }
 
@@ -436,6 +461,7 @@ fun PaymentSelector(
         "Tarjeta de crédito",
         "Tarjeta de débito",
         "Transferencia bancaria",
+        "Mercado Pago",
     )
     CheckoutCard(title = "Método de pago") {
         methods.forEach { method ->

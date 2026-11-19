@@ -41,7 +41,7 @@ import cl.uchile.dcc.mobile.ecotienda.ui.component.CheckoutActionButton
 import cl.uchile.dcc.mobile.ecotienda.ui.component.CheckoutCard
 import cl.uchile.dcc.mobile.ecotienda.ui.component.CheckoutDivider
 import cl.uchile.dcc.mobile.ecotienda.ui.component.CheckoutScreenTitle
-import cl.uchile.dcc.mobile.ecotienda.ui.component.FootprintCards
+import cl.uchile.dcc.mobile.ecotienda.ui.component.CouponSection
 import cl.uchile.dcc.mobile.ecotienda.ui.component.OrderSummarySection
 import cl.uchile.dcc.mobile.ecotienda.ui.component.PaymentSelector
 import cl.uchile.dcc.mobile.ecotienda.ui.component.ShippingForm
@@ -60,9 +60,6 @@ fun Cart(
     onBack: () -> Unit,
     onContinueShopping: () -> Unit = onBack,
     productCategories: Map<String, String> = emptyMap(),
-    quantityCaps: Map<String, Int> = emptyMap(),
-    co2Kg: Double = 0.0,
-    greenPoints: Int = 0,
     authViewModel: AuthViewModel = viewModel(),
     cartViewModel: CartViewModel = viewModel(),
 ) {
@@ -70,8 +67,11 @@ fun Cart(
     val checkoutState by cartViewModel.checkoutState.collectAsState()
     val scrollState = rememberScrollState()
 
-    val shipping = shippingCostFor(cart.total)
-    val canPurchase = authUi.isLoggedIn
+    val shipping = shippingCostFor(
+        subtotal = cart.total,
+        deliveryType = checkoutState.shippingForm.deliveryType,
+    )
+    val discount = checkoutState.discountAmount
 
     BackHandler(
         enabled = checkoutState.orderPlaced || checkoutState.currentStep != CheckoutStep.CART,
@@ -113,10 +113,280 @@ fun Cart(
 
         when {
             checkoutState.orderPlaced -> OrderPlacedContent(
+                deliveryType = checkoutState.shippingForm.deliveryType,
                 onContinue = {
                     cartViewModel.dismissConfirmedOrder()
                     onContinueShopping()
                 },
+            )
+            cart.items.isEmpty() -> {
+                CheckoutScreenTitle("Tu Carrito")
+                EmptyCartMessage()
+            }
+            else -> when (checkoutState.currentStep) {
+                CheckoutStep.CART -> CartStepContent(
+                    items = cart.items,
+                    productCategories = productCategories,
+                    subtotal = cart.total,
+                    shipping = shipping,
+                    discount = discount,
+                    couponCode = checkoutState.couponCode,
+                    couponFeedback = checkoutState.couponFeedback,
+                    onQuantityChange = cartViewModel::setQuantity,
+                    onDecrement = cartViewModel::decrementQuantity,
+                    onRemove = cartViewModel::removeFromCart,
+                    onCouponChange = cartViewModel::updateCouponCode,
+                    onApplyCoupon = { cartViewModel.applyCoupon(cart.total) },
+                    onContinue = { cartViewModel.nextStep() },
+                )
+                CheckoutStep.SHIPPING -> ShippingStepContent(
+                    form = checkoutState.shippingForm,
+                    subtotal = cart.total,
+                    shipping = shipping,
+                    discount = discount,
+                    addressCheck = checkoutState.addressCheck,
+                    addressMessage = checkoutState.addressCheckMessage,
+                    onUpdate = { newState -> cartViewModel.updateShippingForm { newState } },
+                    onContinue = { cartViewModel.submitShipping() },
+                )
+                CheckoutStep.PAYMENT -> PaymentStepContent(
+                    form = checkoutState.shippingForm,
+                    paymentMethod = checkoutState.paymentMethod,
+                    subtotal = cart.total,
+                    shipping = shipping,
+                    discount = discount,
+                    mapLabel = checkoutState.addressCheckMessage.takeIf {
+                        checkoutState.addressCheck == AddressCheckStatus.FOUND
+                    }.orEmpty(),
+                    onSelectMethod = cartViewModel::selectPaymentMethod,
+                    onConfirm = { cartViewModel.confirmPurchase() },
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun CartStepContent(
+    items: List<CartItem>,
+    productCategories: Map<String, String>,
+    subtotal: Int,
+    shipping: Int,
+    discount: Int,
+    couponCode: String,
+    couponFeedback: String,
+    onQuantityChange: (String, Int) -> Unit,
+    onDecrement: (String) -> Unit,
+    onRemove: (String) -> Unit,
+    onCouponChange: (String) -> Unit,
+    onApplyCoupon: () -> Unit,
+    onContinue: () -> Unit,
+) {
+    CheckoutScreenTitle("Tu Carrito")
+
+    val groups = items.groupBy { item ->
+        cartGroupTitle(productCategories[item.productId].orEmpty())
+    }
+    Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
+        groups.forEach { (title, groupItems) ->
+            CheckoutCard(title = title) {
+                groupItems.forEachIndexed { index, item ->
+                    if (index > 0) CheckoutDivider()
+                    CartProductRow(
+                        item = item,
+                        subtitle = item.productProducer,
+                        onQuantityChange = { qty -> onQuantityChange(item.productId, qty) },
+                        onDecrement = { onDecrement(item.productId) },
+                        onRemove = { onRemove(item.productId) },
+                    )
+                }
+            }
+        }
+    }
+
+    Spacer(modifier = Modifier.height(20.dp))
+    CouponSection(
+        code = couponCode,
+        feedback = couponFeedback,
+        applied = discount > 0,
+        onCodeChange = onCouponChange,
+        onApply = onApplyCoupon,
+    )
+    Spacer(modifier = Modifier.height(22.dp))
+    OrderSummarySection(
+        productTotal = subtotal,
+        shipping = shipping,
+        discount = discount,
+    )
+    Spacer(modifier = Modifier.height(20.dp))
+    CheckoutActionButton(
+        label = "Ir a pagar",
+        onClick = onContinue,
+    )
+}
+
+@Composable
+private fun ShippingStepContent(
+    form: ShippingFormState,
+    subtotal: Int,
+    shipping: Int,
+    discount: Int,
+    addressCheck: AddressCheckStatus,
+    addressMessage: String,
+    onUpdate: (ShippingFormState) -> Unit,
+    onContinue: () -> Unit,
+) {
+    var error by remember { mutableStateOf<String?>(null) }
+    val checking = addressCheck == AddressCheckStatus.CHECKING
+    val canContinueAnyway = addressCheck == AddressCheckStatus.NOT_FOUND ||
+        addressCheck == AddressCheckStatus.UNAVAILABLE
+
+    CheckoutScreenTitle(
+        text = "Tu Envío",
+        subtitle = "¿A dónde enviamos tu pedido?",
+    )
+    ShippingForm(
+        state = form,
+        onUpdate = {
+            error = null
+            onUpdate(it)
+        },
+    )
+    if (!error.isNullOrBlank()) {
+        Text(
+            text = error.orEmpty(),
+            color = MaterialTheme.colorScheme.error,
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier.padding(top = 10.dp),
+        )
+    }
+    if (canContinueAnyway && addressMessage.isNotBlank()) {
+        Text(
+            text = addressMessage,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier.padding(top = 10.dp),
+        )
+    }
+    Spacer(modifier = Modifier.height(22.dp))
+    OrderSummarySection(
+        productTotal = subtotal,
+        shipping = shipping,
+        discount = discount,
+    )
+    Spacer(modifier = Modifier.height(20.dp))
+    CheckoutActionButton(
+        label = when {
+            checking -> "Revisando dirección…"
+            canContinueAnyway -> "Continuar de todos modos"
+            else -> "Continuar a la compra"
+        },
+        enabled = !checking,
+        onClick = {
+            if (form.isComplete()) {
+                error = null
+                onContinue()
+            } else if (
+                form.deliveryType != ShippingFormState.PICKUP &&
+                form.street.isNotBlank() &&
+                (form.isNoNumber || form.number.isNotBlank())
+            ) {
+                error = "Elige una comuna de la lista"
+            } else {
+                error = "Completa la dirección para continuar"
+            }
+        },
+    )
+}
+
+@Composable
+private fun PaymentStepContent(
+    form: ShippingFormState,
+    paymentMethod: String,
+    subtotal: Int,
+    shipping: Int,
+    discount: Int,
+    mapLabel: String,
+    onSelectMethod: (String) -> Unit,
+    onConfirm: () -> Unit,
+) {
+    CheckoutScreenTitle(
+        text = "Tu Compra",
+        subtitle = "Revisa el total y elige cómo pagar",
+    )
+    val deliverySummary = form.summaryLine()
+    if (deliverySummary.isNotBlank()) {
+        CheckoutCard(title = "Entrega") {
+            Text(
+                text = deliverySummary,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+            if (form.deliveryInstructions.isNotBlank() && form.deliveryType != ShippingFormState.PICKUP) {
+                Text(
+                    text = form.deliveryInstructions,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            if (mapLabel.isNotBlank()) {
+                Text(
+                    text = "En el mapa: $mapLabel",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(14.dp))
+    }
+    PaymentSelector(
+        selectedMethod = paymentMethod,
+        onSelect = onSelectMethod,
+    )
+    Spacer(modifier = Modifier.height(22.dp))
+    OrderSummarySection(
+        productTotal = subtotal,
+        shipping = shipping,
+        discount = discount,
+    )
+    Spacer(modifier = Modifier.height(20.dp))
+    CheckoutActionButton(
+        label = "Confirmar compra",
+        enabled = paymentMethod.isNotBlank(),
+        onClick = onConfirm,
+    )
+}
+
+@Composable
+private fun OrderPlacedContent(
+    deliveryType: String,
+    onContinue: () -> Unit,
+) {
+    CheckoutScreenTitle(
+        text = "Listo",
+        subtitle = "Tu compra fue confirmada",
+    )
+    CheckoutCard {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.CheckCircle,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(42.dp),
+            )
+            Text(
+                text = if (deliveryType == ShippingFormState.PICKUP) {
+                    "Tu pedido queda listo para retiro."
+                } else {
+                    "Te enviaremos el pedido a la dirección que indicaste."
+                },
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface,
             )
             cart.items.isEmpty() -> {
                 CheckoutScreenTitle("Tu Carrito")
@@ -204,165 +474,35 @@ private fun CartStepContent(
             }
         }
     }
-
-    Spacer(modifier = Modifier.height(22.dp))
-    Text(
-        text = "Huella Verde total",
-        style = MaterialTheme.typography.titleLarge,
-        color = MaterialTheme.colorScheme.onBackground,
-    )
-    Spacer(modifier = Modifier.height(10.dp))
-    FootprintCards(co2Kg = co2Kg, greenPoints = greenPoints)
-    Spacer(modifier = Modifier.height(8.dp))
-    Text(
-        text = "Los puntos se acreditan al recibir el pedido. Todavía no descuentan el total.",
-        style = MaterialTheme.typography.bodySmall,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-    )
-    Spacer(modifier = Modifier.height(22.dp))
-    OrderSummarySection(
-        productTotal = subtotal,
-        shipping = shipping,
-        discount = 0,
-    )
     Spacer(modifier = Modifier.height(20.dp))
     CheckoutActionButton(
-        label = if (canPurchase) "Pagar y finalizar" else "Inicia sesión para comprar",
-        enabled = canPurchase,
+        label = "Seguir comprando",
         onClick = onContinue,
     )
 }
 
 @Composable
-private fun ShippingStepContent(
-    form: ShippingFormState,
-    subtotal: Int,
-    shipping: Int,
-    co2Kg: Double,
-    greenPoints: Int,
-    addressCheck: AddressCheckStatus,
-    addressMessage: String,
-    onUpdate: (ShippingFormState) -> Unit,
-    onContinue: () -> Unit,
-) {
-    var error by remember { mutableStateOf<String?>(null) }
-    val checking = addressCheck == AddressCheckStatus.CHECKING
-    val canContinueAnyway = addressCheck == AddressCheckStatus.NOT_FOUND ||
-        addressCheck == AddressCheckStatus.UNAVAILABLE
-
-    CheckoutScreenTitle(
-        text = "Tu Envío",
-        subtitle = "¿A dónde enviamos tu pedido?",
-    )
-    ShippingForm(
-        state = form,
-        onUpdate = {
-            error = null
-            onUpdate(it)
-        },
-    )
-    if (!error.isNullOrBlank()) {
+private fun EmptyCartMessage() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 48.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
         Text(
-            text = error.orEmpty(),
-            color = MaterialTheme.colorScheme.error,
-            style = MaterialTheme.typography.bodySmall,
-            modifier = Modifier.padding(top = 10.dp),
+            text = "Tu carrito está vacío",
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onBackground,
+            textAlign = TextAlign.Center,
         )
-    }
-    if (canContinueAnyway && addressMessage.isNotBlank()) {
+        Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = addressMessage,
+            text = "Cuando agregues productos, vas a verlos agrupados aquí.",
+            style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodySmall,
-            modifier = Modifier.padding(top = 10.dp),
+            textAlign = TextAlign.Center,
         )
-    }
-    Spacer(modifier = Modifier.height(22.dp))
-    Text(
-        text = "Huella Verde total",
-        style = MaterialTheme.typography.titleLarge,
-        color = MaterialTheme.colorScheme.onBackground,
-    )
-    Spacer(modifier = Modifier.height(10.dp))
-    FootprintCards(co2Kg = co2Kg, greenPoints = greenPoints)
-    Spacer(modifier = Modifier.height(8.dp))
-    Text(
-        text = "Los puntos se acreditan al recibir el pedido. Todavía no descuentan el total.",
-        style = MaterialTheme.typography.bodySmall,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-    )
-    Spacer(modifier = Modifier.height(22.dp))
-    OrderSummarySection(
-        productTotal = subtotal,
-        shipping = shipping,
-        discount = 0,
-    )
-    Spacer(modifier = Modifier.height(20.dp))
-    CheckoutActionButton(
-        label = when {
-            checking -> "Revisando dirección…"
-            canContinueAnyway -> "Continuar de todos modos"
-            else -> "Continuar a la compra"
-        },
-        enabled = !checking,
-        onClick = {
-            if (form.isComplete()) {
-                error = null
-                onContinue()
-            } else if (
-                form.deliveryType != ShippingFormState.PICKUP &&
-                form.street.isNotBlank() &&
-                (form.isNoNumber || form.number.isNotBlank())
-            ) {
-                error = "Elige una comuna de la lista"
-            } else {
-                error = "Completa la dirección para continuar"
-            }
-        },
-    )
-}
-
-@Composable
-private fun PaymentStepContent(
-    form: ShippingFormState,
-    paymentMethod: String,
-    subtotal: Int,
-    shipping: Int,
-    co2Kg: Double,
-    greenPoints: Int,
-    canPurchase: Boolean,
-    mapLabel: String,
-    onSelectMethod: (String) -> Unit,
-    onConfirm: () -> Unit,
-) {
-    CheckoutScreenTitle(
-        text = "Tu Compra",
-        subtitle = "Revisa el total y elige cómo pagar",
-    )
-    val deliverySummary = form.summaryLine()
-    if (deliverySummary.isNotBlank()) {
-        CheckoutCard(title = "Entrega") {
-            Text(
-                text = deliverySummary,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface,
-            )
-            if (form.deliveryInstructions.isNotBlank() && form.deliveryType != ShippingFormState.PICKUP) {
-                Text(
-                    text = form.deliveryInstructions,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-            if (mapLabel.isNotBlank()) {
-                Text(
-                    text = "En el mapa: $mapLabel",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-        }
-        Spacer(modifier = Modifier.height(14.dp))
     }
     PaymentSelector(
         selectedMethod = paymentMethod,
@@ -454,6 +594,13 @@ private fun EmptyCartMessage() {
             textAlign = TextAlign.Center,
         )
     }
+}
+
+private fun cartGroupTitle(category: String): String = when (category.trim()) {
+    "Moda Natural", "Ropa", "Ropa y Accesorios" -> "Ropa y Accesorios"
+    "Cuidado del Hogar", "Limpieza del Hogar" -> "Limpieza del Hogar"
+    "" -> "Otros"
+    else -> category
 }
 
 private fun cartGroupTitle(category: String): String = when (category.trim()) {

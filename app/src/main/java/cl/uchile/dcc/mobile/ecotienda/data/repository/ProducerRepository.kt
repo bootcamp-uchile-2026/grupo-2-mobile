@@ -16,7 +16,7 @@ class ProducerRepository(
 
     suspend fun getAllProducers(): List<Producer> {
         return try {
-            val entities = apiService.getProducers().content.map { it.toEntity() }
+            val entities = apiService.getProducers().map { it.toEntity() }
             for (p in entities) {
                 producerDao.addProducer(p)
             }
