@@ -19,7 +19,6 @@ fun AccountPanelContent(
     authViewModel: AuthViewModel,
     snackbarHostState: SnackbarHostState,
     onGoHome: () -> Unit,
-    onOpenOrders: () -> Unit,
 ) {
     val authState by authViewModel.state.collectAsState()
     val hasSession = authState.isLoggedIn || authState.isGuest
@@ -33,8 +32,6 @@ fun AccountPanelContent(
         if (hasSession) {
             AccountScreen(
                 authViewModel = authViewModel,
-                onOpenOrders = onOpenOrders,
-                onGoHome = onGoHome,
                 onLogout = { authViewModel.logout() }
             )
         } else {

@@ -65,6 +65,7 @@ fun ProductPage(
     onBack: () -> Unit,
     onTakePhoto: () -> Unit,
     modifier: Modifier = Modifier,
+    onOpenCart: () -> Unit = {},
 ) {
     val scrollState = rememberScrollState()
     var favorite by remember { mutableStateOf(false) }

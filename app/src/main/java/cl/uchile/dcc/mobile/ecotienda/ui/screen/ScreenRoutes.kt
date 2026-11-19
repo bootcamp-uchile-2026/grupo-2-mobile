@@ -2,6 +2,7 @@ package cl.uchile.dcc.mobile.ecotienda.ui.screen
 
 import android.graphics.drawable.Icon
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Article
 import androidx.compose.material.icons.filled.EnergySavingsLeaf
 import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.filled.Home

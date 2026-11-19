@@ -12,3 +12,10 @@ fun Int.formatAsCurrency(): String {
     format.maximumFractionDigits = 0
     return format.format(this)
 }
+
+fun formatKilograms(kg: Double): String {
+    val tenths = kotlin.math.round(kg * 10.0).toLong()
+    val sign = if (tenths < 0) "-" else ""
+    val abs = kotlin.math.abs(tenths)
+    return "$sign${abs / 10},${abs % 10} kg"
+}

@@ -388,6 +388,90 @@ private fun OrderPlacedContent(
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurface,
             )
+            cart.items.isEmpty() -> {
+                CheckoutScreenTitle("Tu Carrito")
+                EmptyCartMessage()
+            }
+            else -> when (checkoutState.currentStep) {
+                CheckoutStep.CART -> CartStepContent(
+                    items = cart.items,
+                    productCategories = productCategories,
+                    quantityCaps = quantityCaps,
+                    subtotal = cart.total,
+                    shipping = shipping,
+                    co2Kg = co2Kg,
+                    greenPoints = greenPoints,
+                    canPurchase = canPurchase,
+                    onQuantityChange = cartViewModel::setQuantity,
+                    onDecrement = cartViewModel::decrementQuantity,
+                    onRemove = cartViewModel::removeFromCart,
+                    onContinue = { cartViewModel.nextStep() },
+                )
+                CheckoutStep.SHIPPING -> ShippingStepContent(
+                    form = checkoutState.shippingForm,
+                    subtotal = cart.total,
+                    shipping = shipping,
+                    co2Kg = co2Kg,
+                    greenPoints = greenPoints,
+                    addressCheck = checkoutState.addressCheck,
+                    addressMessage = checkoutState.addressCheckMessage,
+                    onUpdate = { newState -> cartViewModel.updateShippingForm { newState } },
+                    onContinue = { cartViewModel.submitShipping() },
+                )
+                CheckoutStep.PAYMENT -> PaymentStepContent(
+                    form = checkoutState.shippingForm,
+                    paymentMethod = checkoutState.paymentMethod,
+                    subtotal = cart.total,
+                    shipping = shipping,
+                    co2Kg = co2Kg,
+                    greenPoints = greenPoints,
+                    canPurchase = canPurchase,
+                    mapLabel = checkoutState.addressCheckMessage.takeIf {
+                        checkoutState.addressCheck == AddressCheckStatus.FOUND
+                    }.orEmpty(),
+                    onSelectMethod = cartViewModel::selectPaymentMethod,
+                    onConfirm = { cartViewModel.confirmPurchase() },
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun CartStepContent(
+    items: List<CartItem>,
+    productCategories: Map<String, String>,
+    quantityCaps: Map<String, Int>,
+    subtotal: Int,
+    shipping: Int,
+    co2Kg: Double,
+    greenPoints: Int,
+    canPurchase: Boolean,
+    onQuantityChange: (String, Int) -> Unit,
+    onDecrement: (String) -> Unit,
+    onRemove: (String) -> Unit,
+    onContinue: () -> Unit,
+) {
+    CheckoutScreenTitle("Tu Carrito")
+
+    val groups = items.groupBy { item ->
+        cartGroupTitle(productCategories[item.productId].orEmpty())
+    }
+    Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
+        groups.forEach { (title, groupItems) ->
+            CheckoutCard(title = title.uppercase()) {
+                groupItems.forEachIndexed { index, item ->
+                    if (index > 0) CheckoutDivider()
+                    CartProductRow(
+                        item = item,
+                        subtitle = item.productProducer,
+                        maxQuantity = quantityCaps[item.productId] ?: 3,
+                        onQuantityChange = { qty -> onQuantityChange(item.productId, qty) },
+                        onDecrement = { onDecrement(item.productId) },
+                        onRemove = { onRemove(item.productId) },
+                    )
+                }
+            }
         }
     }
     Spacer(modifier = Modifier.height(20.dp))
@@ -420,6 +504,103 @@ private fun EmptyCartMessage() {
             textAlign = TextAlign.Center,
         )
     }
+    PaymentSelector(
+        selectedMethod = paymentMethod,
+        onSelect = onSelectMethod,
+    )
+    Spacer(modifier = Modifier.height(22.dp))
+    Text(
+        text = "Huella Verde total",
+        style = MaterialTheme.typography.titleLarge,
+        color = MaterialTheme.colorScheme.onBackground,
+    )
+    Spacer(modifier = Modifier.height(10.dp))
+    FootprintCards(co2Kg = co2Kg, greenPoints = greenPoints)
+    Spacer(modifier = Modifier.height(8.dp))
+    Text(
+        text = "Los puntos se acreditan al recibir el pedido. Todavía no descuentan el total.",
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
+    Spacer(modifier = Modifier.height(22.dp))
+    OrderSummarySection(
+        productTotal = subtotal,
+        shipping = shipping,
+        discount = 0,
+    )
+    Spacer(modifier = Modifier.height(20.dp))
+    CheckoutActionButton(
+        label = "Confirmar compra",
+        enabled = canPurchase && paymentMethod.isNotBlank(),
+        onClick = onConfirm,
+    )
+}
+
+@Composable
+private fun OrderPlacedContent(
+    onContinue: () -> Unit,
+) {
+    CheckoutScreenTitle(
+        text = "Listo",
+        subtitle = "Tu compra fue confirmada",
+    )
+    CheckoutCard {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.CheckCircle,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(42.dp),
+            )
+            Text(
+                text = "Te enviaremos el pedido a la dirección que indicaste. Los puntos verdes se acreditan cuando lo recibes.",
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+        }
+    }
+    Spacer(modifier = Modifier.height(20.dp))
+    CheckoutActionButton(
+        label = "Seguir comprando",
+        onClick = onContinue,
+    )
+}
+
+@Composable
+private fun EmptyCartMessage() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 48.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text(
+            text = "Tu carrito está vacío",
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onBackground,
+            textAlign = TextAlign.Center,
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = "Cuando agregues productos, vas a verlos agrupados aquí.",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center,
+        )
+    }
+}
+
+private fun cartGroupTitle(category: String): String = when (category.trim()) {
+    "Moda Natural", "Ropa", "Ropa y Accesorios" -> "Ropa y Accesorios"
+    "Cuidado del Hogar", "Limpieza del Hogar" -> "Limpieza del Hogar"
+    "" -> "Otros"
+    else -> category
 }
 
 private fun cartGroupTitle(category: String): String = when (category.trim()) {

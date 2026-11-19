@@ -10,14 +10,26 @@ class CartRepository(
         return cartItemDao.getAllCartItems()
     }
 
-    suspend fun addCartItem(item: CartItem) {
+    suspend fun addCartItem(item: CartItem, maxQuantity: Int = MAX_UNITS_PER_PRODUCT): Int {
+        val cap = maxQuantity.coerceIn(0, MAX_UNITS_PER_PRODUCT)
+        if (cap <= 0) return 0
         val existing = cartItemDao.getCartItemByProductId(item.productId)
+        val merged = (existing?.quantity ?: 0) + item.quantity.coerceAtLeast(1)
+        val stored = merged.coerceAtMost(cap)
         if (existing != null) {
-            val updated = existing.copy(quantity = existing.quantity + item.quantity)
-            cartItemDao.updateCartItem(updated)
+            cartItemDao.updateCartItem(
+                existing.copy(
+                    quantity = stored,
+                    price = item.price,
+                    productName = item.productName,
+                    imageUrl = item.imageUrl,
+                    productProducer = item.productProducer,
+                )
+            )
         } else {
-            cartItemDao.addCartItem(item)
+            cartItemDao.addCartItem(item.copy(quantity = stored))
         }
+        return stored
     }
 
     suspend fun updateQuantity(productId: String, quantity: Int) {
@@ -37,5 +49,9 @@ class CartRepository(
 
     suspend fun clearCart() {
         cartItemDao.clearCart()
+    }
+
+    companion object {
+        const val MAX_UNITS_PER_PRODUCT = 3
     }
 }

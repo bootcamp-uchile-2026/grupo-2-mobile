@@ -1,0 +1,41 @@
+package cl.uchile.dcc.mobile.ecotienda.data.network.dto
+
+import cl.uchile.dcc.mobile.ecotienda.data.model.ArticleDetail
+import cl.uchile.dcc.mobile.ecotienda.data.model.ArticleSummary
+import com.google.gson.annotations.SerializedName
+
+data class ArticleSummaryDto(
+    @SerializedName("id") val id: Int,
+    @SerializedName("title") val title: String,
+    @SerializedName("summary") val summary: String,
+    @SerializedName("coverFileId") val coverFileId: String? = null,
+    @SerializedName("publishedAt") val publishedAt: String? = null,
+)
+
+data class ArticleDetailDto(
+    @SerializedName("id") val id: Int,
+    @SerializedName("title") val title: String,
+    @SerializedName("summary") val summary: String,
+    @SerializedName("coverFileId") val coverFileId: String? = null,
+    @SerializedName("publishedAt") val publishedAt: String? = null,
+    @SerializedName("content") val content: String? = null,
+    @SerializedName("author") val author: String? = null,
+)
+
+fun ArticleSummaryDto.toModel() = ArticleSummary(
+    id = id,
+    title = title,
+    summary = summary,
+    imageUrl = cl.uchile.dcc.mobile.ecotienda.data.network.ApiRepository.fileContentUrl(coverFileId),
+    publishedAt = publishedAt.orEmpty(),
+)
+
+fun ArticleDetailDto.toModel() = ArticleDetail(
+    id = id,
+    title = title,
+    summary = summary,
+    imageUrl = cl.uchile.dcc.mobile.ecotienda.data.network.ApiRepository.fileContentUrl(coverFileId),
+    publishedAt = publishedAt.orEmpty(),
+    content = content.orEmpty(),
+    author = author.orEmpty(),
+)
