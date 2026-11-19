@@ -16,7 +16,6 @@ fun AccountGate(
     authViewModel: AuthViewModel,
     snackbarHostState: SnackbarHostState,
     onEnterApp: () -> Unit,
-    onOpenOrders: () -> Unit,
     onLogout: () -> Unit,
     onSignUp: () -> Unit
 ) {
@@ -28,8 +27,6 @@ fun AccountGate(
         AccountScreen(
             modifier = modifier,
             authViewModel = authViewModel,
-            onOpenOrders = onOpenOrders,
-            onGoHome = onEnterApp,
             onLogout = {
                 authViewModel.logout()
                 onLogout()

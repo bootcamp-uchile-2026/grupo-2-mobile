@@ -25,5 +25,14 @@ data class Product(
     var category: String,
     @ColumnInfo(name = "producer_id")
     var producerID: String, // Referencia a ID de productor
-
+    @ColumnInfo(name = "co2_avoided")
+    var co2Avoided: Double = 0.0,
+    @ColumnInfo(name = "green_points")
+    var greenPoints: Int = 0,
+    @ColumnInfo(name = "available")
+    var available: Boolean = true,
+    @ColumnInfo(name = "list_price")
+    var listPrice: Int = 0,
+    @ColumnInfo(name = "discount_percentage")
+    var discountPercentage: Int = 0,
 )

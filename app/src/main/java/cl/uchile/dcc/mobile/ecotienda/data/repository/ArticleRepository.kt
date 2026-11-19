@@ -10,7 +10,7 @@ class ArticleRepository(
     private val apiService: ArticleApiService = ApiRepository.articleApiService,
 ) {
     suspend fun getArticles(): List<ArticleSummary> {
-        return apiService.getArticles().map { it.toModel() }
+        return apiService.getArticles().content.map { it.toModel() }
     }
 
     suspend fun getArticle(articleId: Int): ArticleDetail {

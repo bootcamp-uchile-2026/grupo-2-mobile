@@ -1,41 +1,53 @@
 package cl.uchile.dcc.mobile.ecotienda.data.network.dto
 
+import cl.uchile.dcc.mobile.ecotienda.data.catalog.ProductCategories
 import cl.uchile.dcc.mobile.ecotienda.data.database.CartItem
 import cl.uchile.dcc.mobile.ecotienda.data.database.Producer
 import cl.uchile.dcc.mobile.ecotienda.data.database.Product
 import cl.uchile.dcc.mobile.ecotienda.data.database.User
+import cl.uchile.dcc.mobile.ecotienda.data.network.ApiRepository
 
 fun ProductListDto.toEntity(): Product = Product(
     id = id.toString(),
     productName = name,
-    price = salePrice ?: price,
+    price = finalPrice,
+    listPrice = price,
+    discountPercentage = discountPercentage,
     description = name,
-    productProducer = brand.orEmpty(),
-    imageUrl = imageUrl.orEmpty(),
-    stock = 0,
-    category = "",
-    producerID = "",
+    productProducer = producerName.orEmpty(),
+    imageUrl = ApiRepository.fileContentUrl(primaryImageFileId),
+    stock = stock,
+    category = ProductCategories.nameOf(categoryId),
+    producerID = producerId.toString(),
+    co2Avoided = co2Avoided,
+    greenPoints = greenPoints,
+    available = available && stock > 0,
 )
 
 fun ProductDetailDto.toEntity(): Product = Product(
     id = id.toString(),
     productName = name,
-    price = price,
+    price = finalPrice,
+    listPrice = price,
+    discountPercentage = discountPercentage,
     description = description.orEmpty(),
-    productProducer = "",
-    imageUrl = images?.firstOrNull().orEmpty(),
-    stock = 0,
-    category = if (!sizes.isNullOrEmpty()) "Moda Natural" else "",
-    producerID = "",
+    productProducer = producerName.orEmpty(),
+    imageUrl = ApiRepository.fileContentUrl(primaryImageFileId ?: imageFileIds?.firstOrNull()),
+    stock = stock,
+    category = categoryName?.takeIf { it.isNotBlank() } ?: ProductCategories.nameOf(categoryId),
+    producerID = producerId.toString(),
+    co2Avoided = co2Avoided,
+    greenPoints = greenPoints,
+    available = available && stock > 0,
 )
 
 fun ProducerDto.toEntity(): Producer = Producer(
     id = id.toString(),
-    name = name,
+    name = businessName,
     description = description.orEmpty(),
-    imageUrl = imageUrl.orEmpty(),
-    location = "",
-    history = story.orEmpty(),
+    imageUrl = ApiRepository.fileContentUrl(logoFileId),
+    location = location.orEmpty(),
+    history = "",
 )
 
 fun UserDto.toEntity(): User = User(

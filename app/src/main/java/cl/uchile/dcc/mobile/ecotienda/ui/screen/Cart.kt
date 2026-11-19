@@ -41,7 +41,7 @@ import cl.uchile.dcc.mobile.ecotienda.ui.component.CheckoutActionButton
 import cl.uchile.dcc.mobile.ecotienda.ui.component.CheckoutCard
 import cl.uchile.dcc.mobile.ecotienda.ui.component.CheckoutDivider
 import cl.uchile.dcc.mobile.ecotienda.ui.component.CheckoutScreenTitle
-import cl.uchile.dcc.mobile.ecotienda.ui.component.CouponSection
+import cl.uchile.dcc.mobile.ecotienda.ui.component.FootprintCards
 import cl.uchile.dcc.mobile.ecotienda.ui.component.OrderSummarySection
 import cl.uchile.dcc.mobile.ecotienda.ui.component.PaymentSelector
 import cl.uchile.dcc.mobile.ecotienda.ui.component.ShippingForm
@@ -60,6 +60,9 @@ fun Cart(
     onBack: () -> Unit,
     onContinueShopping: () -> Unit = onBack,
     productCategories: Map<String, String> = emptyMap(),
+    quantityCaps: Map<String, Int> = emptyMap(),
+    co2Kg: Double = 0.0,
+    greenPoints: Int = 0,
     authViewModel: AuthViewModel = viewModel(),
     cartViewModel: CartViewModel = viewModel(),
 ) {
@@ -67,11 +70,8 @@ fun Cart(
     val checkoutState by cartViewModel.checkoutState.collectAsState()
     val scrollState = rememberScrollState()
 
-    val shipping = shippingCostFor(
-        subtotal = cart.total,
-        deliveryType = checkoutState.shippingForm.deliveryType,
-    )
-    val discount = checkoutState.discountAmount
+    val shipping = shippingCostFor(cart.total)
+    val canPurchase = authUi.isLoggedIn
 
     BackHandler(
         enabled = checkoutState.orderPlaced || checkoutState.currentStep != CheckoutStep.CART,
@@ -113,7 +113,6 @@ fun Cart(
 
         when {
             checkoutState.orderPlaced -> OrderPlacedContent(
-                deliveryType = checkoutState.shippingForm.deliveryType,
                 onContinue = {
                     cartViewModel.dismissConfirmedOrder()
                     onContinueShopping()
@@ -127,23 +126,23 @@ fun Cart(
                 CheckoutStep.CART -> CartStepContent(
                     items = cart.items,
                     productCategories = productCategories,
+                    quantityCaps = quantityCaps,
                     subtotal = cart.total,
                     shipping = shipping,
-                    discount = discount,
-                    couponCode = checkoutState.couponCode,
-                    couponFeedback = checkoutState.couponFeedback,
+                    co2Kg = co2Kg,
+                    greenPoints = greenPoints,
+                    canPurchase = canPurchase,
                     onQuantityChange = cartViewModel::setQuantity,
                     onDecrement = cartViewModel::decrementQuantity,
                     onRemove = cartViewModel::removeFromCart,
-                    onCouponChange = cartViewModel::updateCouponCode,
-                    onApplyCoupon = { cartViewModel.applyCoupon(cart.total) },
                     onContinue = { cartViewModel.nextStep() },
                 )
                 CheckoutStep.SHIPPING -> ShippingStepContent(
                     form = checkoutState.shippingForm,
                     subtotal = cart.total,
                     shipping = shipping,
-                    discount = discount,
+                    co2Kg = co2Kg,
+                    greenPoints = greenPoints,
                     addressCheck = checkoutState.addressCheck,
                     addressMessage = checkoutState.addressCheckMessage,
                     onUpdate = { newState -> cartViewModel.updateShippingForm { newState } },
@@ -154,7 +153,9 @@ fun Cart(
                     paymentMethod = checkoutState.paymentMethod,
                     subtotal = cart.total,
                     shipping = shipping,
-                    discount = discount,
+                    co2Kg = co2Kg,
+                    greenPoints = greenPoints,
+                    canPurchase = canPurchase,
                     mapLabel = checkoutState.addressCheckMessage.takeIf {
                         checkoutState.addressCheck == AddressCheckStatus.FOUND
                     }.orEmpty(),
@@ -170,16 +171,15 @@ fun Cart(
 private fun CartStepContent(
     items: List<CartItem>,
     productCategories: Map<String, String>,
+    quantityCaps: Map<String, Int>,
     subtotal: Int,
     shipping: Int,
-    discount: Int,
-    couponCode: String,
-    couponFeedback: String,
+    co2Kg: Double,
+    greenPoints: Int,
+    canPurchase: Boolean,
     onQuantityChange: (String, Int) -> Unit,
     onDecrement: (String) -> Unit,
     onRemove: (String) -> Unit,
-    onCouponChange: (String) -> Unit,
-    onApplyCoupon: () -> Unit,
     onContinue: () -> Unit,
 ) {
     CheckoutScreenTitle("Tu Carrito")
@@ -189,12 +189,13 @@ private fun CartStepContent(
     }
     Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
         groups.forEach { (title, groupItems) ->
-            CheckoutCard(title = title) {
+            CheckoutCard(title = title.uppercase()) {
                 groupItems.forEachIndexed { index, item ->
                     if (index > 0) CheckoutDivider()
                     CartProductRow(
                         item = item,
                         subtitle = item.productProducer,
+                        maxQuantity = quantityCaps[item.productId] ?: 3,
                         onQuantityChange = { qty -> onQuantityChange(item.productId, qty) },
                         onDecrement = { onDecrement(item.productId) },
                         onRemove = { onRemove(item.productId) },
@@ -204,23 +205,30 @@ private fun CartStepContent(
         }
     }
 
-    Spacer(modifier = Modifier.height(20.dp))
-    CouponSection(
-        code = couponCode,
-        feedback = couponFeedback,
-        applied = discount > 0,
-        onCodeChange = onCouponChange,
-        onApply = onApplyCoupon,
+    Spacer(modifier = Modifier.height(22.dp))
+    Text(
+        text = "Huella Verde total",
+        style = MaterialTheme.typography.titleLarge,
+        color = MaterialTheme.colorScheme.onBackground,
+    )
+    Spacer(modifier = Modifier.height(10.dp))
+    FootprintCards(co2Kg = co2Kg, greenPoints = greenPoints)
+    Spacer(modifier = Modifier.height(8.dp))
+    Text(
+        text = "Los puntos se acreditan al recibir el pedido. Todavía no descuentan el total.",
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
     )
     Spacer(modifier = Modifier.height(22.dp))
     OrderSummarySection(
         productTotal = subtotal,
         shipping = shipping,
-        discount = discount,
+        discount = 0,
     )
     Spacer(modifier = Modifier.height(20.dp))
     CheckoutActionButton(
-        label = "Ir a pagar",
+        label = if (canPurchase) "Pagar y finalizar" else "Inicia sesión para comprar",
+        enabled = canPurchase,
         onClick = onContinue,
     )
 }
@@ -230,7 +238,8 @@ private fun ShippingStepContent(
     form: ShippingFormState,
     subtotal: Int,
     shipping: Int,
-    discount: Int,
+    co2Kg: Double,
+    greenPoints: Int,
     addressCheck: AddressCheckStatus,
     addressMessage: String,
     onUpdate: (ShippingFormState) -> Unit,
@@ -269,10 +278,24 @@ private fun ShippingStepContent(
         )
     }
     Spacer(modifier = Modifier.height(22.dp))
+    Text(
+        text = "Huella Verde total",
+        style = MaterialTheme.typography.titleLarge,
+        color = MaterialTheme.colorScheme.onBackground,
+    )
+    Spacer(modifier = Modifier.height(10.dp))
+    FootprintCards(co2Kg = co2Kg, greenPoints = greenPoints)
+    Spacer(modifier = Modifier.height(8.dp))
+    Text(
+        text = "Los puntos se acreditan al recibir el pedido. Todavía no descuentan el total.",
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
+    Spacer(modifier = Modifier.height(22.dp))
     OrderSummarySection(
         productTotal = subtotal,
         shipping = shipping,
-        discount = discount,
+        discount = 0,
     )
     Spacer(modifier = Modifier.height(20.dp))
     CheckoutActionButton(
@@ -305,7 +328,9 @@ private fun PaymentStepContent(
     paymentMethod: String,
     subtotal: Int,
     shipping: Int,
-    discount: Int,
+    co2Kg: Double,
+    greenPoints: Int,
+    canPurchase: Boolean,
     mapLabel: String,
     onSelectMethod: (String) -> Unit,
     onConfirm: () -> Unit,
@@ -344,22 +369,35 @@ private fun PaymentStepContent(
         onSelect = onSelectMethod,
     )
     Spacer(modifier = Modifier.height(22.dp))
+    Text(
+        text = "Huella Verde total",
+        style = MaterialTheme.typography.titleLarge,
+        color = MaterialTheme.colorScheme.onBackground,
+    )
+    Spacer(modifier = Modifier.height(10.dp))
+    FootprintCards(co2Kg = co2Kg, greenPoints = greenPoints)
+    Spacer(modifier = Modifier.height(8.dp))
+    Text(
+        text = "Los puntos se acreditan al recibir el pedido. Todavía no descuentan el total.",
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
+    Spacer(modifier = Modifier.height(22.dp))
     OrderSummarySection(
         productTotal = subtotal,
         shipping = shipping,
-        discount = discount,
+        discount = 0,
     )
     Spacer(modifier = Modifier.height(20.dp))
     CheckoutActionButton(
         label = "Confirmar compra",
-        enabled = paymentMethod.isNotBlank(),
+        enabled = canPurchase && paymentMethod.isNotBlank(),
         onClick = onConfirm,
     )
 }
 
 @Composable
 private fun OrderPlacedContent(
-    deliveryType: String,
     onContinue: () -> Unit,
 ) {
     CheckoutScreenTitle(
@@ -379,11 +417,7 @@ private fun OrderPlacedContent(
                 modifier = Modifier.size(42.dp),
             )
             Text(
-                text = if (deliveryType == ShippingFormState.PICKUP) {
-                    "Tu pedido queda listo para retiro."
-                } else {
-                    "Te enviaremos el pedido a la dirección que indicaste."
-                },
+                text = "Te enviaremos el pedido a la dirección que indicaste. Los puntos verdes se acreditan cuando lo recibes.",
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurface,

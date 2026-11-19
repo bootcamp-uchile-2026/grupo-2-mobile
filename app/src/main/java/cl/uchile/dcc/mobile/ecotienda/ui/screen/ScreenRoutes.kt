@@ -47,6 +47,8 @@ enum class ScreenRoutes(
     BLOG(title = "Blog", route = "BLOG", icon = Icons.AutoMirrored.Filled.Article, unselectedIcon = Icons.AutoMirrored.Outlined.Article),
     ARTICLE(title = "Artículo", route = "ARTICLE", icon = Icons.AutoMirrored.Filled.Article, unselectedIcon = Icons.AutoMirrored.Outlined.Article),
 
+    ACCOUNT(title = "Cuenta de Usuarios", route = "Account", icon = Icons.Filled.Person2),
+
     // Sin topbar
     PRODUCERPAGE(showTopBar = false, title = "Página de Productores", route = "PRODUCERPAGE", icon = Icons.Filled.NaturePeople, unselectedIcon = Icons.Outlined.NaturePeople),
     ABOUT(showTopBar = false, title = "Nosotros", route = "ABOUT", icon = Icons.Filled.People, unselectedIcon = Icons.Outlined.People),
@@ -55,7 +57,6 @@ enum class ScreenRoutes(
 
     // Sin ninguna barra (ni bottom ni top)
     LOGIN(showTopBar = false, showBottomBar = false, title = "Ingreso de Usuarios", route = "Login", icon = Icons.Filled.Person),
-    ACCOUNT(showTopBar = false, showBottomBar = false, title = "Cuenta de Usuarios", route = "Account", icon = Icons.Filled.Person2),
     SEARCH_RESULTS(showTopBar = false, showBottomBar = false, title = "Resultados de búsqueda", route = "SEARCH_RESULTS", icon = Icons.Filled.Search, unselectedIcon = Icons.Outlined.Search),
     LOADING(showTopBar = false, showBottomBar = false, title = "Cargando", route = "LOADING", icon = Icons.Filled.Search, unselectedIcon = Icons.Outlined.Search),
     SIGNUP(showTopBar = false, showBottomBar = false, title = "Registro", route = "SIGNUP", icon = Icons.Filled.Person, unselectedIcon = Icons.Outlined.Person),

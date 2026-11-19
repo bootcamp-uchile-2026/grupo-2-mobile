@@ -10,7 +10,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 
 @Database(
     entities = [Product::class, Producer::class, User::class, CartItem::class],
-    version = 1,
+    version = 3,
     exportSchema = false
 )
 
@@ -21,6 +21,21 @@ abstract class BuenOrigenDatabase : RoomDatabase() {
     abstract val cartItemDAO: CartItemDAO
 
     companion object {
+        private val MIGRATION_1_TO_2 = object : Migration(1, 2) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE product_registry ADD COLUMN co2_avoided REAL NOT NULL DEFAULT 0")
+                db.execSQL("ALTER TABLE product_registry ADD COLUMN green_points INTEGER NOT NULL DEFAULT 0")
+                db.execSQL("ALTER TABLE product_registry ADD COLUMN available INTEGER NOT NULL DEFAULT 1")
+            }
+        }
+
+        private val MIGRATION_2_TO_3 = object : Migration(2, 3) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE product_registry ADD COLUMN list_price INTEGER NOT NULL DEFAULT 0")
+                db.execSQL("ALTER TABLE product_registry ADD COLUMN discount_percentage INTEGER NOT NULL DEFAULT 0")
+            }
+        }
+
         @Volatile
         private var INSTANCE: BuenOrigenDatabase? = null
 
@@ -31,7 +46,7 @@ abstract class BuenOrigenDatabase : RoomDatabase() {
                     BuenOrigenDatabase::class.java,
                     "buen_origen_database"
                 )
-//                    .addMigrations(MIGRATION_1_TO_2)
+                    .addMigrations(MIGRATION_1_TO_2, MIGRATION_2_TO_3)
                     .build()
                 INSTANCE = instance
                 instance

@@ -21,14 +21,23 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+enum class CartAddResult {
+    ADDED,
+    LIMITED,
+    NO_STOCK,
+    AT_MAX,
+}
+
 class CartViewModel(
     application: Application,
     private val savedStateHandle: SavedStateHandle
 ) : AndroidViewModel(application) {
     private val app = application as? cl.uchile.dcc.mobile.ecotienda.data.repository.EcoTiendaApp
+    private val database = BuenOrigenDatabase.getInstance(application)
     private val cartRepository = app?.container?.cartRepository ?: CartRepository(
-        BuenOrigenDatabase.getInstance(application).cartItemDAO
+        database.cartItemDAO
     )
+    private val productDao = database.productDAO
 
 
     private val addressLookup = NominatimAddressLookup()
@@ -51,27 +60,47 @@ class CartViewModel(
     private fun loadCart() {
         viewModelScope.launch {
             val items = cartRepository.getCartItems()
-            _cart.update { Cart(items = items) }
-        }
-    }
-
-    fun addToCart(product: Product, quantity: Int) {
-        viewModelScope.launch {
-            val cartItem = product.toCartItem(quantity)
-            cartRepository.addCartItem(cartItem)
+            for (item in items) {
+                val product = productDao.getProductById(item.productId)
+                val cap = unitCap(product)
+                when {
+                    product != null && cap <= 0 -> cartRepository.removeCartItem(item.productId)
+                    cap in 1 until item.quantity -> cartRepository.updateQuantity(item.productId, cap)
+                }
+            }
             _cart.update { Cart(items = cartRepository.getCartItems()) }
         }
     }
 
+    fun addToCart(product: Product, quantity: Int): CartAddResult {
+        if (!product.available || product.stock <= 0) return CartAddResult.NO_STOCK
+        val cap = unitCap(product)
+        val current = _cart.value.quantityOf(product.id)
+        if (current >= cap) return CartAddResult.AT_MAX
+        val requested = quantity.coerceAtLeast(1)
+        val result = if (current + requested > cap) CartAddResult.LIMITED else CartAddResult.ADDED
+        viewModelScope.launch {
+            cartRepository.addCartItem(product.toCartItem(requested), cap)
+            _cart.update { Cart(items = cartRepository.getCartItems()) }
+        }
+        return result
+    }
+
     fun incrementQuantity(productId: String) {
         viewModelScope.launch {
-            val currentItem = _cart.value.items.find { it.productId == productId }
-            if (currentItem != null) {
-                val newQty = currentItem.quantity + 1
-                cartRepository.updateQuantity(productId, newQty)
-                _cart.update { Cart(items = cartRepository.getCartItems()) }
-            }
+            val currentItem = _cart.value.items.find { it.productId == productId } ?: return@launch
+            val cap = unitCap(productDao.getProductById(productId))
+            val newQty = (currentItem.quantity + 1).coerceAtMost(cap)
+            if (newQty <= currentItem.quantity) return@launch
+            cartRepository.updateQuantity(productId, newQty)
+            _cart.update { Cart(items = cartRepository.getCartItems()) }
         }
+    }
+
+    private fun unitCap(product: Product?): Int {
+        if (product == null) return CartRepository.MAX_UNITS_PER_PRODUCT
+        if (!product.available || product.stock <= 0) return 0
+        return minOf(CartRepository.MAX_UNITS_PER_PRODUCT, product.stock)
     }
 
     fun decrementQuantity(productId: String) {
@@ -139,10 +168,6 @@ class CartViewModel(
         val state = _checkoutState.value
         val form = state.shippingForm
         if (!form.isComplete()) return
-        if (form.deliveryType == ShippingFormState.PICKUP) {
-            nextStep()
-            return
-        }
         when (state.addressCheck) {
             AddressCheckStatus.CHECKING -> return
             AddressCheckStatus.FOUND,
@@ -204,7 +229,9 @@ class CartViewModel(
 
     fun setQuantity(productId: String, quantity: Int) {
         viewModelScope.launch {
-            cartRepository.updateQuantity(productId, quantity)
+            val cap = unitCap(productDao.getProductById(productId))
+            val allowed = if (cap <= 0) 0 else quantity.coerceIn(1, cap)
+            cartRepository.updateQuantity(productId, allowed)
             _cart.update { Cart(items = cartRepository.getCartItems()) }
         }
     }
