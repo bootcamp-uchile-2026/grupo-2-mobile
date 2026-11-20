@@ -1,7 +1,10 @@
 package cl.uchile.dcc.mobile.ecotienda.ui.screen
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,6 +13,7 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DarkMode
@@ -36,17 +40,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import cl.uchile.dcc.mobile.ecotienda.R
 import cl.uchile.dcc.mobile.ecotienda.data.database.Producer
 import cl.uchile.dcc.mobile.ecotienda.data.database.Product
 import cl.uchile.dcc.mobile.ecotienda.data.repository.CartRepository
+import androidx.compose.material3.rememberModalBottomSheetState
 import cl.uchile.dcc.mobile.ecotienda.ui.component.BottomNavigationBar
+import cl.uchile.dcc.mobile.ecotienda.ui.component.FilterBottomSheet
+import cl.uchile.dcc.mobile.ecotienda.ui.component.NotificationIconButton
 import cl.uchile.dcc.mobile.ecotienda.ui.component.SearchStaticBar
+import cl.uchile.dcc.mobile.ecotienda.ui.theme.CustomBrandTitleStyle
 import cl.uchile.dcc.mobile.ecotienda.viewmodel.AuthViewModel
 import cl.uchile.dcc.mobile.ecotienda.viewmodel.BlogViewModel
 import cl.uchile.dcc.mobile.ecotienda.viewmodel.CartAddResult
@@ -88,6 +99,10 @@ fun EcoTiendaApp(
     val cartState by cartViewModel.cart.collectAsState()
     val authState by authViewModel.state.collectAsState()
     val blogState by blogViewModel.uiState.collectAsState()
+    val searchUiState by searchViewModel.uiState.collectAsState()
+
+    var showFilterSheet by remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     fun addAndNotify(product: Product, quantity: Int, openCart: Boolean = false) {
         val result = cartViewModel.addToCart(product, quantity)
@@ -136,35 +151,62 @@ fun EcoTiendaApp(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             if (currentScreen.showTopBar) {
-                val searchUiState by searchViewModel.uiState.collectAsState()
                 Surface(
-                    color = MaterialTheme.colorScheme.primary,
+                    color = MaterialTheme.colorScheme.background,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Row(
+                    Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 8.dp)
-                            .windowInsetsPadding(WindowInsets.statusBars),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            .windowInsetsPadding(WindowInsets.statusBars)
+                            .padding(top = 10.dp, bottom = 6.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        SearchStaticBar(
-                            query= searchUiState.query,
-                            onQueryChange = searchViewModel::onQueryChange,
-                            onSearch = { navController.navigate(route = "SEARCH") },
-                            modifier = Modifier.weight(1f)
-                        )
-
-                        // Botón de alternador de tema Claro / Oscuro
-                        IconButton(
-                            onClick = onToggleTheme,
-                            modifier = Modifier.size(40.dp)
+                        // Logo centrado con Buen Origen (logo_solo + texto)
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center,
+                            modifier = Modifier.padding(bottom = 12.dp)
                         ) {
-                            Icon(
-                                imageVector = if (isDarkTheme) Icons.Filled.LightMode else Icons.Filled.DarkMode,
-                                contentDescription = if (isDarkTheme) "Cambiar a modo claro" else "Cambiar a modo oscuro",
-                                tint = Color.White
+                            Image(
+                                painter = painterResource(id = R.drawable.logo_solo),
+                                contentDescription = "Logo Buen Origen",
+                                modifier = Modifier.size(32.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = "Buen Origen",
+                                style = CustomBrandTitleStyle.copy(
+                                    fontSize = 24.sp,
+                                    lineHeight = 28.sp,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            )
+                        }
+
+                        // Barra de búsqueda interactiva con menú de filtrado y campana de notificaciones
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        ) {
+                            SearchStaticBar(
+                                query = searchUiState.query,
+                                onQueryChange = searchViewModel::onQueryChange,
+                                onSearch = { searchViewModel.onSearchSubmitted(searchUiState.query) },
+                                onFilterClick = { showFilterSheet = true },
+                                modifier = Modifier.weight(1f)
+                            )
+
+                            NotificationIconButton(
+                                count = 1,
+                                onClick = {
+                                    scope.launch {
+                                        snackbarHostState.showSnackbar("Tienes 1 notificación nueva: ¡Envíos gratis en tu primera compra!")
+                                    }
+                                }
                             )
                         }
                     }
@@ -213,6 +255,7 @@ fun EcoTiendaApp(
                     productos = catalogProducts,
                     producers = catalogProducers,
                     authViewModel = authViewModel,
+                    searchViewModel = searchViewModel,
                     onProductClick = { product ->
                         productViewModel.selectProduct(product)
                         navController.navigate(ScreenRoutes.PRODUCTPAGE.route)
@@ -336,6 +379,8 @@ fun EcoTiendaApp(
                     modifier = Modifier.padding(innerPadding),
                     authViewModel = authViewModel,
                     snackbarHostState = snackbarHostState,
+                    isDarkTheme = isDarkTheme,
+                    onToggleTheme = onToggleTheme,
                     onEnterApp = {
                         navController.navigate(ScreenRoutes.HOME.route) {
                             popUpTo(ScreenRoutes.ACCOUNT.route) { inclusive = true }
@@ -363,6 +408,8 @@ fun EcoTiendaApp(
                     modifier = Modifier.padding(innerPadding),
                     authViewModel = authViewModel,
                     snackbarHostState = snackbarHostState,
+                    isDarkTheme = isDarkTheme,
+                    onToggleTheme = onToggleTheme,
                     onEnterApp = {
                         navController.navigate(ScreenRoutes.HOME.route) {
                             popUpTo(ScreenRoutes.LOGIN.route) { inclusive = true }
@@ -445,6 +492,19 @@ fun EcoTiendaApp(
                     onBack = { navController.popBackStack() }
                 )
             }
+        }
+
+        if (showFilterSheet) {
+            FilterBottomSheet(
+                sheetState = sheetState,
+                currentFilter = searchUiState.filter,
+                searchQuery = searchUiState.query,
+                onDismiss = { showFilterSheet = false },
+                onApplyFilter = { newFilter ->
+                    searchViewModel.updateFilter(newFilter)
+                    showFilterSheet = false
+                }
+            )
         }
     }
 }

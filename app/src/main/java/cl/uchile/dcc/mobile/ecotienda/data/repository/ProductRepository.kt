@@ -58,9 +58,9 @@ class ProductRepository(
             for (p in entities) {
                 productDao.addProduct(p)
             }
-            entities
+            entities.ifEmpty { productDao.searchProducts(query) }
         } catch (_: Exception) {
-            emptyList()
+            productDao.searchProducts(query)
         }
     }
 }

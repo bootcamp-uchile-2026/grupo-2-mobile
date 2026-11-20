@@ -47,7 +47,7 @@ enum class ScreenRoutes(
     BLOG(title = "Blog", route = "BLOG", icon = Icons.AutoMirrored.Filled.Article, unselectedIcon = Icons.AutoMirrored.Outlined.Article),
     ARTICLE(title = "Artículo", route = "ARTICLE", icon = Icons.AutoMirrored.Filled.Article, unselectedIcon = Icons.AutoMirrored.Outlined.Article),
 
-    ACCOUNT(title = "Cuenta de Usuarios", route = "Account", icon = Icons.Filled.Person2),
+    ACCOUNT(showTopBar = false, title = "Cuenta de Usuarios", route = "Account", icon = Icons.Filled.Person2),
 
     // Sin topbar
     PRODUCERPAGE(showTopBar = false, title = "Página de Productores", route = "PRODUCERPAGE", icon = Icons.Filled.NaturePeople, unselectedIcon = Icons.Outlined.NaturePeople),
