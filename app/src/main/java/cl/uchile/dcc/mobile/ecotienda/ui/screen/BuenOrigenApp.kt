@@ -219,6 +219,9 @@ fun EcoTiendaApp(
                     currentRoute = currentRoute,
                     onNavigateTo = { route ->
                         if (route == ScreenRoutes.HOME.route) {
+                            // Limpia la búsqueda y los filtros para restaurar el Home original
+                            searchViewModel.clearSearch()
+
                             val returned = navController.popBackStack(
                                 ScreenRoutes.HOME.route,
                                 inclusive = false,

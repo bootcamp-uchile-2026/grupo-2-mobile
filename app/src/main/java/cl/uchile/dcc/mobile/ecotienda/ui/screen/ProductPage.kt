@@ -45,6 +45,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -53,6 +54,7 @@ import androidx.compose.ui.unit.sp
 import cl.uchile.dcc.mobile.ecotienda.data.database.Product
 import cl.uchile.dcc.mobile.ecotienda.ui.component.FootprintCards
 import cl.uchile.dcc.mobile.ecotienda.utils.formatAsCurrency
+import cl.uchile.dcc.mobile.ecotienda.R
 import coil3.compose.AsyncImage
 
 @Composable
@@ -75,7 +77,7 @@ fun ProductPage(
     val isClothing = product.category.contains("ropa", ignoreCase = true) ||
         product.category.equals("Moda Natural", ignoreCase = true)
     val listPrice = product.listPrice
-    val hasOffer = listPrice > product.price && product.price > 0
+    val hasOffer = product.price in 1..<listPrice
     val discount = when {
         product.discountPercentage > 0 -> product.discountPercentage
         hasOffer -> ((listPrice - product.price) * 100) / listPrice
@@ -135,16 +137,14 @@ fun ProductPage(
                     .background(MaterialTheme.colorScheme.primaryContainer),
                 contentAlignment = Alignment.Center,
             ) {
-                if (product.imageUrl.isNotBlank()) {
-                    AsyncImage(
-                        model = product.imageUrl,
-                        contentDescription = product.productName,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(24.dp),
-                        contentScale = ContentScale.Fit,
-                    )
-                }
+                AsyncImage(
+                    model = product.imageUrl.ifBlank { R.drawable.fondo_producto },
+                    fallback = painterResource(id = R.drawable.fondo_producto),
+                    error = painterResource(id = R.drawable.fondo_producto),
+                    contentDescription = product.productName,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop, // O ContentScale.Fit según cómo prefieras que se encuadre
+                )
             }
 
             if (product.category.isNotBlank()) {

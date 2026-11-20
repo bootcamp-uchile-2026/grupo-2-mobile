@@ -144,6 +144,7 @@ fun HomeEcoTienda(
                 query = searchUiState.query,
                 results = searchUiState.searchResults,
                 isLoading = searchUiState.isLoading,
+                onClearSearch = { searchViewModel.clearSearch() }, // Borrar resultados o fiiltros para volver a HOME
                 onProductClick = onProductClick,
                 onAgregarClick = onAgregarClick
             )
@@ -189,8 +190,12 @@ fun HomeEcoTienda(
                         productos = productos,
                         onProductClick = onProductClick,
                         onAgregarClick = onAgregarClick,
-                        onSeeMoreProductsClick = onSeeMoreProductsClick
+                        onSeeMoreProductsClick = {
+                            selectedTabIndex = 1          // Cambia a la pestaña "Categorías"
+                            selectedCategoryName = null   // Muestra las 8 fotos de categorías
+                        }
                     )
+
                     1 -> CategoriasTabContent(
                         productos = productos,
                         selectedCategory = selectedCategoryName,
@@ -199,10 +204,12 @@ fun HomeEcoTienda(
                         onProductClick = onProductClick,
                         onAgregarClick = onAgregarClick
                     )
+
                     2 -> EmprendedoresTabContent(
                         producers = producers,
                         onProducerClick = onProducerClick
                     )
+
                     3 -> HuellaVerde()
                     4 -> BlogPreviewSection(
                         articles = articles,
@@ -223,6 +230,7 @@ private fun SearchResultsInline(
     query: String,
     results: List<Product>,
     isLoading: Boolean,
+    onClearSearch: () -> Unit, // Limpieza
     onProductClick: (Product) -> Unit,
     onAgregarClick: (Product) -> Unit
 ) {
@@ -234,7 +242,8 @@ private fun SearchResultsInline(
             .verticalScroll(scrollState)
             .padding(bottom = 24.dp)
     ) {
-        val titleText = if (query.isNotBlank()) "Resultados para “$query”" else "Resultados de filtros"
+        val titleText =
+            if (query.isNotBlank()) "Resultados para “$query”" else "Resultados de filtros"
         Text(
             text = titleText,
             style = MaterialTheme.typography.titleMedium.copy(
@@ -248,56 +257,67 @@ private fun SearchResultsInline(
                 .padding(horizontal = 16.dp, vertical = 14.dp)
         )
 
-        if (isLoading) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
-            }
-        } else if (results.isEmpty()) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(32.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "No se encontraron productos que coincidan con tu búsqueda.",
-                    textAlign = TextAlign.Center,
-                    color = Color.Gray,
-                    fontSize = 15.sp
-                )
-            }
-        } else {
-            Column(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(14.dp)
-            ) {
-                val chunkedProducts = results.chunked(2)
-                chunkedProducts.forEach { rowProducts ->
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(14.dp)
-                    ) {
-                        rowProducts.forEach { product ->
-                            ProductCompactCard(
-                                product = product,
-                                onProductClick = { onProductClick(product) },
-                                onAgregarClick = { onAgregarClick(product) },
-                                modifier = Modifier.weight(1f)
-                            )
-                        }
-                        if (rowProducts.size == 1) {
-                            Spacer(modifier = Modifier.weight(1f))
-                        }
+        // Botón que resetea la búsqueda y los filtros
+        TextButton(onClick = onClearSearch) {
+            Text(
+                text = "Volver al inicio ✕",
+                color = Color(0xFF8E412E),
+                fontWeight = FontWeight.Bold,
+                fontSize = 13.sp
+            )
+        }
+
+
+    if (isLoading) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+        }
+    } else if (results.isEmpty()) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(32.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "No se encontraron productos que coincidan con tu búsqueda.",
+                textAlign = TextAlign.Center,
+                color = Color.Gray,
+                fontSize = 15.sp
+            )
+        }
+    } else {
+        Column(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp)
+        ) {
+            val chunkedProducts = results.chunked(2)
+            chunkedProducts.forEach { rowProducts ->
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(14.dp)
+                ) {
+                    rowProducts.forEach { product ->
+                        ProductCompactCard(
+                            product = product,
+                            onProductClick = { onProductClick(product) },
+                            onAgregarClick = { onAgregarClick(product) },
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+                    if (rowProducts.size == 1) {
+                        Spacer(modifier = Modifier.weight(1f))
                     }
                 }
             }
         }
     }
+        }
 }
 
 // Vista de Categorías con imágenes en cuadrícula (Imagen 1)
@@ -373,9 +393,12 @@ private fun CategoriasTabContent(
                 val cat = selectedCategory.lowercase()
                 productos.filter {
                     it.category.lowercase().contains(cat) ||
-                    (cat.contains("ropa") && (it.category.lowercase().contains("ropa") || it.category.lowercase().contains("moda"))) ||
-                    (cat.contains("artesan") && (it.category.lowercase().contains("artesan") || it.category.lowercase().contains("decoraci"))) ||
-                    (cat.contains("aroma") && it.category.lowercase().contains("aroma"))
+                            (cat.contains("ropa") && (it.category.lowercase()
+                                .contains("ropa") || it.category.lowercase().contains("moda"))) ||
+                            (cat.contains("artesan") && (it.category.lowercase()
+                                .contains("artesan") || it.category.lowercase()
+                                .contains("decoraci"))) ||
+                            (cat.contains("aroma") && it.category.lowercase().contains("aroma"))
                 }
             }
 
@@ -488,6 +511,14 @@ private fun ParaTiTabContent(
                 buttonText = "Conocer más",
                 backgroundColor = Color(0xFFD6DEC9) // Verde salvia suave del mockup
             ),
+            // Banner para
+            BannerSlide(
+                title = "Compara\ncon Buen Origen",
+                subtitle = "Haz click en la camara en nuestros productos y ve las diferencias",
+                buttonText = "Descubrir",
+                backgroundColor = Color(0xFFE5DDD0) // Puedes cambiar el color de fondo
+            ),
+
             BannerSlide(
                 title = "Productos\nLocales",
                 subtitle = "Apoya a pequeños emprendedores y productores de Chile",
@@ -629,7 +660,9 @@ private fun ParaTiTabContent(
                             .size(if (pagerState.currentPage == index) 8.dp else 6.dp)
                             .clip(CircleShape)
                             .background(
-                                if (pagerState.currentPage == index) Color(0xFF1C3224) else Color.Gray.copy(alpha = 0.4f)
+                                if (pagerState.currentPage == index) Color(0xFF1C3224) else Color.Gray.copy(
+                                    alpha = 0.4f
+                                )
                             )
                     )
                 }
@@ -762,8 +795,10 @@ fun ProductCompactCard(
                     .background(Color(0xFFF6F3ED))
             ) {
                 AsyncImage(
-                    model = product.imageUrl,
+                    model = product.imageUrl.ifBlank { R.drawable.fondo_producto },
                     contentDescription = product.productName,
+                    fallback = painterResource(id = R.drawable.fondo_producto),
+                    error = painterResource(id = R.drawable.fondo_producto),
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()
                 )
@@ -861,7 +896,8 @@ fun ProductCompactCard(
                     modifier = Modifier.padding(top = 4.dp),
                     horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-                    val tagText = if (product.category.isNotBlank()) product.category else "Materiales Naturales"
+                    val tagText =
+                        if (product.category.isNotBlank()) product.category else "Materiales Naturales"
                     Surface(
                         shape = RoundedCornerShape(6.dp),
                         color = Color(0xFFF6D8CC)
