@@ -45,6 +45,8 @@ fun SearchStaticBar(
     onFilterClick: (() -> Unit)? = null,
     bgColor: Color = MaterialTheme.colorScheme.surface,
 ) {
+    val focusManager = LocalFocusManager.current
+
     Surface(
         modifier = modifier.height(50.dp),
         shape = RoundedCornerShape(16.dp),

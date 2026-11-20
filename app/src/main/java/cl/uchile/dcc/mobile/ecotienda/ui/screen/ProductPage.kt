@@ -1,7 +1,7 @@
 package cl.uchile.dcc.mobile.ecotienda.ui.screen
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -61,6 +62,7 @@ import coil3.compose.AsyncImage
 fun ProductPage(
     product: Product,
     onAddToCart: (Product, Int) -> Unit,
+    onBuyNow: (Product, Int) -> Unit,
     onBack: () -> Unit,
     onTakePhoto: () -> Unit,
     modifier: Modifier = Modifier,
@@ -119,7 +121,6 @@ fun ProductPage(
                 icon = Icons.Outlined.ShoppingCart,
                 contentDescription = "Carrito",
             )
-        }
 
         Column(
             modifier = Modifier
@@ -179,7 +180,32 @@ fun ProductPage(
                             fontSize = 13.sp,
                         )
                     }
+                    Icon(
+                        imageVector = Icons.Outlined.StarOutline,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(16.dp),
+                    )
+                    Text(
+                        text = "4.5 (24 valoraciones)",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(start = 6.dp),
+                    )
                 }
+                Text(
+                    text = product.price.formatAsCurrency(),
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onBackground,
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = product.description,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    lineHeight = 20.sp,
+                )
             }
 
             if (canBuy) {

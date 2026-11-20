@@ -463,3 +463,17 @@ private fun cartGroupTitle(category: String): String = when (category.trim()) {
     else -> category
 }
 
+private fun cartGroupTitle(category: String): String = when (category.trim()) {
+    "Moda Natural", "Ropa", "Ropa y Accesorios" -> "Ropa y Accesorios"
+    "Cuidado del Hogar", "Limpieza del Hogar" -> "Limpieza del Hogar"
+    "" -> "Otros"
+    else -> category
+}
+
+private fun cartGroupTitle(category: String): String = when (category.trim()) {
+    "Moda Natural", "Ropa", "Ropa y Accesorios" -> "Ropa y Accesorios"
+    "Cuidado del Hogar", "Limpieza del Hogar" -> "Limpieza del Hogar"
+    "" -> "Otros"
+    else -> category
+}
+
