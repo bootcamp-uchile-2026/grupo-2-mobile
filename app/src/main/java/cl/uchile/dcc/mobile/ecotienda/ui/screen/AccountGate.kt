@@ -29,8 +29,6 @@ fun AccountGate(
         AccountScreen(
             modifier = modifier,
             authViewModel = authViewModel,
-            isDarkTheme = isDarkTheme,
-            onToggleTheme = onToggleTheme,
             onLogout = {
                 authViewModel.logout()
                 onLogout()

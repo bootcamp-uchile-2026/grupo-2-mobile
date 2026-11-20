@@ -16,7 +16,7 @@ class ProductRepository(
 
     suspend fun getAllProduct(): List<Product> {
         return try {
-            val entities = apiService.getProducts().content.map { it.toEntity() }
+            val entities = apiService.getProducts().map { it.toEntity() }
             for (p in entities) {
                 productDao.addProduct(p)
             }
@@ -54,13 +54,13 @@ class ProductRepository(
     suspend fun searchProducts(query: String): List<Product> {
         if (query.isBlank()) return emptyList()
         return try {
-            val entities = apiService.searchProducts(query).content.map { it.toEntity() }
+            val entities = apiService.searchProducts(query).map { it.toEntity() }
             for (p in entities) {
                 productDao.addProduct(p)
             }
-            entities.ifEmpty { productDao.searchProducts(query) }
+            entities
         } catch (_: Exception) {
-            productDao.searchProducts(query)
+            emptyList()
         }
     }
 }

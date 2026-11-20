@@ -14,7 +14,6 @@ import androidx.compose.material.icons.filled.Person2
 import androidx.compose.material.icons.filled.Photo
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ShoppingCart
-import androidx.compose.material.icons.automirrored.outlined.Article
 import androidx.compose.material.icons.outlined.EnergySavingsLeaf
 import androidx.compose.material.icons.outlined.GridView
 import androidx.compose.material.icons.outlined.Home
@@ -44,10 +43,6 @@ enum class ScreenRoutes(
     PRODUCTPAGE(showTopBar = false, title = "Página Producto", route = "PRODUCTPAGE", icon = Icons.Filled.Nature, unselectedIcon = Icons.Outlined.Nature),
     ORDERS(title = "Página Ordenes", route = "ORDERS", icon = Icons.Filled.Nature, unselectedIcon = Icons.Outlined.Nature ),
     SEARCH(title = "Búsqueda", route = "SEARCH", icon = Icons.Filled.Search, unselectedIcon = Icons.Outlined.Search),
-    BLOG(title = "Blog", route = "BLOG", icon = Icons.AutoMirrored.Filled.Article, unselectedIcon = Icons.AutoMirrored.Outlined.Article),
-    ARTICLE(title = "Artículo", route = "ARTICLE", icon = Icons.AutoMirrored.Filled.Article, unselectedIcon = Icons.AutoMirrored.Outlined.Article),
-
-    ACCOUNT(showTopBar = false, title = "Cuenta de Usuarios", route = "Account", icon = Icons.Filled.Person2),
 
     // Sin topbar
     PRODUCERPAGE(showTopBar = false, title = "Página de Productores", route = "PRODUCERPAGE", icon = Icons.Filled.NaturePeople, unselectedIcon = Icons.Outlined.NaturePeople),
@@ -57,6 +52,7 @@ enum class ScreenRoutes(
 
     // Sin ninguna barra (ni bottom ni top)
     LOGIN(showTopBar = false, showBottomBar = false, title = "Ingreso de Usuarios", route = "Login", icon = Icons.Filled.Person),
+    ACCOUNT(showTopBar = false, showBottomBar = false, title = "Cuenta de Usuarios", route = "Account", icon = Icons.Filled.Person2),
     SEARCH_RESULTS(showTopBar = false, showBottomBar = false, title = "Resultados de búsqueda", route = "SEARCH_RESULTS", icon = Icons.Filled.Search, unselectedIcon = Icons.Outlined.Search),
     LOADING(showTopBar = false, showBottomBar = false, title = "Cargando", route = "LOADING", icon = Icons.Filled.Search, unselectedIcon = Icons.Outlined.Search),
     SIGNUP(showTopBar = false, showBottomBar = false, title = "Registro", route = "SIGNUP", icon = Icons.Filled.Person, unselectedIcon = Icons.Outlined.Person),

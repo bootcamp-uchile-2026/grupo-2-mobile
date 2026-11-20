@@ -42,6 +42,9 @@ class CartViewModel(
 
     private val addressLookup = NominatimAddressLookup()
 
+
+    private val addressLookup = NominatimAddressLookup()
+
     private val _cart = MutableStateFlow(Cart())
     val cart = _cart.asStateFlow()
 
@@ -168,6 +171,10 @@ class CartViewModel(
         val state = _checkoutState.value
         val form = state.shippingForm
         if (!form.isComplete()) return
+        if (form.deliveryType == ShippingFormState.PICKUP) {
+            nextStep()
+            return
+        }
         when (state.addressCheck) {
             AddressCheckStatus.CHECKING -> return
             AddressCheckStatus.FOUND,
@@ -229,9 +236,7 @@ class CartViewModel(
 
     fun setQuantity(productId: String, quantity: Int) {
         viewModelScope.launch {
-            val cap = unitCap(productDao.getProductById(productId))
-            val allowed = if (cap <= 0) 0 else quantity.coerceIn(1, cap)
-            cartRepository.updateQuantity(productId, allowed)
+            cartRepository.updateQuantity(productId, quantity)
             _cart.update { Cart(items = cartRepository.getCartItems()) }
         }
     }

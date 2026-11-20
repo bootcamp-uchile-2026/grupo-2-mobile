@@ -1,10 +1,7 @@
 package cl.uchile.dcc.mobile.ecotienda.ui.screen
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,7 +10,6 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DarkMode
@@ -40,27 +36,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import cl.uchile.dcc.mobile.ecotienda.R
 import cl.uchile.dcc.mobile.ecotienda.data.database.Producer
 import cl.uchile.dcc.mobile.ecotienda.data.database.Product
-import cl.uchile.dcc.mobile.ecotienda.data.repository.CartRepository
-import androidx.compose.material3.rememberModalBottomSheetState
 import cl.uchile.dcc.mobile.ecotienda.ui.component.BottomNavigationBar
-import cl.uchile.dcc.mobile.ecotienda.ui.component.FilterBottomSheet
-import cl.uchile.dcc.mobile.ecotienda.ui.component.NotificationIconButton
 import cl.uchile.dcc.mobile.ecotienda.ui.component.SearchStaticBar
-import cl.uchile.dcc.mobile.ecotienda.ui.theme.CustomBrandTitleStyle
 import cl.uchile.dcc.mobile.ecotienda.viewmodel.AuthViewModel
-import cl.uchile.dcc.mobile.ecotienda.viewmodel.BlogViewModel
-import cl.uchile.dcc.mobile.ecotienda.viewmodel.CartAddResult
 import cl.uchile.dcc.mobile.ecotienda.viewmodel.CartViewModel
 import cl.uchile.dcc.mobile.ecotienda.viewmodel.MainScreenViewModel
 import cl.uchile.dcc.mobile.ecotienda.viewmodel.ProducerDetailViewModel
@@ -81,7 +67,6 @@ fun EcoTiendaApp(
     cartViewModel: CartViewModel = viewModel(),
     authViewModel: AuthViewModel = viewModel(),
     searchViewModel: SearchViewModel = viewModel(),
-    blogViewModel: BlogViewModel = viewModel(),
 ) {
     val navController = rememberNavController()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -98,47 +83,10 @@ fun EcoTiendaApp(
     val productDetailState by productViewModel.uiState.collectAsState()
     val cartState by cartViewModel.cart.collectAsState()
     val authState by authViewModel.state.collectAsState()
-    val blogState by blogViewModel.uiState.collectAsState()
-    val searchUiState by searchViewModel.uiState.collectAsState()
-
-    var showFilterSheet by remember { mutableStateOf(false) }
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-
-    fun addAndNotify(product: Product, quantity: Int, openCart: Boolean = false) {
-        val result = cartViewModel.addToCart(product, quantity)
-        val message = when (result) {
-            CartAddResult.NO_STOCK -> "Sin stock"
-            CartAddResult.AT_MAX, CartAddResult.LIMITED -> "Máximo 3 unidades"
-            CartAddResult.ADDED -> "Añadido: ${product.productName}"
-        }
-        if (!(result == CartAddResult.ADDED && openCart)) {
-            scope.launch { snackbarHostState.showSnackbar(message) }
-        }
-        if (openCart && result != CartAddResult.NO_STOCK) {
-            navController.navigate(ScreenRoutes.CART.route)
-        }
-    }
 
     val appContext = LocalContext.current.applicationContext
     var catalogProducts by remember { mutableStateOf<List<Product>>(emptyList()) }
     var catalogProducers by remember { mutableStateOf<List<Producer>>(emptyList()) }
-    val productsById = catalogProducts.associateBy { it.id }
-    val cartCo2Kg = cartState.items.sumOf { item ->
-        (productsById[item.productId]?.co2Avoided ?: 0.0) * item.quantity
-    }
-    val cartGreenPoints = cartState.items.sumOf { item ->
-        (productsById[item.productId]?.greenPoints ?: 0) * item.quantity
-    }
-    val cartQuantityCaps = cartState.items.associate { item ->
-        val product = productsById[item.productId]
-        val cap = when {
-            product == null -> CartRepository.MAX_UNITS_PER_PRODUCT
-            !product.available || product.stock <= 0 -> 1
-            else -> minOf(CartRepository.MAX_UNITS_PER_PRODUCT, product.stock).coerceAtLeast(1)
-        }
-        item.productId to cap
-    }
-
     LaunchedEffect(Unit) {
         val container = (appContext as? cl.uchile.dcc.mobile.ecotienda.data.repository.EcoTiendaApp)
             ?.container ?: return@LaunchedEffect
@@ -151,62 +99,35 @@ fun EcoTiendaApp(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             if (currentScreen.showTopBar) {
+                val searchUiState by searchViewModel.uiState.collectAsState()
                 Surface(
-                    color = MaterialTheme.colorScheme.background,
+                    color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Column(
+                    Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .windowInsetsPadding(WindowInsets.statusBars)
-                            .padding(top = 10.dp, bottom = 6.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                            .windowInsetsPadding(WindowInsets.statusBars),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
-                        // Logo centrado con Buen Origen (logo_solo + texto)
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center,
-                            modifier = Modifier.padding(bottom = 12.dp)
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.logo_solo),
-                                contentDescription = "Logo Buen Origen",
-                                modifier = Modifier.size(32.dp)
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                text = "Buen Origen",
-                                style = CustomBrandTitleStyle.copy(
-                                    fontSize = 24.sp,
-                                    lineHeight = 28.sp,
-                                    color = MaterialTheme.colorScheme.primary
-                                )
-                            )
-                        }
+                        SearchStaticBar(
+                            query= searchUiState.query,
+                            onQueryChange = searchViewModel::onQueryChange,
+                            onSearch = { navController.navigate(route = "SEARCH") },
+                            modifier = Modifier.weight(1f)
+                        )
 
-                        // Barra de búsqueda interactiva con menú de filtrado y campana de notificaciones
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        // Botón de alternador de tema Claro / Oscuro
+                        IconButton(
+                            onClick = onToggleTheme,
+                            modifier = Modifier.size(40.dp)
                         ) {
-                            SearchStaticBar(
-                                query = searchUiState.query,
-                                onQueryChange = searchViewModel::onQueryChange,
-                                onSearch = { searchViewModel.onSearchSubmitted(searchUiState.query) },
-                                onFilterClick = { showFilterSheet = true },
-                                modifier = Modifier.weight(1f)
-                            )
-
-                            NotificationIconButton(
-                                count = 1,
-                                onClick = {
-                                    scope.launch {
-                                        snackbarHostState.showSnackbar("Tienes 1 notificación nueva: ¡Envíos gratis en tu primera compra!")
-                                    }
-                                }
+                            Icon(
+                                imageVector = if (isDarkTheme) Icons.Filled.LightMode else Icons.Filled.DarkMode,
+                                contentDescription = if (isDarkTheme) "Cambiar a modo claro" else "Cambiar a modo oscuro",
+                                tint = Color.White
                             )
                         }
                     }
@@ -217,28 +138,8 @@ fun EcoTiendaApp(
             if (!isKeyboardOpen && currentScreen.showBottomBar) {
                 BottomNavigationBar(
                     currentRoute = currentRoute,
-                    onNavigateTo = { route ->
-                        if (route == ScreenRoutes.HOME.route) {
-                            // Limpia la búsqueda y los filtros para restaurar el Home original
-                            searchViewModel.clearSearch()
-
-                            val returned = navController.popBackStack(
-                                ScreenRoutes.HOME.route,
-                                inclusive = false,
-                            )
-                            if (!returned && navController.currentDestination?.route != ScreenRoutes.HOME.route) {
-                                navController.navigate(ScreenRoutes.HOME.route) {
-                                    popUpTo(0) { inclusive = true }
-                                    launchSingleTop = true
-                                }
-                            }
-                        } else {
-                            navController.navigate(route) {
-                                popUpTo(ScreenRoutes.HOME.route) { saveState = true }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
-                        }
+                    onNavigateTo = {
+                        navController.navigate(it)
                     }
                 )
             }
@@ -258,13 +159,15 @@ fun EcoTiendaApp(
                     productos = catalogProducts,
                     producers = catalogProducers,
                     authViewModel = authViewModel,
-                    searchViewModel = searchViewModel,
                     onProductClick = { product ->
                         productViewModel.selectProduct(product)
                         navController.navigate(ScreenRoutes.PRODUCTPAGE.route)
                     },
                     onAgregarClick = { product ->
-                        addAndNotify(product, 1)
+                        cartViewModel.addToCart(product, 1)
+                        scope.launch {
+                            snackbarHostState.showSnackbar("Añadido: ${product.productName}")
+                        }
                     },
                     onProducerClick = { producer ->
                         producerViewModel.selectProducer(producer)
@@ -272,15 +175,7 @@ fun EcoTiendaApp(
                     },
                     onSeeMoreProductsClick = {
                         navController.navigate(ScreenRoutes.CATALOG.route)
-                    },
-                    articles = blogState.articles,
-                    articlesLoading = blogState.isLoading,
-                    articlesError = blogState.error,
-                    onOpenBlog = { navController.navigate(ScreenRoutes.BLOG.route) },
-                    onOpenArticle = { articleId ->
-                        blogViewModel.openArticle(articleId)
-                        navController.navigate(ScreenRoutes.ARTICLE.route)
-                    },
+                    }
                 )
             }
             composable(ScreenRoutes.CATALOG.route) {
@@ -291,7 +186,10 @@ fun EcoTiendaApp(
                         navController.navigate(ScreenRoutes.PRODUCTPAGE.route)
                     },
                     onAgregarClick = { product ->
-                        addAndNotify(product, 1)
+                        cartViewModel.addToCart(product, 1)
+                        scope.launch {
+                            snackbarHostState.showSnackbar("Añadido: ${product.productName}")
+                        }
                     }
                 )
             }
@@ -309,7 +207,10 @@ fun EcoTiendaApp(
                         navController.navigate(ScreenRoutes.PRODUCTPAGE.route)
                     },
                     onAddToCart = { product ->
-                        addAndNotify(product, 1)
+                        cartViewModel.addToCart(product, 1)
+                        scope.launch {
+                            snackbarHostState.showSnackbar("Añadido: ${product.productName}")
+                        }
                     }
                 )
             }
@@ -323,7 +224,10 @@ fun EcoTiendaApp(
                         navController.navigate(ScreenRoutes.PRODUCTPAGE.route)
                     },
                     onAddToCart = { product ->
-                        addAndNotify(product, 1)
+                        cartViewModel.addToCart(product, 1)
+                        scope.launch {
+                            snackbarHostState.showSnackbar("Añadido: ${product.productName}")
+                        }
                     }
                 )
             }
@@ -351,10 +255,18 @@ fun EcoTiendaApp(
                     ProductPage(
                         modifier = Modifier.padding(innerPadding),
                         product = product,
-                        onAddToCart = { p, q -> addAndNotify(p, q) },
+                        onAddToCart = { p, q ->
+                            cartViewModel.addToCart(p, q)
+                            scope.launch {
+                                snackbarHostState.showSnackbar("Añadido: ${product.productName}")
+                            }
+                        },
+                        onBuyNow = { p, q ->
+                            cartViewModel.addToCart(p, q)
+                            navController.navigate(ScreenRoutes.CART.route)
+                        },
                         onBack = { navController.popBackStack() },
                         onTakePhoto = { navController.navigate(ScreenRoutes.PHOTOCOMP.route) },
-                        onOpenCart = { navController.navigate(ScreenRoutes.CART.route) },
                     )
                 }
             }
@@ -365,9 +277,6 @@ fun EcoTiendaApp(
                     authViewModel = authViewModel,
                     cartViewModel = cartViewModel,
                     productCategories = catalogProducts.associateBy({ it.id }, { it.category }),
-                    quantityCaps = cartQuantityCaps,
-                    co2Kg = cartCo2Kg,
-                    greenPoints = cartGreenPoints,
                     onBack = { navController.popBackStack() },
                     onContinueShopping = {
                         navController.navigate(ScreenRoutes.HOME.route) {
@@ -382,13 +291,12 @@ fun EcoTiendaApp(
                     modifier = Modifier.padding(innerPadding),
                     authViewModel = authViewModel,
                     snackbarHostState = snackbarHostState,
-                    isDarkTheme = isDarkTheme,
-                    onToggleTheme = onToggleTheme,
                     onEnterApp = {
                         navController.navigate(ScreenRoutes.HOME.route) {
                             popUpTo(ScreenRoutes.ACCOUNT.route) { inclusive = true }
                         }
                     },
+                    onOpenOrders = { navController.navigate(ScreenRoutes.ORDERS.route) },
                     onLogout = {
                         navController.navigate(ScreenRoutes.HOME.route) {
                             popUpTo(0) { inclusive = true }
@@ -411,13 +319,12 @@ fun EcoTiendaApp(
                     modifier = Modifier.padding(innerPadding),
                     authViewModel = authViewModel,
                     snackbarHostState = snackbarHostState,
-                    isDarkTheme = isDarkTheme,
-                    onToggleTheme = onToggleTheme,
                     onEnterApp = {
                         navController.navigate(ScreenRoutes.HOME.route) {
                             popUpTo(ScreenRoutes.LOGIN.route) { inclusive = true }
                         }
                     },
+                    onOpenOrders = { navController.navigate(ScreenRoutes.ORDERS.route) },
                     onLogout = {},
                     onSignUp = { navController.navigate(ScreenRoutes.SIGNUP.route) }
                 )
@@ -459,28 +366,6 @@ fun EcoTiendaApp(
                 )
             }
 
-            composable(ScreenRoutes.BLOG.route) {
-                BlogScreen(
-                    modifier = Modifier.padding(innerPadding),
-                    articles = blogState.articles,
-                    isLoading = blogState.isLoading,
-                    error = blogState.error,
-                    onBack = { navController.popBackStack() },
-                    onOpenArticle = { articleId ->
-                        blogViewModel.openArticle(articleId)
-                        navController.navigate(ScreenRoutes.ARTICLE.route)
-                    },
-                )
-            }
-            composable(ScreenRoutes.ARTICLE.route) {
-                ArticleScreen(
-                    modifier = Modifier.padding(innerPadding),
-                    detail = blogState.detail,
-                    isLoading = blogState.detailLoading,
-                    error = blogState.detailError,
-                    onBack = { navController.popBackStack() },
-                )
-            }
             composable(ScreenRoutes.HUELLAVERDE.route) {
                 HuellaVerde(
                     modifier = Modifier.padding(innerPadding),
@@ -495,19 +380,6 @@ fun EcoTiendaApp(
                     onBack = { navController.popBackStack() }
                 )
             }
-        }
-
-        if (showFilterSheet) {
-            FilterBottomSheet(
-                sheetState = sheetState,
-                currentFilter = searchUiState.filter,
-                searchQuery = searchUiState.query,
-                onDismiss = { showFilterSheet = false },
-                onApplyFilter = { newFilter ->
-                    searchViewModel.updateFilter(newFilter)
-                    showFilterSheet = false
-                }
-            )
         }
     }
 }

@@ -4,10 +4,8 @@ import com.google.gson.annotations.SerializedName
 
 data class ProducerDto(
     @SerializedName("id") val id: Int,
-    @SerializedName("businessName") val businessName: String,
+    @SerializedName("name") val name: String,
     @SerializedName("description") val description: String? = null,
-    @SerializedName("logoFileId") val logoFileId: String? = null,
-    @SerializedName("bannerFileId") val bannerFileId: String? = null,
-    @SerializedName("location") val location: String? = null,
-    @SerializedName("websiteUrl") val websiteUrl: String? = null,
+    @SerializedName("imageUrl") val imageUrl: String? = null,
+    @SerializedName("story") val story: String? = null,
 )

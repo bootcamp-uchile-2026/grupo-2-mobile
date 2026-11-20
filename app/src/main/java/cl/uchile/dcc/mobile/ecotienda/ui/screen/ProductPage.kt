@@ -1,7 +1,7 @@
 package cl.uchile.dcc.mobile.ecotienda.ui.screen
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -19,19 +20,20 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PhotoCamera
-import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.FavoriteBorder
-import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material.icons.outlined.StarOutline
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -47,12 +49,12 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cl.uchile.dcc.mobile.ecotienda.data.database.Product
-import cl.uchile.dcc.mobile.ecotienda.ui.component.FootprintCards
+import cl.uchile.dcc.mobile.ecotienda.ui.theme.EcoTiendaTheme
 import cl.uchile.dcc.mobile.ecotienda.utils.formatAsCurrency
 import cl.uchile.dcc.mobile.ecotienda.R
 import coil3.compose.AsyncImage
@@ -61,6 +63,7 @@ import coil3.compose.AsyncImage
 fun ProductPage(
     product: Product,
     onAddToCart: (Product, Int) -> Unit,
+    onBuyNow: (Product, Int) -> Unit,
     onBack: () -> Unit,
     onTakePhoto: () -> Unit,
     modifier: Modifier = Modifier,
@@ -68,351 +71,243 @@ fun ProductPage(
 ) {
     val scrollState = rememberScrollState()
     var favorite by remember { mutableStateOf(false) }
-    var quantity by remember(product.id) { mutableIntStateOf(1) }
-    var sizeLabel by remember(product.id) { mutableStateOf("M") }
-    var selectedTab by remember(product.id) { mutableIntStateOf(0) }
-    val maxUnits = minOf(3, product.stock).coerceAtLeast(0)
-    val canBuy = product.available && maxUnits > 0
-    val safeQuantity = quantity.coerceIn(1, maxUnits.coerceAtLeast(1))
+    var quantityLabel by remember { mutableStateOf<String?>(null) }
+    var sizeLabel by remember { mutableStateOf<String?>(null) }
+    var colorLabel by remember { mutableStateOf<String?>(null) }
+    var selectedTab by remember { mutableIntStateOf(1) }
+    val quantity = quantityLabel?.toIntOrNull() ?: 1
     val isClothing = product.category.contains("ropa", ignoreCase = true) ||
         product.category.equals("Moda Natural", ignoreCase = true)
-    val listPrice = product.listPrice
-    val hasOffer = product.price in 1..<listPrice
-    val discount = when {
-        product.discountPercentage > 0 -> product.discountPercentage
-        hasOffer -> ((listPrice - product.price) * 100) / listPrice
-        else -> 0
-    }
-    val savings = if (hasOffer) (listPrice - product.price) * safeQuantity else 0
-    val tabs = listOf("Elaboración", "Materiales", "Reseñas")
+
+    val tabs = listOf("Materiales", "Elaboración", "Reseñas")
 
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
+            .background(MaterialTheme.colorScheme.background)
+            .verticalScroll(scrollState)
     ) {
-        Row(
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 12.dp, vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
+                .clip(RoundedCornerShape(topEnd = 24.dp, topStart = 24.dp))
+                .background(MaterialTheme.colorScheme.primaryContainer)
+                .height(320.dp)
         ) {
-            CircleIconButton(
-                onClick = onBack,
-                icon = Icons.AutoMirrored.Filled.ArrowBack,
-                contentDescription = "Volver",
+            AsyncImage(
+                model = product.imageUrl,
+                contentDescription = product.productName,
+                modifier = Modifier
+                    .fillMaxWidth(),
+                contentScale = ContentScale.Fit
             )
-            Text(
-                text = "Detalles",
-                modifier = Modifier.weight(1f),
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onBackground,
-            )
-            CircleIconButton(
-                onClick = onTakePhoto,
-                icon = Icons.Filled.PhotoCamera,
-                contentDescription = "Sacar foto de la etiqueta",
-            )
-            CircleIconButton(
-                onClick = onOpenCart,
-                icon = Icons.Outlined.ShoppingCart,
-                contentDescription = "Carrito",
-            )
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(12.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                CircleIconButton(
+                    onClick = onBack,
+                    icon = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "Volver",
+                )
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    CircleIconButton(
+                        onClick = onTakePhoto,
+                        icon = Icons.Filled.PhotoCamera,
+                        contentDescription = "Sacar foto de la etiqueta",
+                    )
+                    CircleIconButton(
+                        onClick = { favorite = !favorite },
+                        icon = if (favorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+                        contentDescription = "Favorito",
+                    )
+                }
+            }
+
+            Row(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 72.dp),
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                repeat(5) { index ->
+                    Box(
+                        modifier = Modifier
+                            .size(if (index == 0) 8.dp else 6.dp)
+                            .clip(CircleShape)
+                            .background(
+                                if (index == 0) {
+                                    MaterialTheme.colorScheme.primary
+                                } else {
+                                    MaterialTheme.colorScheme.surface.copy(alpha = 0.75f)
+                                }
+                            )
+                    )
+                }
+            }
+        }
+
+        Surface(
+            modifier = Modifier
+                .offset(y = (-52).dp)
+                .fillMaxWidth(),
+            shape = RoundedCornerShape(24.dp),
+            color = MaterialTheme.colorScheme.surface,
+            shadowElevation = 8.dp,
+        ) {
+            Column(modifier = Modifier.padding(horizontal = 20.dp, vertical = 18.dp)) {
+                Text(
+                    text = product.productName,
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onBackground,
+                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(vertical = 6.dp),
+                ) {
+                    repeat(4) {
+                        Icon(
+                            imageVector = Icons.Filled.Star,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(16.dp),
+                        )
+                    }
+                    Icon(
+                        imageVector = Icons.Outlined.StarOutline,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(16.dp),
+                    )
+                    Text(
+                        text = "4.5 (24 valoraciones)",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(start = 6.dp),
+                    )
+                }
+                Text(
+                    text = product.price.formatAsCurrency(),
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onBackground,
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = product.description,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    lineHeight = 20.sp,
+                )
+            }
         }
 
         Column(
             modifier = Modifier
-                .weight(1f)
-                .verticalScroll(scrollState)
+                .offset(y = (-36).dp)
                 .padding(horizontal = 20.dp),
-            verticalArrangement = Arrangement.spacedBy(14.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
-            // Fondo liso: la ilustración del diseño todavía no está en el proyecto.
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(300.dp)
-                    .clip(RoundedCornerShape(24.dp))
-                    .background(MaterialTheme.colorScheme.primaryContainer),
-                contentAlignment = Alignment.Center,
-            ) {
-                AsyncImage(
-                    model = product.imageUrl.ifBlank { R.drawable.fondo_producto },
-                    fallback = painterResource(id = R.drawable.fondo_producto),
-                    error = painterResource(id = R.drawable.fondo_producto),
-                    contentDescription = product.productName,
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop, // O ContentScale.Fit según cómo prefieras que se encuadre
-                )
-            }
-
-            if (product.category.isNotBlank()) {
-                Text(
-                    text = product.category.uppercase(),
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    letterSpacing = 1.sp,
-                )
-            }
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
-            ) {
-                Text(
-                    text = product.productName,
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    modifier = Modifier.weight(1f, fill = false),
-                )
-                if (discount > 0) {
-                    Surface(
-                        shape = RoundedCornerShape(20.dp),
-                        color = MaterialTheme.colorScheme.secondaryContainer,
-                    ) {
-                        Text(
-                            text = "$discount%",
-                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
-                            color = MaterialTheme.colorScheme.onSecondaryContainer,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 13.sp,
-                        )
-                    }
-                }
-            }
-
-            if (canBuy) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    if (isClothing) {
-                        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                            Text("Talla", color = MaterialTheme.colorScheme.onSurfaceVariant)
-                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                listOf("S", "M", "L", "XL").forEach { size ->
-                                    SizeChip(
-                                        label = size,
-                                        selected = sizeLabel == size,
-                                        onClick = { sizeLabel = size },
-                                    )
-                                }
-                            }
-                        }
-                    }
-                    Column(
-                        horizontalAlignment = Alignment.End,
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                    ) {
-                        Text("Cantidad", color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        QuantityStepper(
-                            quantity = safeQuantity,
-                            onMinus = { if (safeQuantity > 1) quantity = safeQuantity - 1 },
-                            onPlus = { if (safeQuantity < maxUnits) quantity = safeQuantity + 1 },
-                        )
-                    }
-                }
-            } else {
-                Text(
-                    text = "Sin stock",
-                    color = MaterialTheme.colorScheme.error,
-                    fontWeight = FontWeight.SemiBold,
-                )
-            }
-
-            Text(
-                text = "Tu Huella Verde",
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onBackground,
+            SelectField(
+                label = "Cantidad",
+                options = (1..5).map { it.toString() },
+                selected = quantityLabel,
+                onSelected = { quantityLabel = it },
             )
-            FootprintCards(
-                co2Kg = product.co2Avoided * safeQuantity,
-                greenPoints = product.greenPoints * safeQuantity,
-            )
-
-            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                if (hasOffer) {
-                    Text(
-                        text = "Precio especial",
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        fontSize = 13.sp,
-                    )
-                    Text(
-                        text = listPrice.formatAsCurrency(),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        textDecoration = TextDecoration.LineThrough,
-                    )
-                }
-                Text(
-                    text = (product.price * if (canBuy) safeQuantity else 1).formatAsCurrency(),
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onBackground,
+            if (isClothing) {
+                SelectField(
+                    label = "Talla",
+                    options = listOf("XS", "S", "M", "L", "XL"),
+                    selected = sizeLabel,
+                    onSelected = { sizeLabel = it },
                 )
-                if (savings > 0) {
-                    Text(
-                        text = "Ahorras ${savings.formatAsCurrency()} en esta compra",
-                        color = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.SemiBold,
-                    )
-                }
+                SelectField(
+                    label = "Color",
+                    options = listOf("Natural", "Verde", "Negro", "Crudo"),
+                    selected = colorLabel,
+                    onSelected = { colorLabel = it },
+                )
             }
+
+            Spacer(modifier = Modifier.height(6.dp))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalAlignment = Alignment.CenterVertically,
             ) {
-                Button(
-                    onClick = { onAddToCart(product, safeQuantity) },
-                    enabled = canBuy,
+                OutlinedButton(
+                    onClick = { onAddToCart(product, quantity) },
                     modifier = Modifier
                         .weight(1f)
-                        .height(52.dp),
-                    shape = RoundedCornerShape(28.dp),
+                        .height(48.dp),
+                    shape = RoundedCornerShape(24.dp),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        containerColor = MaterialTheme.colorScheme.background,
+                        contentColor = MaterialTheme.colorScheme.onBackground,
+                    ),
+                ) {
+                    Text("Agregar al carrito", fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
+                }
+                Button(
+                    onClick = { onBuyNow(product, quantity) },
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(48.dp),
+                    shape = RoundedCornerShape(24.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.secondary,
                         contentColor = MaterialTheme.colorScheme.onSecondary,
                     ),
                 ) {
-                    Text("Añadir al carrito", fontWeight = FontWeight.SemiBold)
+                    Text("Comprar ahora", fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
                 }
-                CircleIconButton(
-                    onClick = { favorite = !favorite },
-                    icon = if (favorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
-                    contentDescription = "Favorito",
-                )
             }
 
-            Text(
-                text = "Descripción",
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onBackground,
-            )
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Spacer(modifier = Modifier.height(18.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
                 tabs.forEachIndexed { index, title ->
                     val selected = selectedTab == index
-                    Surface(
-                        shape = RoundedCornerShape(20.dp),
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
                         color = if (selected) {
                             MaterialTheme.colorScheme.primary
                         } else {
-                            MaterialTheme.colorScheme.background
+                            MaterialTheme.colorScheme.onSurfaceVariant
                         },
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(20.dp))
-                            .clickable { selectedTab = index },
-                        border = if (selected) {
-                            null
-                        } else {
-                            androidx.compose.foundation.BorderStroke(
-                                1.dp,
-                                MaterialTheme.colorScheme.outlineVariant,
-                            )
-                        },
-                    ) {
-                        Text(
-                            text = title,
-                            modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
-                            color = if (selected) {
-                                MaterialTheme.colorScheme.onPrimary
-                            } else {
-                                MaterialTheme.colorScheme.onSurface
-                            },
-                            fontSize = 14.sp,
-                        )
-                    }
+                        textDecoration = if (selected) TextDecoration.Underline else TextDecoration.None,
+                        modifier = Modifier.clickable { selectedTab = index },
+                    )
                 }
             }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
             when (selectedTab) {
-                0 -> Text(
-                    text = product.description.ifBlank { "Todavía no hay una descripción de la elaboración." },
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    lineHeight = 22.sp,
-                )
-                1 -> Text(
-                    text = "El detalle de materiales llega con la ficha del producto." ,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    lineHeight = 22.sp,
-                )
-                else -> RatingSection()
+                2 -> RatingSection()
+                else -> {
+                    Text(
+                        text = "Más detalles sobre ${tabs[selectedTab]} próximamente.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(vertical = 16.dp),
+                    )
+                }
             }
-            Spacer(modifier = Modifier.height(24.dp))
         }
-    }
-}
-
-@Composable
-private fun SizeChip(
-    label: String,
-    selected: Boolean,
-    onClick: () -> Unit,
-) {
-    Box(
-        modifier = Modifier
-            .size(36.dp)
-            .clip(CircleShape)
-            .background(
-                if (selected) MaterialTheme.colorScheme.primary
-                else MaterialTheme.colorScheme.surface
-            )
-            .border(
-                width = 1.dp,
-                color = if (selected) MaterialTheme.colorScheme.primary
-                else MaterialTheme.colorScheme.outlineVariant,
-                shape = CircleShape,
-            )
-            .clickable(onClick = onClick),
-        contentAlignment = Alignment.Center,
-    ) {
-        Text(
-            text = label,
-            color = if (selected) MaterialTheme.colorScheme.onPrimary
-            else MaterialTheme.colorScheme.onSurface,
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 13.sp,
-        )
-    }
-}
-
-@Composable
-private fun QuantityStepper(
-    quantity: Int,
-    onMinus: () -> Unit,
-    onPlus: () -> Unit,
-) {
-    Row(
-        modifier = Modifier
-            .clip(RoundedCornerShape(24.dp))
-            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(24.dp))
-            .padding(horizontal = 6.dp, vertical = 4.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Icon(
-            imageVector = Icons.Filled.Remove,
-            contentDescription = "Disminuir cantidad",
-            modifier = Modifier
-                .size(28.dp)
-                .clickable(onClick = onMinus)
-                .padding(4.dp),
-            tint = MaterialTheme.colorScheme.onSurface,
-        )
-        Text(
-            text = quantity.toString(),
-            modifier = Modifier.padding(horizontal = 10.dp),
-            fontWeight = FontWeight.SemiBold,
-        )
-        Icon(
-            imageVector = Icons.Filled.Add,
-            contentDescription = "Aumentar cantidad",
-            modifier = Modifier
-                .size(28.dp)
-                .clickable(onClick = onPlus)
-                .padding(4.dp),
-            tint = MaterialTheme.colorScheme.onSurface,
-        )
     }
 }
 
@@ -433,9 +328,61 @@ private fun CircleIconButton(
         Icon(
             imageVector = icon,
             contentDescription = contentDescription,
-            tint = MaterialTheme.colorScheme.onSurface,
+            tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier.size(20.dp),
         )
+    }
+}
+
+@Composable
+private fun SelectField(
+    label: String,
+    options: List<String>,
+    selected: String?,
+    onSelected: (String) -> Unit,
+) {
+    var expanded by remember { mutableStateOf(false) }
+    Box(modifier = Modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(52.dp)
+                .clip(RoundedCornerShape(16.dp))
+                .background(MaterialTheme.colorScheme.surface)
+                .clickable { expanded = true }
+                .padding(horizontal = 16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Text(
+                text = selected ?: label,
+                style = MaterialTheme.typography.bodyLarge,
+                color = if (selected == null) {
+                    MaterialTheme.colorScheme.onSurfaceVariant
+                } else {
+                    MaterialTheme.colorScheme.onSurface
+                },
+            )
+            Icon(
+                imageVector = Icons.Filled.KeyboardArrowDown,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+        ) {
+            options.forEach { option ->
+                DropdownMenuItem(
+                    text = { Text(option) },
+                    onClick = {
+                        onSelected(option)
+                        expanded = false
+                    },
+                )
+            }
+        }
     }
 }
 
@@ -460,7 +407,7 @@ fun RatingSection() {
             Row {
                 repeat(4) {
                     Icon(
-                        Icons.Filled.Star,
+                        Icons.Default.Star,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(18.dp),
@@ -499,7 +446,7 @@ fun ReviewItem() {
             contentAlignment = Alignment.Center,
         ) {
             Icon(
-                Icons.Filled.Person,
+                Icons.Default.Person,
                 contentDescription = null,
                 modifier = Modifier.size(24.dp),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -532,7 +479,7 @@ fun ReviewItem() {
         Row {
             repeat(4) {
                 Icon(
-                    Icons.Filled.Star,
+                    Icons.Default.Star,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(12.dp),
