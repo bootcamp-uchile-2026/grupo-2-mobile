@@ -25,7 +25,6 @@ data class ShippingFormState(
     val deliveryType: String = DELIVERY,
 ) {
     fun isComplete(): Boolean {
-        if (deliveryType == PICKUP) return true
         val hasNumber = isNoNumber || number.isNotBlank()
         return ChileCommunes.canonical(commune) != null && street.isNotBlank() && hasNumber
     }
@@ -60,10 +59,10 @@ data class CartCheckoutState(
     val addressCheckMessage: String = "",
 )
 
-const val HOME_DELIVERY_COST = 3_990
+// El ejemplo de la vista previa de checkout de la API usa 2990.
+const val HOME_DELIVERY_COST = 2_990
 
-fun shippingCostFor(subtotal: Int, deliveryType: String): Int {
+fun shippingCostFor(subtotal: Int): Int {
     if (subtotal <= 0) return 0
-    if (deliveryType == ShippingFormState.PICKUP) return 0
     return HOME_DELIVERY_COST
 }

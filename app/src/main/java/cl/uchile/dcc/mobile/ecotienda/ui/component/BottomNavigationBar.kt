@@ -73,35 +73,38 @@ fun BottomNavigationBar(
         shadowElevation = 10.dp,
         tonalElevation = 0.dp,
     ) {
-        val sections = listOf(
-            ScreenRoutes.HOME,
-            ScreenRoutes.SEARCH,
-            ScreenRoutes.HUELLAVERDE,
-            ScreenRoutes.CART,
-            ScreenRoutes.ACCOUNT,
-        )
-
-        sections.forEach { section ->
-            // Filled y Outlined iconos en la bottom bar
-            val selected = currentRoute == section.route
-            NavigationBarItem(
-                selected = selected,
-                onClick = { onNavigateTo(section.route) },
-                icon = {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            bottomDestinations.forEach { destination ->
+                val selected = currentRoute == destination.route
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .clip(RoundedCornerShape(24.dp))
+                        .clickable(role = Role.Tab) { onNavigateTo(destination.route) }
+                        .semantics { this.selected = selected }
+                        .padding(vertical = 6.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
                     Icon(
-                        imageVector = if (selected) section.icon else section.unselectedIcon,
-                        contentDescription = section.title,
+                        imageVector = if (selected) destination.selectedIcon else destination.icon,
+                        contentDescription = destination.label,
+                        tint = contentColor,
                         modifier = Modifier.size(24.dp),
-                    ) },
-                label = { "Text(section.title)" },
-                colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = selectedColor,
-                    indicatorColor = Color.Transparent,
-                    unselectedIconColor = unselectedColor,
-                    selectedTextColor = selectedColor,
-                    unselectedTextColor = unselectedColor,
-                )
-            )
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = destination.label,
+                        color = contentColor,
+                        fontSize = 12.sp,
+                        fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium,
+                    )
+                }
+            }
         }
     }
 }

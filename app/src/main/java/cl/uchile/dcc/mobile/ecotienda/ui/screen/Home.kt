@@ -68,7 +68,6 @@ import cl.uchile.dcc.mobile.ecotienda.data.database.Producer
 import cl.uchile.dcc.mobile.ecotienda.data.database.Product
 import cl.uchile.dcc.mobile.ecotienda.data.model.ArticleSummary
 import cl.uchile.dcc.mobile.ecotienda.ui.component.BlogPreviewSection
-import cl.uchile.dcc.mobile.ecotienda.ui.component.CompromisosSection
 import cl.uchile.dcc.mobile.ecotienda.ui.component.ProducerEmprendedorCard
 import cl.uchile.dcc.mobile.ecotienda.ui.theme.CustomBrandTitleStyle
 import cl.uchile.dcc.mobile.ecotienda.utils.formatAsCurrency
@@ -115,12 +114,15 @@ fun HomeEcoTienda(
     articlesError: String? = null,
     onOpenBlog: () -> Unit = {},
     onOpenArticle: (Int) -> Unit = {},
-    authViewModel: AuthViewModel = viewModel()
+    authViewModel: AuthViewModel = viewModel(),
+    searchViewModel: SearchViewModel = viewModel()
 ) {
     val ui by authViewModel.state.collectAsState()
     val searchUiState by searchViewModel.uiState.collectAsState()
     var selectedTabIndex by remember { mutableIntStateOf(0) }
-    val tabs = listOf("Ofertas", "Compromiso", "Huella Verde", "Emprendedores", "Blog")
+    var selectedCategoryName by remember { mutableStateOf<String?>(null) }
+
+    val tabs = listOf("Para ti", "Categorías", "Emprendedores", "Huella Verde", "Blog")
 
     LaunchedEffect(ui.isLoggedIn, ui.isGuest) {
         if ((ui.isLoggedIn || ui.isGuest) && !ui.welcomeMessageShown) {
@@ -384,13 +386,6 @@ private fun CategoriasTabContent(
                         fontSize = 18.sp
                     ),
                     color = MaterialTheme.colorScheme.onSurface
-                )
-                4 -> BlogPreviewSection(
-                    articles = articles,
-                    isLoading = articlesLoading,
-                    error = articlesError,
-                    onOpenBlog = onOpenBlog,
-                    onOpenArticle = onOpenArticle,
                 )
             }
 

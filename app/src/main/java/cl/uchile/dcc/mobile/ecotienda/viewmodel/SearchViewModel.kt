@@ -29,7 +29,7 @@ class SearchViewModel(
 
     private var searchJob: Job? = null
 
-    // Limpiar la búsqueda
+    // Limpiar la búsqueda y filtros
     fun clearSearch() {
         searchJob?.cancel()
         _uiState.update {
@@ -37,67 +37,18 @@ class SearchViewModel(
                 query = "",
                 searchResults = emptyList(),
                 isLoading = false,
-                isSearchSubmitted = false
+                isSearchSubmitted = false,
+                filter = ProductFilter()
             )
         }
     }
 
-    // Función de busqueda
+    // Búsqueda en vivo al cambiar el texto
     fun onQueryChange(newQuery: String) {
         _uiState.update {
             it.copy(
                 query = newQuery,
-                isSearchSubmitted = false,
-                searchResults = if (newQuery.isEmpty()) emptyList() else it.searchResults
-            )
-        }
-
-        searchJob?.cancel()
-
-        if (newQuery.isBlank()) {
-            _uiState.update {
-                it.copy(
-                    searchResults = emptyList(),
-                    isLoading = false
-                )
-            }
-        } else {
-            searchJob = viewModelScope.launch {
-                delay(300) // Debounce de 300ms
-                _uiState.update { it.copy(isLoading = true) }
-                val results = productRepository.searchProducts(newQuery)
-
-                // SOLO actualizar si el usuario sigue en la misma búsqueda actual
-                if (_uiState.value.query == newQuery) {
-                    _uiState.update {
-                        it.copy(
-                            searchResults = results,
-                            isLoading = false
-                        )
-                    }
-                }
-            }
-        }
-    }
-
-    fun onSearchSubmitted(query: String) {
-        if (query.isBlank()) {
-            _uiState.update {
-                it.copy(
-                    query = query,
-                    searchResults = emptyList(),
-                    isLoading = false,
-                    isSearchSubmitted = true
-                )
-            }
-            return
-        }
-        _uiState.update {
-            it.copy(
-                query = query,
-                searchResults = emptyList(),
-                isLoading = true,
-                isSearchSubmitted = true
+                isSearchSubmitted = false
             )
         }
 
@@ -118,24 +69,58 @@ class SearchViewModel(
         }
     }
 
-    fun searchProducts(query: String) {
-        if (query.isBlank()) {
-            _uiState.update {
-                it.copy(
-                    searchResults = emptyList(),
-                    isLoading = false
-                )
-            }
-            return
-        }
+    fun onSearchSubmitted(query: String) {
+        onQueryChange(query)
+    }
+
+    fun updateFilter(filter: ProductFilter) {
+        _uiState.update { it.copy(filter = filter) }
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, searchResults = emptyList()) }
-            val results = productRepository.searchProducts(query)
-            _uiState.update {
-                it.copy(
-                    searchResults = results,
-                    isLoading = false,
-                )
+            executeSearchAndFilter(_uiState.value.query, filter)
+        }
+    }
+
+    fun clearFilter() {
+        _uiState.update { it.copy(filter = ProductFilter()) }
+        viewModelScope.launch {
+            executeSearchAndFilter(_uiState.value.query, ProductFilter())
+        }
+    }
+
+    private suspend fun executeSearchAndFilter(query: String, filter: ProductFilter) {
+        _uiState.update { it.copy(isLoading = true) }
+
+        val rawList = if (query.isNotBlank()) {
+            productRepository.searchProducts(query)
+        } else {
+            productRepository.getAllProduct()
+        }
+
+        val filtered = applyFilterRules(rawList, query, filter)
+
+        _uiState.update {
+            it.copy(
+                searchResults = filtered,
+                isLoading = false
+            )
+        }
+    }
+
+    private fun applyFilterRules(
+        products: List<Product>,
+        query: String,
+        filter: ProductFilter
+    ): List<Product> {
+        var list = products
+
+        // Filtrado por consulta de texto (si no fue filtrado en BD o para coincidencia local)
+        if (query.isNotBlank()) {
+            val q = query.trim().lowercase()
+            list = list.filter {
+                it.productName.lowercase().contains(q) ||
+                it.description.lowercase().contains(q) ||
+                it.category.lowercase().contains(q) ||
+                it.productProducer.lowercase().contains(q)
             }
         }
 

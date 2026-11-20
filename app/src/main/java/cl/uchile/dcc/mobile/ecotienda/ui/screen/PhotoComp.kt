@@ -11,8 +11,10 @@ import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -20,17 +22,25 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Eco
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -42,7 +52,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -56,6 +66,7 @@ import cl.uchile.dcc.mobile.ecotienda.ui.theme.CustomBrandTitleStyle
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
+import java.util.Locale
 
 @Composable
 fun PhotoComp(
@@ -67,7 +78,7 @@ fun PhotoComp(
     var hasCamera by remember {
         mutableStateOf(
             ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) ==
-                PackageManager.PERMISSION_GRANTED
+                    PackageManager.PERMISSION_GRANTED
         )
     }
     val permissionLauncher = rememberLauncherForActivityResult(
@@ -102,17 +113,17 @@ fun PhotoComp(
         Text(
             text = "Compara tu producto con Buen Origen",
             style = CustomBrandTitleStyle.copy(
-                fontSize = 32.sp,
+                fontSize = 30.sp,
                 textAlign = TextAlign.Center,
             ),
             color = MaterialTheme.colorScheme.onSurface,
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
         Text(
-            text = product?.productName?.let { "Etiqueta contra $it" }
-                ?: "Saca una foto de la etiqueta de otro producto.",
+            text = product?.productName?.let { "Analiza una etiqueta y compárala con $it" }
+                ?: "Saca una foto a la etiqueta de ropa o producto para comparar sus componentes.",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
@@ -156,7 +167,7 @@ fun PhotoComp(
                                     reading = false
                                     if (error != null || text.isNullOrBlank()) {
                                         comparison = null
-                                        errorMessage = error ?: "No se leyó texto en la etiqueta."
+                                        errorMessage = error ?: "No se detectó texto claro en la etiqueta."
                                     } else {
                                         comparison = compareLabelWithProduct(product, text)
                                     }
@@ -165,7 +176,7 @@ fun PhotoComp(
 
                             override fun onError(exception: ImageCaptureException) {
                                 reading = false
-                                errorMessage = "No se pudo tomar la foto."
+                                errorMessage = "No se pudo capturar la foto."
                             }
                         },
                     )
@@ -174,11 +185,11 @@ fun PhotoComp(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(24.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.secondary,
-                    contentColor = MaterialTheme.colorScheme.onSecondary,
+                    containerColor = Color(0xFF8E412E),
+                    contentColor = Color.White,
                 ),
             ) {
-                Text(if (reading) "Leyendo etiqueta..." else "Leer etiqueta")
+                Text(if (reading) "Analizando etiqueta..." else "Analizar etiqueta")
             }
         }
 
@@ -193,6 +204,7 @@ fun PhotoComp(
                 text = message,
                 color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Center
             )
         }
 
@@ -255,57 +267,174 @@ private fun LabelCameraPreview(
     )
 }
 
-
 @Composable
 private fun ComparisonResult(result: LabelComparison) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(20.dp))
-            .background(MaterialTheme.colorScheme.surface)
-            .padding(16.dp),
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        border = BorderStroke(1.dp, Color(0xFFE2DDD5)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
-        Text(
-            text = result.verdict,
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.primary,
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        result.reasons.forEach { reason ->
+        Column(modifier = Modifier.padding(18.dp)) {
+            // Veredicto
             Text(
-                text = reason,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.padding(bottom = 6.dp),
+                text = result.verdict,
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp
+                ),
+                color = Color(0xFF1C3224),
             )
+
+            Spacer(modifier = Modifier.height(14.dp))
+
+            // 1. Palabras y componentes relevantes detectados
+            Text(
+                text = "Componentes detectados en la etiqueta:",
+                fontWeight = FontWeight.Bold,
+                fontSize = 14.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Spacer(modifier = Modifier.height(6.dp))
+
+            if (result.detectedKeywords.isNotEmpty()) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    result.detectedKeywords.forEach { tag ->
+                        Surface(
+                            shape = RoundedCornerShape(8.dp),
+                            color = Color(0xFFF3ECE6),
+                            border = BorderStroke(1.dp, Color(0xFFDECFC3))
+                        ) {
+                            Text(
+                                text = tag,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = Color(0xFF7A3926),
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                            )
+                        }
+                    }
+                }
+            } else {
+                Text(
+                    text = "No se reconocieron fibras específicas (ej. poliéster, algodón) en la foto.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.Gray
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // 2. Conclusiones y comparación en tono sustentable
+            Text(
+                text = "Análisis comparativo:",
+                fontWeight = FontWeight.Bold,
+                fontSize = 14.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Spacer(modifier = Modifier.height(6.dp))
+
+            result.reasons.forEach { reason ->
+                Row(
+                    modifier = Modifier.padding(bottom = 6.dp),
+                    verticalAlignment = Alignment.Top
+                ) {
+                    Text(
+                        text = "• ",
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF8E412E)
+                    )
+                    Text(
+                        text = reason,
+                        style = MaterialTheme.typography.bodyMedium.copy(
+                            lineHeight = 20.sp
+                        ),
+                        color = MaterialTheme.colorScheme.onSurface,
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // 3. Beneficios por comprar 1 producto en Buen Origen (CO2 y Puntos Verdes)
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(14.dp),
+                color = Color(0xFFF1F6EF),
+                border = BorderStroke(1.dp, Color(0xFFC7DEC4))
+            ) {
+                Column(modifier = Modifier.padding(14.dp)) {
+                    Text(
+                        text = "🌱 Beneficios por elegir 1 unidad en Buen Origen:",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 14.sp,
+                        color = Color(0xFF1B3D23)
+                    )
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    // CO2 Ahorrado
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Surface(
+                            shape = CircleShape,
+                            color = Color(0xFF2E6F40),
+                            modifier = Modifier.size(24.dp)
+                        ) {
+                            Box(contentAlignment = Alignment.Center) {
+                                Icon(
+                                    imageVector = Icons.Default.Eco,
+                                    contentDescription = null,
+                                    tint = Color.White,
+                                    modifier = Modifier.size(16.dp)
+                                )
+                            }
+                        }
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Ahorras ${result.co2Avoided} kg de CO₂ frente a un producto convencional.",
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = Color(0xFF1B3D23)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    // Puntos Verdes
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Surface(
+                            shape = CircleShape,
+                            color = Color(0xFF8E412E),
+                            modifier = Modifier.size(24.dp)
+                        ) {
+                            Box(contentAlignment = Alignment.Center) {
+                                Icon(
+                                    imageVector = Icons.Default.Star,
+                                    contentDescription = null,
+                                    tint = Color.White,
+                                    modifier = Modifier.size(16.dp)
+                                )
+                            }
+                        }
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Ganas +${result.greenPoints} Puntos Verdes canjeables en tu cuenta.",
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = Color(0xFF1B3D23)
+                        )
+                    }
+                }
+            }
         }
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = "Texto de la etiqueta",
-            fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        Text(
-            text = result.labelText,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurface,
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = "Nuestro producto",
-            fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        Text(
-            text = result.oursText,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurface,
-        )
     }
 }
 
-// Lectura de texto de la foto
+// Lectura de texto de la foto mediante ML Kit
 private fun readLabel(
     bitmap: android.graphics.Bitmap,
     onResult: (String?, String?) -> Unit,
@@ -319,50 +448,86 @@ private fun readLabel(
 }
 
 data class LabelComparison(
-    val labelText: String,
-    val oursText: String,
+    val detectedKeywords: List<String>,
     val reasons: List<String>,
     val verdict: String,
+    val greenPoints: Int,
+    val co2Avoided: Double,
 )
 
-private val buenOrigenSignals = listOf(
-    "orgánico", "organico", "reciclado", "natural", "biodegradable",
-    "local", "artesanal", "algodón", "algodon", "comercio justo",
+// Catálogo de materiales comunes a buscar en etiquetas
+private val knownMaterials = listOf(
+    "poliéster", "poliester", "polyester",
+    "algodón", "algodon", "cotton",
+    "elastano", "elastane", "spandex", "lycra",
+    "acrílico", "acrilico", "acrylic",
+    "nylon", "poliamida", "polyamide",
+    "viscosa", "viscose", "rayón", "rayon",
+    "lana", "wool",
+    "lino", "linen",
+    "seda", "silk",
+    "plástico", "plastico", "plastic",
+    "microfibra", "microfiber",
+    "reciclado", "recycled"
 )
 
-private val weakerSignals = listOf(
-    "plástico", "plastico", "poliéster", "poliester",
-    "sintético", "sintetico", "importado",
-)
+// Extrae palabras clave y combinaciones de porcentaje (ej. "80% algodón", "poliéster")
+private fun extractRelevantKeywords(rawText: String): List<String> {
+    val text = rawText.lowercase()
+    val foundList = mutableListOf<String>()
 
-// Comparación de la etiqueta con el texto descriptivo o materiales del producto
-fun compareLabelWithProduct(product: Product?, labelText: String): LabelComparison {
-    val oursText = listOfNotNull(
-        product?.productName,
-        product?.productProducer,
-        product?.description,
-    ).filter { it.isNotBlank() }.joinToString(". ").ifBlank { "Producto Buen Origen" }
-
-    val label = labelText.lowercase()
-    val ours = oursText.lowercase()
-    val reasons = buildList {
-        val weak = weakerSignals.filter { label.contains(it) }
-        if (weak.isNotEmpty()) {
-            add("La etiqueta menciona ${weak.joinToString()}.")
-        }
-        val oursOnly = buenOrigenSignals.filter { ours.contains(it) && !label.contains(it) }
-        if (oursOnly.isNotEmpty()) {
-            add("Buen Origen declara ${oursOnly.joinToString()} y la etiqueta no.")
-        }
-        if (isEmpty()) {
-            add("Buen Origen publica el origen y la elaboración. La etiqueta leída no muestra esa trazabilidad.")
+    // 1. Busca patrones con porcentajes (ej. "60% algodon", "100% polyester")
+    val percentRegex = Regex("""(\d{1,3}%\s*[a-záéíóúñ]+)""")
+    percentRegex.findAll(text).forEach { match ->
+        val matchedStr = match.value.trim()
+        if (knownMaterials.any { matchedStr.contains(it) }) {
+            foundList.add(matchedStr.replaceFirstChar { it.uppercase() })
         }
     }
 
+    // 2. Si no encontró porcentajes, busca los materiales individuales
+    if (foundList.isEmpty()) {
+        knownMaterials.forEach { mat ->
+            if (text.contains(mat)) {
+                foundList.add(mat.replaceFirstChar { it.uppercase() })
+            }
+        }
+    }
+
+    return foundList.distinct().take(5)
+}
+
+// Comparación de la etiqueta con los datos y beneficios de Buen Origen
+fun compareLabelWithProduct(product: Product?, labelText: String): LabelComparison {
+    val detected = extractRelevantKeywords(labelText)
+    val label = labelText.lowercase()
+
+    val synthetics = listOf("poliéster", "poliester", "polyester", "acrílico", "acrilico", "nylon", "spandex", "plástico", "sintético")
+    val hasSynthetics = synthetics.any { label.contains(it) }
+    val hasCotton = label.contains("algodón") || label.contains("algodon") || label.contains("cotton")
+
+    val reasons = buildList {
+        if (hasSynthetics) {
+            add("La etiqueta contiene fibras sintéticas derivadas del petróleo que desprenden microplásticos al lavarse y tardan cientos de años en degradarse.")
+        } else if (hasCotton) {
+            add("La etiqueta registra algodón convencional, que suele requerir gran cantidad de pesticidas y agua en su cultivo industrial.")
+        }
+
+        if (product != null) {
+            add("${product.productName} está confeccionado de forma artesanal y sustentable por ${product.productProducer}, garantizando materiales limpios y trazabilidad.")
+        } else {
+            add("Los productos de Buen Origen utilizan materias primas 100% nobles, orgánicas o recicladas con producción local.")
+        }
+    }
+
+    val co2 = if ((product?.co2Avoided ?: 0.0) > 0.0) product!!.co2Avoided else 1.8
+    val points = if ((product?.greenPoints ?: 0) > 0) product!!.greenPoints else 15
+
     return LabelComparison(
-        labelText = labelText.trim(),
-        oursText = oursText,
+        detectedKeywords = detected,
         reasons = reasons,
-        verdict = "Buen Origen es mejor opción",
+        verdict = "Buen Origen es una alternativa más sustentable",
+        greenPoints = points,
+        co2Avoided = co2,
     )
 }

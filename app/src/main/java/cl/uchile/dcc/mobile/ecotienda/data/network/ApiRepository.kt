@@ -5,7 +5,12 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object ApiRepository {
     // La base termina en '/'. /api/ solo sirve Swagger; los datos están en la raíz.
-    private const val BASE_URL = "http://159.112.150.143:3003/"
+    private const val BASE_URL = "http://159.112.150.143:3004/"
+
+    fun fileContentUrl(fileId: String?): String {
+        if (fileId.isNullOrBlank()) return ""
+        return "${BASE_URL}files/$fileId/content"
+    }
 
     // Instancia compartida de Retrofit
     private val retrofit: Retrofit by lazy {
@@ -33,5 +38,9 @@ object ApiRepository {
     // Instancia para el Carrito
     val cartApiService: CartApiService by lazy {
         retrofit.create(CartApiService::class.java)
+    }
+
+    val articleApiService: ArticleApiService by lazy {
+        retrofit.create(ArticleApiService::class.java)
     }
 }
