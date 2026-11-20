@@ -563,6 +563,7 @@ private fun OrderPlacedContent(
                 color = MaterialTheme.colorScheme.onSurface,
             )
         }
+        Spacer(modifier = Modifier.height(14.dp))
     }
     Spacer(modifier = Modifier.height(20.dp))
     CheckoutActionButton(

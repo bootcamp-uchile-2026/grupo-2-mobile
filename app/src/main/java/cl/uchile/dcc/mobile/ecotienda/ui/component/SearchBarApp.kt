@@ -13,6 +13,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -23,8 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import compose.icons.FeatherIcons
-import compose.icons.feathericons.Search
+import androidx.compose.ui.unit.sp
 
 
 // SearchStaticBar :: onClick modifier -> SeachrBar falsa
@@ -37,7 +37,8 @@ fun SearchStaticBar(
     onQueryChange: (String) -> Unit,
     onSearch: () -> Unit,
     modifier: Modifier = Modifier,
-    bgColor: Color = MaterialTheme.colorScheme.primaryContainer,
+    onFilterClick: (() -> Unit)? = null,
+    bgColor: Color = MaterialTheme.colorScheme.surface,
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -79,6 +80,24 @@ fun SearchStaticBar(
                 contentDescription = "Buscar",
                 tint = Color.Black.copy(alpha = 0.8f),
             )
+            if (count > 0) {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(bottom = 2.dp, end = 2.dp)
+                        .size(16.dp)
+                        .background(Color(0xFF1C3224), CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = if (count > 9) "9+" else count.toString(),
+                        color = Color.White,
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Bold,
+                        lineHeight = 10.sp
+                    )
+                }
+            }
         }
     }
 }

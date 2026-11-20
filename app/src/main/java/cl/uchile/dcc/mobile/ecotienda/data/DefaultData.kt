@@ -40,6 +40,22 @@ object DefaultData {
             producerID = "MT1"
         ),
         Product(
+            id = "PRD-POLERON-MONTANA",
+            productName = "Polerón Montana",
+            price = 15594,
+            listPrice = 25990,
+            discountPercentage = 15,
+            description = "Polerón rojo de algodón orgánico sustentable con estampado de montaña. Suave, abrigador y hecho a mano.",
+            productProducer = "Raíz Textil",
+            imageUrl = "https://images.pexels.com/photos/6311652/pexels-photo-6311652.jpeg",
+            stock = 8,
+            category = "Ropa y Accesorios",
+            producerID = "CL1",
+            co2Avoided = 2.4,
+            greenPoints = 25,
+            available = true
+        ),
+        Product(
             id = "PRD-POLERA",
             productName = "Polera Aurora",
             price = 4990,

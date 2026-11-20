@@ -17,7 +17,9 @@ fun AccountGate(
     snackbarHostState: SnackbarHostState,
     onEnterApp: () -> Unit,
     onLogout: () -> Unit,
-    onSignUp: () -> Unit
+    onSignUp: () -> Unit,
+    isDarkTheme: Boolean = false,
+    onToggleTheme: () -> Unit = {}
 ) {
     val authState by authViewModel.state.collectAsState()
     val hasSession = authState.isLoggedIn || authState.isGuest
